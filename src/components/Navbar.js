@@ -26,7 +26,7 @@ const drawerWidth = 240;
 
 export const Navbar = () => {
   const { logout, currentUser } = useAuth()
-  console.log(currentUser)
+
   return (
     <>
     <Box>
@@ -40,8 +40,7 @@ export const Navbar = () => {
             <Box sx={{ml: -1.4, backgroundImage: `url(${Logo})`,backgroundSize: 'contain', backgroundRepeat:'no-repeat', width: '140px', height: '55px'}}/>
           </Stack>
           <Stack direction="row" spacing={4}>
-            <Button variant="outlined" color="primary" component={NavLink} to="/profile">Profile</Button> 
-            <Button variant="outlined" sx={{ color: '#6366f1', border: '1px solid #6366f1', "&:hover": { backgroundColor: '#ededff', border: '1px solid #6366f1' }, textTransform: 'none'}} component={NavLink} to="/"
+            <Button variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none'}} component={NavLink} to="/"
             onClick={ e => {
               e.preventDefault()
               logout();
@@ -64,14 +63,14 @@ export const Navbar = () => {
         <Divider />
 
         <List>
-          <ListItem button sx={{ "&:hover": { backgroundColor: '#ededff'} }}>
+          <ListItem button component={NavLink} to="/explore" sx={{ "&:hover": { backgroundColor: '#ededff'} }}>
             <ListItemIcon>
               <ExploreIcon sx={{ color: '#6366f1', }}/>
             </ListItemIcon>
             <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Explore</Typography>} />
           </ListItem>
 
-          <ListItem button sx={{ "&:hover": { backgroundColor: '#ededff'}} }>
+          <ListItem button component={NavLink} to="/projects" sx={{ "&:hover": { backgroundColor: '#ededff'}} }>
             <ListItemIcon>
               <FolderIcon sx={{ color: '#6366f1' }} />
             </ListItemIcon>
@@ -83,7 +82,7 @@ export const Navbar = () => {
 
         <List>
         <ListItem sx={{fontFamily: 'Roboto', fontSize:14, fontWeight: 700}}>Latest Projects</ListItem>
-          {['Marvel MCU', 'DC', 'Doctors in USA', 'pug', 'Marvel MCU', 'DC', 'Doctors in USA', 'pug', 'Marvel MCU', 'DC', 'Doctors in USA', 'pug', 'Marvel MCU', 'DC', 'Doctors in USA', 'pug',  ].map((text, index) => (
+          {['Marvel MCU', 'DC', 'Doctors in USA'].map((text, index) => (
             <ListItem button key={text} sx={{height: 30, "&:hover": { background: 'none', color: '#6366f1' },}}>
                 <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14}}>{text}</Typography>} />
             </ListItem>

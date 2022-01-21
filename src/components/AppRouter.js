@@ -9,9 +9,10 @@ import {
 import { useAuth } from '../contexts/AuthContext'
 import ForgotPasswordPage from '../pages/ForgotPasswordPage'
 import Homepage from '../pages/Homepage'
-import Loginpage from './Login'
 import NotfoundPage from '../pages/NotfoundPage'
-import Profilepage from '../pages/Profilepage'
+import ExplorePage from '../pages/ExplorePage'
+import ProjectsPage from '../pages/ProjectsPage'
+import NewProjectPage from '../pages/NewProjectPage'
 import Registerpage from '../pages/Registerpage'
 import ResetPasswordPage from '../pages/ResetPasswordPage'
 import TestPage from '../pages/TestPage'
@@ -24,7 +25,9 @@ const AppRouter = (props) => {
           <Route exact path='/' component={Homepage} />
           {/* <ProtectedRoute exact path='/login' component={Loginpage} /> */}
           <ProtectedRoute exact path='/register' component={Registerpage} />
-          <ProtectedRoute exact path='/profile' component={Profilepage} />
+          <ProtectedRoute exact path='/explore' component={ExplorePage} />
+          <ProtectedRoute exact path='/projects' component={ProjectsPage} />
+          <ProtectedRoute exact path='/newproject' component={NewProjectPage} />
           <ProtectedRoute exact path='/test' component={TestPage} />
           <ProtectedRoute
             exact
@@ -46,9 +49,7 @@ const AppRouter = (props) => {
 function ProtectedRoute(props) {
   const { currentUser } = useAuth()
   const { path } = props
-  console.log('path', path)
   const location = useLocation()
-  console.log('location state', location.state)
 
   if (
     path === '/login' ||

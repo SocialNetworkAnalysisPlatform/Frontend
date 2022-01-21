@@ -1,8 +1,9 @@
 
 import React, {useState} from 'react'
 import { Layout } from '../components/Layout'
+import Collaborator from '../components/Collaborator';
 import { useAuth } from '../contexts/AuthContext'
-
+import List from '@mui/material/List';
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -23,12 +24,16 @@ const NewProject = () => {
 
   const [newProject, setNewProject] = useState({id: '', shared: false, name: '', description: ''});
   const [collaborators, setCollaborators] = useState([
-    // { name:"Linoy" }
+    { id: 1, name: 'Hercules', email: 'herc@gmail.com', image: '' },
+    { id: 2, name: 'Edgar', email: 'edgar@gmail.com', image: '' },
   ]);
   const [openModal, setOpenModal] = useState(false);
-
+  
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [inputSearchValue, setInputSearchValue] = useState("");
+
+  const [disabledSelect, setDisabledSelect] = useState(true);
+
 
   const modalSstyle = {
     position: 'absolute',
@@ -50,45 +55,72 @@ const NewProject = () => {
 ];
 
 
+
+
+  const eachCollaborator = (item, index) => {
+    return  (<Collaborator key={item.id} index={index} collaborator={item}></Collaborator>)
+  };
+
   return (
     <>
-    <Layout>
-        <Box sx={{ width: '50vw' }}>
-          <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Create a new project</Typography>
-          <Typography color="textSecondary" sx={{ fontSize: 14 }}>A project contains all conversations files.</Typography>
-          <Divider light sx={{ mt: 3, mb: 3 }}/>
-          <Stack spacing={4}>
-            <FormControl>
-              <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Project name</FormLabel>
-              <OutlinedInput size="small" sx={{ width: 300,  }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
-            </FormControl>
-            <FormControl>
-              <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description (optional)</FormLabel>
-              <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
-            </FormControl>
-          </Stack>
-          <Divider light sx={{ mt: 3, mb: 3 }}/>
-          <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Collaborators</Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.2)',  borderRadius: 2, minHeight: 200,}}>
-          {
-            collaborators.length > 0 ?
-            <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Collaborators</Typography>
-            : 
-            <Stack sx={{alignItems: 'center'}} spacing={2}>
-              <GroupsIcon sx={{ fontSize: 50, fontWeight: 500, color: "#6366f1" }}/>
-              <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#000000DE" }}>You have not invited any collaborators yet</Typography>
-              <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none' }} >
-                  Add
-              </Button>
+      <Layout>
+          <Box sx={{ width: '50vw' }}>
+            <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Create a new project</Typography>
+            <Typography color="textSecondary" sx={{ fontSize: 14 }}>A project contains all conversations files.</Typography>
+            <Divider light sx={{ mt: 3, mb: 3 }}/>
+            <Stack spacing={4}>
+              <FormControl>
+                <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Project name</FormLabel>
+                <OutlinedInput size="small" sx={{ width: 300,  }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
+              </FormControl>
+              <FormControl>
+                <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description (optional)</FormLabel>
+                <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
+              </FormControl>
             </Stack>
-          }
+
+            <Divider light sx={{ mt: 3, mb: 3 }}/>
+
+            <Stack direction={'row'} justifyContent={'space-between'}>
+              <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Collaborators</Typography>
+              { // Show button depending on collaborators array length > 0 (true case)
+                collaborators.length > 0 &&
+                <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                  Add 
+                </Button>
+              }
+            </Stack>   
+
+            <Box sx={{ mt: 2, minHeight: 170, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.2)',  borderRadius: 2, }}>
+            { // Show items depending on collaborators array length (ternary expression - true and false case)
+              collaborators.length > 0
+              ?
+              <List sx={{ width: '100%', bgcolor: 'background.paper'}}>
+                { collaborators.map(eachCollaborator) }
+              </List>
+              : 
+              <Stack sx={{alignItems: 'center', mt: 4, mb: 4}} spacing={2}>
+                <GroupsIcon sx={{ fontSize: 50, fontWeight: 500, color: "#6366f1" }}/>
+                <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#000000DE" }}>You have not invited any collaborators yet</Typography>
+                <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none' }} >
+                    Add
+                </Button>
+              </Stack>
+            }
+            </Box>
+            
+            <Divider light sx={{ mt: 3, mb: 3 }}/>
+
+            <Button variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+              Create project 
+            </Button>
           </Box>
-        </Box>
-    </Layout>
-    <Modal open={openModal} onClose={() => setOpenModal(false)} > 
+      </Layout>
+
+      <Modal open={openModal} onClose={() => setOpenModal(false)} > 
         <Stack sx={modalSstyle} >
           <Box sx={{ textAlign:'right', mt: -2 }}>
-            <IconButton onClick={() => setOpenModal(false)} color="default" aria-label="upload picture" component="span">
+            <IconButton onClick={() => setOpenModal(false)} color="default" component="span">
               <CloseIcon sx={{ fontSize: 16 }} />
             </IconButton>
           </Box>
@@ -108,13 +140,19 @@ const NewProject = () => {
                 setOpenAutocomplete(false);
               }
             }}
+            onChange={(e, value, reason) => {
+              setDisabledSelect(false)
+              if (!value) {
+                setDisabledSelect(true)
+              }
+            }}
             options={users}
             getOptionLabel={(option) => option.name}
             renderInput={(params) => (
               <TextField {...params} variant="outlined" placeholder='Search by name or email'/>
             )}
           />
-          <Button onClick={() => setOpenModal(false)} variant="contained" sx={{ mt: 3,  backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+          <Button disabled={disabledSelect} onClick={() => setOpenModal(false)} variant="contained" sx={{ mt: 3,  backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
             Select 
           </Button>
         </Stack>

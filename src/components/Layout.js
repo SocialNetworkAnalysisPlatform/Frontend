@@ -7,9 +7,9 @@ export const Layout = ({ children }) => {
   const { currentUser } = useAuth()
 
   return (
-    <Box sx={{ height: '100vh'}}>
+    <Box mb={20} sx={{ height: '100vh'}}>
       <Navbar />
-      <Box ml={35} mr={3} mt={4} mb={4}>{children}</Box>
+      <Box ml={35} mr={3} mt={4} >{children}</Box>
     </Box>
   )
 }

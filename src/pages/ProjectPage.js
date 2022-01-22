@@ -34,13 +34,13 @@ const ProjectPage = (props) => {
         setPage(newPage);
       };
     
-      const handleChangeRowsPerPage = (event) => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
-      };
+    };
 
 
-      const [networks, setNetworks] = useState([
+    const [networks, setNetworks] = useState([
             {id:1, title: "Social", description: 'first', source: "Linoy",
           createdBy: { id: 10101010, displayName: 'Sagi', photoURL: ''},
           createdAt: '2020-10-05T14:48:00.000Z', isPublished: false},
@@ -48,67 +48,82 @@ const ProjectPage = (props) => {
           {id:2, title: "Social2", description: 'second', source: "Linoy",
           createdBy: { id: 2, displayName: 'Linoy', photoURL: ''},
           createdAt: '2020-10-05T14:48:00.000Z', isPublished: false},
-      ]);
 
-      const project =  {
+          {id:3, title: "Soc", description: 'second', source: "Linoy",
+          createdBy: { id: 2, displayName: 'Linoy', photoURL: ''},
+          createdAt: '2020-10-05T14:48:00.000Z', isPublished: false},
+
+          {id:4, title: "sada", description: 'first', source: "Linoy",
+          createdBy: { id: 10101010, displayName: 'Sagi', photoURL: ''},
+          createdAt: '2020-10-05T14:48:00.000Z', isPublished: false},
+    ]);
+    const [filteredNetworks, setFilteredNetworks] = useState(networks);
+
+    const project =  {
         id: 1, owner: { id: 10101010, displayName: "Sagi"}, shared: false, name: 'Doctors Among The World', conversations: [{ id: 1, name: "USA", source: {} }], description: "Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi", createdAt: "2020-10-05T14:48:00.000Z",
         collaborators: [{ id: 10101010, displayName: 'Sagi', photoURL: ''}, { id: 2, displayName: 'Linoy', photoURL: ''} ],
         networks: networks
-        }
+    }
       
 
-      const [filteredNetworks, setFilteredNetworks] = useState(networks);
-      const [searchInput, setSearchInput] = useState('');
+    const [searchInput, setSearchInput] = useState('');
 
-      const popupState = usePopupState({ variant: 'popover', popupId: 'demoMenu' })
+    const popupState = usePopupState({ variant: 'popover', popupId: 'demoMenu' })
 
-
-      const [checked, setChecked] = useState();
-
-      // Create dynamic key & value: collaborator id : false
-      let collaborators = {}
-      project.collaborators.map((collaborator) => {
+    // Create dynamic key & value: collaborator id : false
+    let collaborators = {}
+    project.collaborators.map((collaborator) => {
         collaborators[`${collaborator.id}`] = true
-      })
-      // checked list - created by filter
-      const [clCreatedBy, setClCreatedBy] = useState(collaborators);
+    })
+    // checked list - created by collaborator filter
+    const [clCreatedBy, setClCreatedBy] = useState(collaborators);
       
-     
-
     useEffect(() => {
-        // #TBD !!!!!!!!!
-        // console.log("in", clCreatedBy)
-        //     if(clCreatedBy) {
-        //         let result = [];
-        //         for (let [key, value] of Object.entries(clCreatedBy)) {
-        //             result = networks.filter((row) => {
-        //                 if((Number(key) == Number(row.createdBy.id)) && value == true) {
-        //                     console.log(row)
-
-        //                         return row
-        //                 }
-        //                 console.log("resIn", result)
-        //             });
-        //         }
-        //         console.log("resOut", result)
-
-        //         setFilteredNetworks(result);
-        //     }
-      }, [clCreatedBy]);
+        // When CreatedBy checkbox changed
+        handleSearchAndFilter(searchInput);
+    }, [clCreatedBy]);
 
 
+    const handleSearchAndFilter = (text) => {
+        const isFilteredByCreatedBy = () => {
+            for (let [key, value] of Object.entries(clCreatedBy)) {
+                if(value == false) {
+                    return true;
+                }
+            }
+            return false;
+          }
+        
+        const isFilteredCreatedBy = isFilteredByCreatedBy();
 
-
-      const handleSearch = (text) => {
-        if (text) {
-            let result = filteredNetworks.filter((row) => {
-            return row.title.toLowerCase().includes(text.toLowerCase());
+        let result = null;
+        if (!text && !isFilteredCreatedBy) { // Regular
+            result = networks;
+        } else if (text && !isFilteredCreatedBy) { // Filtered by text ONLY
+            result = networks.filter((row) => {
+                return row.title.toLowerCase().includes(text.toLowerCase());
             });
-            setFilteredNetworks(result);
+        } else if (!text && isFilteredCreatedBy) { // Filtered by checkbox ONLY
+            result = []
+            for (let [key, value] of Object.entries(clCreatedBy)) {
+                const filterRes = networks.filter((row) => {
+                    return (value == true && (Number(key) == Number(row.createdBy.id)))
+                });
+                result.push(...filterRes)
+            }
+        } else if (text && isFilteredCreatedBy) { // Filtered by Both
+            result = []
+            for (let [key, value] of Object.entries(clCreatedBy)) {
+                const filterRes = filteredNetworks.filter((row) => {
+                    return (value == true && (Number(key) == Number(row.createdBy.id)))
+                });
+                result.push(...filterRes)
+            }
+            result = result.filter((row) => {
+                return row.title.toLowerCase().includes(text.toLowerCase());
+            });
         }
-        else {
-            setFilteredNetworks(networks);
-        }
+        setFilteredNetworks(result); 
     }
 
     
@@ -121,7 +136,7 @@ const ProjectPage = (props) => {
     return (
         <Layout>
             <Stack direction={"row"} justifyContent={"space-between"}>
-                <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a network...' value={searchInput} onChange={(e) => { handleSearch(e.target.value); setSearchInput(e.target.value) } }/> 
+                <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a network...' value={searchInput} onChange={(e) => { setSearchInput(e.target.value); handleSearchAndFilter(e.target.value); } }/> 
                 <Button endIcon={<KeyboardArrowDownIcon/>} {...bindTrigger(popupState)} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     Created by 
                 </Button>
@@ -130,7 +145,7 @@ const ProjectPage = (props) => {
                         project.collaborators.map((collaborator) => {
                             return (
                                 <MenuItem sx={{ pr: 7 }} >
-                                    <Checkbox color="primary" checked={clCreatedBy[`${collaborator.id}`]} onChange={() => setClCreatedBy({...clCreatedBy, [`${collaborator.id}`]:event.target.checked}) }/>
+                                    <Checkbox color="primary" checked={clCreatedBy[`${collaborator.id}`]} onChange={() => {setClCreatedBy({...clCreatedBy, [`${collaborator.id}`]: event.target.checked}); } }/>
                                     <Avatar sx={{ width: 25, height: 25, mr: 2}} src={collaborator.photoURL}/>
                                     <Typography sx={{ wordWrap: 'break-word' }}>{collaborator.displayName}</Typography>     
                                 </MenuItem>

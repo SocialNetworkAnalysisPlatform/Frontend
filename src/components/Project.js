@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Layout } from '../components/Layout'
 import { useAuth } from '../contexts/AuthContext'
+import { Link } from 'react-router-dom'
 import dateFormat, { masks } from "dateformat";
 import { ResponsiveContainer, AreaChart, Area, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
@@ -40,13 +41,13 @@ const Project = (props) => {
         <Box sx={{ mt: 3 }}>
             <Divider light sx={{ mb: 3 }}/>
             <Stack direction={"row"} justifyContent={"space-between"}>
-                <Typography sx={{ fontSize: 20, fontWeight: 500, "&:hover": { color: "#6366f1" }}}>{props.project.name}</Typography>
+                <Typography component={Link} to={`/project?id=${props.project.id}`} sx={{ textDecoration: "none", color: "#000000DE" , fontSize: 20, fontWeight: 500, "&:hover": { color: "#6366f1" }}}>{props.project.name}</Typography>
                 <SettingsIcon sx={{ color: 'rgba(0, 0, 0, 0.6)', "&:hover": { color: "#6366f1" }}}/>
             </Stack>
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Box>
                     { props.project.shared && 
-                        <Typography color="textSecondary" sx={{ fontSize: 12, }}>{`Shared from ${props.project.owner.name}/${props.project.name}`}</Typography>
+                        <Typography color="textSecondary" sx={{ fontSize: 12, }}>{`Shared from ${props.project.owner.displayName}/${props.project.name}`}</Typography>
                     }
                     <Typography color="textSecondary" sx={{ fontSize: 14, width: '32vw', wordWrap: 'break-word' }}>{props.project.description.length > 170 ? `${props.project.description.substring(0, 170)}...` : props.project.description }</Typography>
                     <Stack direction={"row"} sx={{ mt: 1 }}>

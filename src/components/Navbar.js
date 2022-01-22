@@ -18,8 +18,8 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ExploreIcon from '@mui/icons-material/Explore';
-import FolderIcon from '@mui/icons-material/Folder';
+import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import Logo from '../assets/images/snap-logo.png';
 
 const drawerWidth = 240;
@@ -40,7 +40,7 @@ export const Navbar = () => {
             <Box sx={{ml: -1.4, backgroundImage: `url(${Logo})`,backgroundSize: 'contain', backgroundRepeat:'no-repeat', width: '140px', height: '55px'}}/>
           </Stack>
           <Stack direction="row" spacing={4}>
-            <Button variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none'}} component={NavLink} to="/"
+            <Button component={NavLink} to="/" variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none'}}
             onClick={ e => {
               e.preventDefault()
               logout();
@@ -65,14 +65,14 @@ export const Navbar = () => {
         <List>
           <ListItem button component={NavLink} to="/explore" sx={{ "&:hover": { backgroundColor: '#ededff'} }}>
             <ListItemIcon>
-              <ExploreIcon sx={{ color: '#6366f1', }}/>
+              <ExploreOutlinedIcon sx={{ color: '#6366f1', }}/>
             </ListItemIcon>
             <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Explore</Typography>} />
           </ListItem>
 
           <ListItem button component={NavLink} to="/projects" sx={{ "&:hover": { backgroundColor: '#ededff'}} }>
             <ListItemIcon>
-              <FolderIcon sx={{ color: '#6366f1' }} />
+              <FolderOutlinedIcon sx={{ color: '#6366f1' }} />
             </ListItemIcon>
             <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Projects</Typography>} />
           </ListItem>

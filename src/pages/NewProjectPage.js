@@ -24,8 +24,8 @@ const NewProject = () => {
 
   const [newProject, setNewProject] = useState({id: '', shared: false, name: '', description: ''});
   const [collaborators, setCollaborators] = useState([
-    { id: 1, name: 'Hercules', email: 'herc@gmail.com', image: '' },
-    { id: 2, name: 'Edgar', email: 'edgar@gmail.com', image: '' },
+    { id: 1, displayName: 'Maya', email: 'maya@gmail.com', photoURL: '' },
+    { id: 2, displayName: 'Edgar', email: 'edgar@gmail.com', photoURL: '' },
   ]);
   const [openModal, setOpenModal] = useState(false);
   

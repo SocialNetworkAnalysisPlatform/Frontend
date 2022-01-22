@@ -20,11 +20,11 @@ const Collaborator = (props) => {
         <>
             <ListItem>
                 <ListItemAvatar>
-                    <Avatar alt={`${props.collaborator.name}`} src={props.collaborator.image} />
+                    <Avatar alt={`${props.collaborator.displayName}`} src={props.collaborator.photoURL} />
                 </ListItemAvatar>
-                <ListItemText primary={`${props.collaborator.name}`} secondary="Collaborator" />
+                <ListItemText primary={`${props.collaborator.displayName}`} secondary="Collaborator" />
                 <IconButton color="default" component="span">
-                <DeleteOutlineIcon />
+                    <DeleteOutlineIcon />
                 </IconButton>
             </ListItem>
             { props.index % 2 == 0 && <Divider variant="inset" />}

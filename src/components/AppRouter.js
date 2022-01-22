@@ -12,6 +12,7 @@ import Homepage from '../pages/Homepage'
 import NotfoundPage from '../pages/NotfoundPage'
 import ExplorePage from '../pages/ExplorePage'
 import ProjectsPage from '../pages/ProjectsPage'
+import ProjectPage from '../pages/ProjectPage'
 import NewProjectPage from '../pages/NewProjectPage'
 import Registerpage from '../pages/Registerpage'
 import ResetPasswordPage from '../pages/ResetPasswordPage'
@@ -27,6 +28,7 @@ const AppRouter = (props) => {
           <ProtectedRoute exact path='/register' component={Registerpage} />
           <ProtectedRoute exact path='/explore' component={ExplorePage} />
           <ProtectedRoute exact path='/projects' component={ProjectsPage} />
+          <ProtectedRoute exact path='/project' component={ProjectPage} />
           <ProtectedRoute exact path='/newproject' component={NewProjectPage} />
           <ProtectedRoute exact path='/test' component={TestPage} />
           <ProtectedRoute

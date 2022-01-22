@@ -24,6 +24,11 @@ import MenuItem from '@mui/material/MenuItem'
 import Avatar from '@mui/material/Avatar';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Checkbox from '@mui/material/Checkbox';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import IconButton from '@mui/material/IconButton';
 import Network from '../components/Network'
 
 const ProjectPage = (props) => {
@@ -135,28 +140,39 @@ const ProjectPage = (props) => {
 
     return (
         <Layout>
-            <Stack direction={"row"} justifyContent={"space-between"}>
-                <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a network...' value={searchInput} onChange={(e) => { setSearchInput(e.target.value); handleSearchAndFilter(e.target.value); } }/> 
-                <Button endIcon={<KeyboardArrowDownIcon/>} {...bindTrigger(popupState)} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
-                    Created by 
+            <Stack direction={"row"} spacing={3}> 
+                <Button component={Link} to={'/newconversation'} startIcon={<AddIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                    Add conversation
                 </Button>
-                <Menu sx={{ ml: -3, }} {...bindMenu(popupState)}>
-                    {
-                        project.collaborators.map((collaborator) => {
-                            return (
-                                <MenuItem sx={{ pr: 7 }} >
-                                    <Checkbox color="primary" checked={clCreatedBy[`${collaborator.id}`]} onChange={() => {setClCreatedBy({...clCreatedBy, [`${collaborator.id}`]: event.target.checked}); } }/>
-                                    <Avatar sx={{ width: 25, height: 25, mr: 2}} src={collaborator.photoURL}/>
-                                    <Typography sx={{ wordWrap: 'break-word' }}>{collaborator.displayName}</Typography>     
-                                </MenuItem>
-                            )
-                    })}
-                </Menu>
-           
-           
+                <Button startIcon={<DeleteOutlineIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                    Delete 
+                </Button>
+                <Button startIcon={<CompareArrowsIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                    Compare 
+                </Button>     
             </Stack>
+           
             <Paper sx={{ width: '100%', overflow: 'hidden', mt: 4 }}>
                 <TableContainer sx={{ maxHeight: 440 }}>
+                    <Stack sx={{ mt: 1, pr: 2, pl: 2, }} direction={"row"} justifyContent={"space-between"}>
+                        <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a network...' value={searchInput} onChange={(e) => { setSearchInput(e.target.value); handleSearchAndFilter(e.target.value); } }/> 
+                        <IconButton {...bindTrigger(popupState)} color="default" >
+                            <FilterAltOutlinedIcon/>
+                        </IconButton>
+                        <Menu sx={{ ml: -3, }} {...bindMenu(popupState)}>
+                            {
+                                project.collaborators.map((collaborator) => {
+                                    return (
+                                        <MenuItem sx={{ pr: 7 }} >
+                                            <Checkbox color="primary" checked={clCreatedBy[`${collaborator.id}`]} onChange={() => {setClCreatedBy({...clCreatedBy, [`${collaborator.id}`]: event.target.checked}); } }/>
+                                            <Avatar sx={{ width: 25, height: 25, mr: 2}} src={collaborator.photoURL}/>
+                                            <Typography sx={{ wordWrap: 'break-word' }}>{collaborator.displayName}</Typography>     
+                                        </MenuItem>
+                                    )
+                            })}
+                        </Menu>
+                    </Stack>
+
                     <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
@@ -164,8 +180,8 @@ const ProjectPage = (props) => {
                             <TableCell align={'left'} style={{ minWidth: 130 }}>Title</TableCell>
                             <TableCell align={'left'} style={{ minWidth: 130 }}>Description</TableCell>
                             <TableCell align={'left'} style={{ minWidth: 130 }}>Source</TableCell>
-                            <TableCell align={'left'} style={{ minWidth: 130 }}>Created date</TableCell>
-                            <TableCell align={'left'} style={{ minWidth: 130 }}>Created by</TableCell>
+                            <TableCell align={'left'} style={{ minWidth: 130 }}>Creator</TableCell>
+                            <TableCell align={'left'} style={{ minWidth: 130 }}>Created</TableCell>
                             <TableCell align={'center'} style={{ minWidth: 70 }}></TableCell>
 
                         </TableRow>

@@ -26,17 +26,16 @@ const Network = (props) => {
             <TableCell padding="checkbox">
                 <Checkbox color="primary" checked={checked} onChange={() => setChecked(event.target.checked)} />
             </TableCell>
-            <TableCell align={'left'}>{props.network.title}</TableCell>
+            <TableCell align={'left'} component={Link} to={`/network?id=${props.network.id}`} sx={{ textDecoration: "none", color: "#000000DE" ,"&:hover": { color: "#6366f1" }}}>{props.network.title}</TableCell>
             <TableCell align={'left'}>{props.network.description}</TableCell>
             <TableCell align={'left'}>{props.network.source}</TableCell>
-            <TableCell align={'left'}>{dateFormat(new Date(props.network.createdAt), "dd/mm/yyyy")}</TableCell>
-
             <TableCell align={'left'}>
                 <Stack direction={"row"} alignItems={"center"}>
                     <Avatar sx={{ width: 25, height: 25, mr: 2 }} src={props.network.createdBy.photoURL}/>
                     {props.network.createdBy.displayName}
                 </Stack>
             </TableCell>
+            <TableCell align={'left'}>{dateFormat(new Date(props.network.createdAt), "dd/mm/yyyy")}</TableCell>
             <TableCell align={'center'}> 
             {
                 props.network.isPublished ?

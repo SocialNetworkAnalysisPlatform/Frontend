@@ -21,10 +21,15 @@ const Network = (props) => {
 
     const [checked, setChecked] = useState(false);
 
+    const handleChecked = (checkValue) => {
+        setChecked(checkValue);
+        props.checkedStatus(props.network.id, checkValue)
+    }
+
     return (
         <TableRow hover role="checkbox" tabIndex={-1} key={props.index} onClick={() => setChecked(true)}>
             <TableCell padding="checkbox">
-                <Checkbox color="primary" checked={checked} onChange={() => setChecked(event.target.checked)} />
+                <Checkbox color='default' sx={{ color: '#6366f1' }} checked={checked} onChange={() => handleChecked(event.target.checked)}  />
             </TableCell>
             <TableCell align={'left'} component={Link} to={`/network?id=${props.network.id}`} sx={{ textDecoration: "none", color: "#000000DE" ,"&:hover": { color: "#6366f1" }}}>{props.network.title}</TableCell>
             <TableCell align={'left'}>{props.network.description}</TableCell>

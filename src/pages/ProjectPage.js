@@ -30,8 +30,13 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import IconButton from '@mui/material/IconButton';
 import Network from '../components/Network'
+import { AlertDialog } from '@chakra-ui/react'
 
 const ProjectPage = (props) => {
+
+    const [disabledDelete, setDisabledDelete] = useState(true);
+    const [disabledCompare, setDisabledCompare] = useState(true);
+
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -45,7 +50,7 @@ const ProjectPage = (props) => {
     };
 
 
-    const [networks, setNetworks] = useState([
+    const [projectNetworks, setProjectNetworks] = useState([
             {id:1, title: "Social", description: 'first', source: "Linoy",
           createdBy: { id: 10101010, displayName: 'Sagi', photoURL: ''},
           createdAt: '2020-10-05T14:48:00.000Z', isPublished: false},
@@ -62,14 +67,14 @@ const ProjectPage = (props) => {
           createdBy: { id: 10101010, displayName: 'Sagi', photoURL: ''},
           createdAt: '2020-10-05T14:48:00.000Z', isPublished: false},
     ]);
-    const [filteredNetworks, setFilteredNetworks] = useState(networks);
 
     const project =  {
         id: 1, owner: { id: 10101010, displayName: "Sagi"}, shared: false, name: 'Doctors Among The World', conversations: [{ id: 1, name: "USA", source: {} }], description: "Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi", createdAt: "2020-10-05T14:48:00.000Z",
         collaborators: [{ id: 10101010, displayName: 'Sagi', photoURL: ''}, { id: 2, displayName: 'Linoy', photoURL: ''} ],
-        networks: networks
+        networks: projectNetworks
     }
-      
+
+    const [filteredNetworks, setFilteredNetworks] = useState(project.networks);
 
     const [searchInput, setSearchInput] = useState('');
 
@@ -84,7 +89,7 @@ const ProjectPage = (props) => {
     const [clCreatedBy, setClCreatedBy] = useState(collaborators);
       
     useEffect(() => {
-        // When CreatedBy checkbox changed
+        // When checkbox of one of clCreatedBy list changed
         handleSearchAndFilter(searchInput);
     }, [clCreatedBy]);
 
@@ -103,15 +108,15 @@ const ProjectPage = (props) => {
 
         let result = null;
         if (!text && !isFilteredCreatedBy) { // Regular
-            result = networks;
+            result = project.networks;
         } else if (text && !isFilteredCreatedBy) { // Filtered by text ONLY
-            result = networks.filter((row) => {
+            result = project.networks.filter((row) => {
                 return row.title.toLowerCase().includes(text.toLowerCase());
             });
         } else if (!text && isFilteredCreatedBy) { // Filtered by checkbox ONLY
             result = []
             for (let [key, value] of Object.entries(clCreatedBy)) {
-                const filterRes = networks.filter((row) => {
+                const filterRes = project.networks.filter((row) => {
                     return (value == true && (Number(key) == Number(row.createdBy.id)))
                 });
                 result.push(...filterRes)
@@ -131,23 +136,67 @@ const ProjectPage = (props) => {
         setFilteredNetworks(result); 
     }
 
-    
+    const [compareList, setCompareList] = useState([]);
+    console.log(compareList)
 
-      const eachNetwork = (item, index) => {
-        return  (<Network key={item.id} index={index} network={item}></Network>)
+    // Create dynamic key & value: network id : false
+    let networks = {}
+    project.networks.map((network) => {
+        networks[`${network.id}`] = false
+    })
+    // checked list - created by collaborator filter
+    const [clNetworks, setClNetworks] = useState(networks);
+
+    const handleCheckedNetwork = (id, checkValue) => {
+        for (let [key, value] of Object.entries(clNetworks)) {
+           if(key == id) {
+                setClNetworks({...clNetworks, [`${id}`]: checkValue}); 
+           } 
+        }
+
+        // Handle creation of networks compare list
+        let networksList = compareList
+        if(checkValue == true) {
+            networksList.push(id)
+            setCompareList(networksList)
+        }
+        else {
+            const res = networksList.filter(networkId => networkId !== id)
+            setCompareList(res);
+        }        
+    }
+
+    useEffect(() => {
+        // When checkbox of one of clNetworks list changed
+        let networksCnt = 0;
+        for (let [key, value] of Object.entries(clNetworks)) {
+            value ? ++networksCnt : ''
+            networksCnt > 0 ? setDisabledDelete(false) : setDisabledDelete(true)
+            networksCnt > 1 ? setDisabledCompare(false) : setDisabledCompare(true)    
+        }
+    }, [clNetworks]);
+
+
+
+
+    const eachNetwork = (item, index) => {
+        return  (<Network key={item.id} index={index} network={item}
+                checkedStatus={handleCheckedNetwork}>
+                </Network>)
     };
    
 
     return (
         <Layout>
-            <Stack direction={"row"} spacing={3}> 
+            <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>{project.name}</Typography>
+            <Stack direction={"row"} spacing={3} sx={{ mt: 2 }}> 
                 <Button component={Link} to={'/newconversation'} startIcon={<AddIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     Add conversation
                 </Button>
-                <Button startIcon={<DeleteOutlineIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                <Button disabled={disabledDelete} startIcon={<DeleteOutlineIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     Delete 
                 </Button>
-                <Button startIcon={<CompareArrowsIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                <Button disabled={disabledCompare} startIcon={<CompareArrowsIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     Compare 
                 </Button>     
             </Stack>
@@ -156,7 +205,7 @@ const ProjectPage = (props) => {
                 <TableContainer sx={{ maxHeight: 440 }}>
                     <Stack sx={{ mt: 1, pr: 2, pl: 2, }} direction={"row"} justifyContent={"space-between"}>
                         <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a network...' value={searchInput} onChange={(e) => { setSearchInput(e.target.value); handleSearchAndFilter(e.target.value); } }/> 
-                        <IconButton {...bindTrigger(popupState)} color="default" >
+                        <IconButton {...bindTrigger(popupState)} color="default" sx={{ mr: 1 }} >
                             <FilterAltOutlinedIcon/>
                         </IconButton>
                         <Menu sx={{ ml: -3, }} {...bindMenu(popupState)}>
@@ -164,7 +213,7 @@ const ProjectPage = (props) => {
                                 project.collaborators.map((collaborator) => {
                                     return (
                                         <MenuItem sx={{ pr: 7 }} >
-                                            <Checkbox color="primary" checked={clCreatedBy[`${collaborator.id}`]} onChange={() => {setClCreatedBy({...clCreatedBy, [`${collaborator.id}`]: event.target.checked}); } }/>
+                                            <Checkbox color='default' sx={{ color: '#6366f1' }} checked={clCreatedBy[`${collaborator.id}`]} onChange={() => {setClCreatedBy({...clCreatedBy, [`${collaborator.id}`]: event.target.checked}); } }/>
                                             <Avatar sx={{ width: 25, height: 25, mr: 2}} src={collaborator.photoURL}/>
                                             <Typography sx={{ wordWrap: 'break-word' }}>{collaborator.displayName}</Typography>     
                                         </MenuItem>
@@ -197,7 +246,7 @@ const ProjectPage = (props) => {
                 <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
-                    count={networks.length}
+                    count={project.networks.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

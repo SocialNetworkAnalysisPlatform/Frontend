@@ -69,12 +69,12 @@ const ProjectPage = (props) => {
     ]);
 
     const project =  {
-        id: 1, owner: { id: 10101010, displayName: "Sagi"}, shared: false, name: 'Doctors Among The World', conversations: [{ id: 1, name: "USA", source: {} }], description: "Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi", createdAt: "2020-10-05T14:48:00.000Z",
+        id: 1, owner: { id: 10101010, displayName: "Sagi"}, shared: false, name: 'Doctors Among The World',  description: "Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi", createdAt: "2020-10-05T14:48:00.000Z",
         collaborators: [{ id: 10101010, displayName: 'Sagi', photoURL: ''}, { id: 2, displayName: 'Linoy', photoURL: ''} ],
-        networks: projectNetworks
+        conversations: projectNetworks
     }
 
-    const [filteredNetworks, setFilteredNetworks] = useState(project.networks);
+    const [filteredNetworks, setFilteredNetworks] = useState(project.conversations);
 
     const [searchInput, setSearchInput] = useState('');
 
@@ -108,15 +108,15 @@ const ProjectPage = (props) => {
 
         let result = null;
         if (!text && !isFilteredCreatedBy) { // Regular
-            result = project.networks;
+            result = project.conversations;
         } else if (text && !isFilteredCreatedBy) { // Filtered by text ONLY
-            result = project.networks.filter((row) => {
+            result = project.conversations.filter((row) => {
                 return row.title.toLowerCase().includes(text.toLowerCase());
             });
         } else if (!text && isFilteredCreatedBy) { // Filtered by checkbox ONLY
             result = []
             for (let [key, value] of Object.entries(clCreatedBy)) {
-                const filterRes = project.networks.filter((row) => {
+                const filterRes = project.conversations.filter((row) => {
                     return (value == true && (Number(key) == Number(row.createdBy.id)))
                 });
                 result.push(...filterRes)
@@ -141,16 +141,16 @@ const ProjectPage = (props) => {
 
     // Create dynamic key & value: network id : false
     let networks = {}
-    project.networks.map((network) => {
+    project.conversations.map((network) => {
         networks[`${network.id}`] = false
     })
     // checked list - created by collaborator filter
-    const [clNetworks, setClNetworks] = useState(networks);
+    const [clConversations, setClConversations] = useState(networks);
 
     const handleCheckedNetwork = (id, checkValue) => {
-        for (let [key, value] of Object.entries(clNetworks)) {
+        for (let [key, value] of Object.entries(clConversations)) {
            if(key == id) {
-                setClNetworks({...clNetworks, [`${id}`]: checkValue}); 
+            setClConversations({...clConversations, [`${id}`]: checkValue}); 
            } 
         }
 
@@ -167,14 +167,14 @@ const ProjectPage = (props) => {
     }
 
     useEffect(() => {
-        // When checkbox of one of clNetworks list changed
+        // When checkbox of one of clConversations list changed
         let networksCnt = 0;
-        for (let [key, value] of Object.entries(clNetworks)) {
+        for (let [key, value] of Object.entries(clConversations)) {
             value ? ++networksCnt : ''
             networksCnt > 0 ? setDisabledDelete(false) : setDisabledDelete(true)
             networksCnt > 1 ? setDisabledCompare(false) : setDisabledCompare(true)    
         }
-    }, [clNetworks]);
+    }, [clConversations]);
 
 
 
@@ -246,7 +246,7 @@ const ProjectPage = (props) => {
                 <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
-                    count={project.networks.length}
+                    count={project.conversations.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

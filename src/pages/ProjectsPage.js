@@ -16,11 +16,11 @@ import Project from '../components/Project'
 
 const ProjectsPage = () => {
     const [projects, setProjects] = useState([
-        {id: 1, owner: { id: '11111', displayName: "Sagi"}, shared: false, name: 'Doctors Among The World', conversations: [{ id: 1, name: "USA", source: {} }], description: "Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi", createdAt: "2020-10-05T14:48:00.000Z",
+        {id: 1, owner: { id: '11111', displayName: "Sagi"}, collaborators: [{ id: 10101010, displayName: 'Sagi', photoURL: ''},], name: 'Doctors Among The World', conversations: [{ id: 1, name: "USA", source: {} }], description: "Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi", createdAt: "2020-10-05T14:48:00.000Z",
         collaborators: [{ id: 1, displayName: 'Sagi', photoURL: ''}, { id: 2, displayName: 'Linoy', photoURL: ''}],
         },
-        {id: 2, owner: { id: '22222', displayName: "Yaron"}, shared: true, name: 'Marvel MCU', conversations: [{ id: 1, name: "marvel", source: {} }], description: "Check", createdAt: "2020-10-05T14:48:00.000Z"},
-        {id: 3, owner: { id: '33333', displayName: "Yarin"}, shared: true, name: 'DC', conversations: [{ id: 1, name: "marvel", source: {} }], description: "Check", createdAt: "2020-10-05T14:48:00.000Z"}
+        {id: 2, owner: { id: '22222', displayName: "Yaron"},  collaborators: [{ id: 10101010, displayName: 'Sagi', photoURL: ''},], name: 'DC111', conversations: [{ id: 1, name: "marvel", source: {} }], description: "Check", createdAt: "2020-10-05T14:48:00.000Z"},
+        {id: 3, owner: { id: '33333', displayName: "Yarin"},  collaborators: [{ id: 10101010, displayName: 'Sagi', photoURL: ''},], name: 'Marvel MCU11', conversations: [{ id: 1, name: "marvel", source: {} }], description: "Check", createdAt: "2020-10-05T14:48:00.000Z"}
 
     ]);
     const [filteredProjects, setFilteredProjects] = useState(projects);
@@ -46,7 +46,7 @@ const ProjectsPage = () => {
     <Layout>
         <Box sx={{ width: '69vw' }}>
             <Stack direction={"row"} justifyContent={"space-between"}>
-                <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a network...' value={searchInput} onChange={(e) => {handleSearch(e.target.value); setSearchInput(e.target.value)} }/> 
+                <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a project...' value={searchInput} onChange={(e) => {handleSearch(e.target.value); setSearchInput(e.target.value)} }/> 
                 <Button startIcon={<AddIcon />} component={Link} to="/newproject" variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     New
                 </Button>

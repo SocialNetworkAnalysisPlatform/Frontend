@@ -14,7 +14,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const Project = (props) => {
-
+    const { currentUser } = useAuth()
     // Graph
     const data = [
         { month: "Jan", value: 200},
@@ -46,7 +46,7 @@ const Project = (props) => {
             </Stack>
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Box>
-                    { props.project.shared && 
+                    { currentUser.uid !== props.project.owner && 
                         <Typography color="textSecondary" sx={{ fontSize: 12, }}>{`Shared from ${props.project.owner.displayName}/${props.project.name}`}</Typography>
                     }
                     <Typography color="textSecondary" sx={{ fontSize: 14, width: '32vw', wordWrap: 'break-word' }}>{props.project.description.length > 170 ? `${props.project.description.substring(0, 170)}...` : props.project.description }</Typography>

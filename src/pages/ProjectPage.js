@@ -31,11 +31,13 @@ import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import IconButton from '@mui/material/IconButton';
 import Network from '../components/Network'
 import { AlertDialog } from '@chakra-ui/react'
+import Compare from '../components/Compare'
 
 const ProjectPage = (props) => {
 
     const [disabledDelete, setDisabledDelete] = useState(true);
     const [disabledCompare, setDisabledCompare] = useState(true);
+    const [isCompare, setIsCompare] = useState(false);
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -137,7 +139,6 @@ const ProjectPage = (props) => {
     }
 
     const [compareList, setCompareList] = useState([]);
-    console.log(compareList)
 
     // Create dynamic key & value: network id : false
     let networks = {}
@@ -172,19 +173,16 @@ const ProjectPage = (props) => {
         for (let [key, value] of Object.entries(clConversations)) {
             value ? ++networksCnt : ''
             networksCnt > 0 ? setDisabledDelete(false) : setDisabledDelete(true)
-            networksCnt > 1 ? setDisabledCompare(false) : setDisabledCompare(true)    
+            networksCnt > 1 && networksCnt < 5 ? setDisabledCompare(false) : setDisabledCompare(true)    
         }
+
     }, [clConversations]);
-
-
-
 
     const eachNetwork = (item, index) => {
         return  (<Network key={item.id} index={index} network={item}
                 checkedStatus={handleCheckedNetwork}>
                 </Network>)
     };
-   
 
     return (
         <Layout>
@@ -196,11 +194,11 @@ const ProjectPage = (props) => {
                 <Button disabled={disabledDelete} startIcon={<DeleteOutlineIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     Delete 
                 </Button>
-                <Button disabled={disabledCompare} startIcon={<CompareArrowsIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                <Button onClick={() => setIsCompare(true)} disabled={disabledCompare} startIcon={<CompareArrowsIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     Compare 
                 </Button>     
             </Stack>
-           
+            {isCompare && <Compare compareList={compareList}></Compare> }
             <Paper sx={{ width: '100%', overflow: 'hidden', mt: 4 }}>
                 <TableContainer sx={{ maxHeight: 440 }}>
                     <Stack sx={{ mt: 1, pr: 2, pl: 2, }} direction={"row"} justifyContent={"space-between"}>

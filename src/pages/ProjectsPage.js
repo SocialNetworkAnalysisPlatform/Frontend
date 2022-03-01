@@ -47,7 +47,7 @@ const ProjectsPage = () => {
         <Box sx={{ width: '69vw' }}>
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a project...' value={searchInput} onChange={(e) => {handleSearch(e.target.value); setSearchInput(e.target.value)} }/> 
-                <Button startIcon={<AddIcon />} component={Link} to="/newproject" variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                <Button startIcon={<AddIcon />} component={Link} to="/new-project" variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     New
                 </Button>
             </Stack>

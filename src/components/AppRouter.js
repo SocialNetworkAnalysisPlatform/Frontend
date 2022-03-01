@@ -30,10 +30,10 @@ const AppRouter = (props) => {
           <ProtectedRoute exact path='/register' component={Registerpage} />
           <ProtectedRoute exact path='/explore' component={ExplorePage} />
           <ProtectedRoute exact path='/projects' component={ProjectsPage} />
-          <ProtectedRoute exact path='/project' component={ProjectPage} />
-          <ProtectedRoute exact path='/network' component={NetworkPage} />
-          <ProtectedRoute exact path='/newconversation' component={NewConversationPage} />
-          <ProtectedRoute exact path='/newproject' component={NewProjectPage} />
+          <ProtectedRoute exact path='/project/:id' component={ProjectPage} />
+          <ProtectedRoute exact path='/network/:id' component={NetworkPage} />
+          <ProtectedRoute exact path='/project/:id/new-conversation' component={NewConversationPage} />
+          <ProtectedRoute exact path='/new-project' component={NewProjectPage} />
           <ProtectedRoute exact path='/test' component={TestPage} />
           <ProtectedRoute
             exact

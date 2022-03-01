@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from '@mui/styles';
+import { makeStyles, propsToClassKey } from '@mui/styles';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -7,9 +7,19 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     height: "70px"
   },
+  containerColumn: {
+    display: "flex",
+    alignItems: "center",
+    height: "500px",
+    flexDirection: "column"
+  },
   border: {
     borderBottom: "1px solid lightgray",
-    width: "138px"
+    width: "138px",
+  },
+  borderLeft: {
+    borderLeft: "1px solid lightgray",
+    height: "200px",
   },
   content: {
     paddingTop: 0.5,
@@ -22,13 +32,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DividerWithText = ({ children }) => {
+const DividerWithText = (props) => {
  const classes = useStyles();
+
  return (
-  <div className={classes.container}>
-    <div className={classes.border} />
-    <span className={classes.content}>{children}</span>
-    <div className={classes.border} />
+  <div className={ props.direction == 'left' ? classes.containerColumn : classes.container }>
+    <div className={ props.direction == 'left' ? classes.borderLeft : classes.border } />
+    <span className={classes.content}>{props.children}</span>
+    <div className={ props.direction == 'left' ? classes.borderLeft : classes.border } />
   </div>
  );
 };

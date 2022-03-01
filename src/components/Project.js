@@ -41,7 +41,7 @@ const Project = (props) => {
         <Box sx={{ mt: 3 }}>
             <Divider light sx={{ mb: 3 }}/>
             <Stack direction={"row"} justifyContent={"space-between"}>
-                <Typography component={Link} to={`/project?id=${props.project.id}`} sx={{ textDecoration: "none", color: "#000000DE" , fontSize: 20, fontWeight: 500, "&:hover": { color: "#6366f1" }}}>{props.project.name}</Typography>
+                <Typography component={Link} to={`/project/${props.project.id}`} sx={{ textDecoration: "none", color: "#000000DE" , fontSize: 20, fontWeight: 500, "&:hover": { color: "#6366f1" }}}>{props.project.name}</Typography>
                 <SettingsIcon sx={{ color: 'rgba(0, 0, 0, 0.6)', "&:hover": { color: "#6366f1" }}}/>
             </Stack>
             <Stack direction={"row"} justifyContent={"space-between"}>

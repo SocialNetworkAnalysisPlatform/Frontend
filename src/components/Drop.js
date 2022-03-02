@@ -171,7 +171,7 @@ export default function Dropzone(props) {
             control={<Checkbox color='default' sx={{ color: '#6366f1' }} checked={checked} onChange={() => setChecked(event.target.checked)} />}
         />
         <Stack direction="row" gap={2}>
-            <Button onClick={handleUpload} disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Upload </Button>
+            <Button onClick={handleUpload} disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Import </Button>
             { progress > 0 && <CircularProgressWithLabel value={progress} /> }
         </Stack>
     </Stack>

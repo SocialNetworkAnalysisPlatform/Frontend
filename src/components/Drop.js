@@ -172,7 +172,7 @@ export default function Dropzone(props) {
         />
         <Stack direction="row" gap={2}>
             <Button onClick={handleUpload} disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Upload </Button>
-            <CircularProgressWithLabel value={progress} />
+            { progress > 0 && <CircularProgressWithLabel value={progress} /> }
         </Stack>
     </Stack>
   );

@@ -24,19 +24,18 @@ const AuthContext = createContext({
 export const useAuth = () => useContext(AuthContext)
 
 export default function AuthContextProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null);
+  const [pending, setPending] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
-      setCurrentUser(user ? user : null)
+    onAuthStateChanged(auth, user => {
+      setCurrentUser(user ? user : null);
+      setPending(false);
     })
-    return () => {
-      unsubscribe()
-    }
   }, [])
 
   useEffect(() => {
-    // console.log('The user is', currentUser)
+     console.log('The user is', currentUser)
   }, [currentUser])
 
   const login = (email, password) => {
@@ -75,5 +74,10 @@ export default function AuthContextProvider({ children }) {
     forgotPassword,
     resetPassword,
   }
+
+  if (pending) {
+    return <div></div>
+  }
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

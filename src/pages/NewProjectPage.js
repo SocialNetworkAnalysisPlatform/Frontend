@@ -57,7 +57,7 @@ const NewProject = () => {
           console.error("Error adding document: ", e);
         }
       } else {
-        console.log("No project name, cant create project");
+        console.log("No project name, can't create project");
       }
   }
 
@@ -80,8 +80,6 @@ const NewProject = () => {
   { name: 'Pikachu', email: 'pikapika@gmail.com' },
   { name: 'Maya', email: 'maya@gmail.com' },
 ];
-
-
 
 
   const eachCollaborator = (item, index) => {

@@ -8,7 +8,7 @@ import Radio from '@mui/material/Radio';
 
 const useStyles = makeStyles({
     fileBorder: {
-        boxShadow: props => props.groupSelected == props.file.id ? 'inset 0 0 0 2px #6366f1' : '',
+        boxShadow: ({props, isSelected}) => (props.groupSelected == props.file.id) && isSelected ? 'inset 0 0 0 2px #6366f1' : '',
         cursor: 'pointer',
         "&:hover": {
             boxShadow: 'inset 0 0 0 2px #6366f1'
@@ -17,10 +17,28 @@ const useStyles = makeStyles({
 });
 
 export const File = (props) => {
-    const classes = useStyles(props);
+    const [isSelected, setIsSelected] = useState(false)
+    const classes = useStyles({props, isSelected});
+
+    useEffect(() => {
+        if(isSelected) {
+            props.selected(props.file.id)
+        }
+        else {
+            if(props.groupSelected == props.file.id) {
+                props.selected(null)
+            }
+        }
+    }, [isSelected]);
+
+    useEffect(() => {
+        if(props.groupSelected != props.file.id) {
+            setIsSelected(false)
+        }
+    }, [props.groupSelected]);
 
     return (
-        <Box onClick={() => props.selected(props.file.id)} className={classes.fileBorder} p={3}>
+        <Box onClick={() => { setIsSelected(!isSelected)}} className={classes.fileBorder} p={2} m={1}>
             <Box sx={{backgroundImage: `url(${fileIcon})`,backgroundSize: 'contain', backgroundRepeat:'no-repeat', width: 35, height: 35}}/>
             <Typography>{ props.file.name }</Typography>
         </Box>

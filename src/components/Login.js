@@ -36,24 +36,10 @@ export default function Loginpage() {
   const [isMounted, setIsMounted] = useState(false);
 
   
- 
-  // useEffect(() => {
-  //   mounted.current = true
-  //   return () => {
-  //     mounted.current = false
-  //   }
-  // }, [])
-
   const mounted = useMounted();
 
   function handleRedirectToOrBack() {
-    // console.log(location?.state)
-    history.replace(location.state?.from ?? "/profile");
-    // if (location.state) {
-    //   history.replace(location.state?.from)
-    // } else {
-    //   history.replace('/profile')
-    // }
+    history.replace(location.state?.from ?? "/explore");
   }
 
   return (

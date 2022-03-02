@@ -26,7 +26,6 @@ const AppRouter = (props) => {
       <Router>
         <Switch>
           <Route exact path='/' component={Homepage} />
-          {/* <ProtectedRoute exact path='/login' component={Loginpage} /> */}
           <ProtectedRoute exact path='/register' component={Registerpage} />
           <ProtectedRoute exact path='/explore' component={ExplorePage} />
           <ProtectedRoute exact path='/projects' component={ProjectsPage} />
@@ -64,7 +63,7 @@ function ProtectedRoute(props) {
     path === '/reset-password'
   ) {
     return currentUser ? (
-      <Redirect to={location.state?.from ?? '/profile'} />
+      <Redirect to={location.state?.from ?? '/'} />
     ) : (
       <Route {...props} />
     )

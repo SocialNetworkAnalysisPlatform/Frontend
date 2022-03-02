@@ -24,7 +24,6 @@ const Homepage = () => {
 
         <Box sx={{ width: "70vw", backgroundImage: `url(${Bg})` }}>
           <Box sx={{}}>
-            <Typography sx={{ color: 'black'}}>Home pa222222222222222222222ge</Typography>
           </Box>
         </Box>
       </Stack>

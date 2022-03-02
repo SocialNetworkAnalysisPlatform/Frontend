@@ -27,6 +27,7 @@ const drawerWidth = 240;
 export const Navbar = () => {
   const { logout, currentUser } = useAuth()
 
+  if (currentUser) {
   return (
     <>
     <Box>
@@ -55,9 +56,9 @@ export const Navbar = () => {
         <List sx={{ mt: 10}}>
           <ListItem>
             <ListItemIcon>
-                <Avatar sx={{ width: 30, height: 30 }} src={currentUser.photoURL}/>
+                <Avatar sx={{ width: 30, height: 30 }} src={currentUser?.photoURL}/>
             </ListItemIcon>
-            <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontWeight: 700}}>{currentUser.displayName}</Typography>} />
+            <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontWeight: 700}}>{currentUser?.displayName}</Typography>} />
           </ListItem>
         </List>
         <Divider />
@@ -101,20 +102,11 @@ export const Navbar = () => {
       </Drawer>
         <Toolbar />
     </Box>
-    {/* <Box sx={{ p: 3, backgroundColor: 'rgba(255,255,255,.99)', boxShadow: '0px 0px 24px 0px rgb(0 0 0 / 15%)', }}  >
-      <Stack justifyContent='flex-start' spacing={4} direction="row">
-        <Navlink to='/' name='Firbase Authentication' size='lg' />
-        {!currentUser && <Button variant="outlined" color="inherit" component={NavLink} to="/login">Login</Button> }
-        {!currentUser && <Button variant="outlined" color="inherit" component={NavLink} to="/register">Register</Button> }
-        {currentUser && <Button variant="outlined" color="inherit" component={NavLink} to="/profile">Profile</Button> }
-        {currentUser && <Button variant="outlined" color="inherit" component={NavLink} to="/logout"
-         onClick={async e => {
-          e.preventDefault()
-          logout();
-        }}
-        >Logout</Button>}
-      </Stack>
-    </Box> */}
     </>
   )
+      } else {
+        return (
+         <div></div>
+        )
+      }
 }

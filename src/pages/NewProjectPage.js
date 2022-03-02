@@ -20,12 +20,13 @@ import TextField from '@mui/material/TextField';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
+
 import { db } from "../utils/firebase";
 import { collection, addDoc } from "firebase/firestore"; 
 
-
 const NewProject = () => {
-
+  const { currentUser } = useAuth();
+  
   const [newProject, setNewProject] = useState({id: '', shared: false, name: '', description: ''});
   const [collaborators, setCollaborators] = useState([
     { id: 1, displayName: 'Maya', email: 'maya@gmail.com', photoURL: '' },
@@ -47,6 +48,9 @@ const NewProject = () => {
             name: newProject.name,
             description: newProject.description,
             collaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
+            owner: currentUser.uid,
+            createdAt: new Date(),
+            conversations: [],
           });
           console.log("Document written with ID: ", docRef.id);
           /* TODO: 

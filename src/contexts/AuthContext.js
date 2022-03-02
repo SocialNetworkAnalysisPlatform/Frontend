@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { auth } from '../utils/firebase'
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -9,7 +8,8 @@ import {
   GoogleAuthProvider,
   signOut,
   confirmPasswordReset,
-} from 'firebase/auth'
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
 
 const AuthContext = createContext({
   currentUser: null,
@@ -19,51 +19,47 @@ const AuthContext = createContext({
   logout: () => Promise,
   forgotPassword: () => Promise,
   resetPassword: () => Promise,
-})
+});
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);
 
 export default function AuthContextProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [pending, setPending] = useState(true);
 
   useEffect(() => {
-    onAuthStateChanged(auth, user => {
+    onAuthStateChanged(auth, (user) => {
       setCurrentUser(user ? user : null);
       setPending(false);
-    })
-  }, [])
-
-  useEffect(() => {
-     console.log('The user is', currentUser)
-  }, [currentUser])
+    });
+  }, []);
 
   const login = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password)
-  }
+    return signInWithEmailAndPassword(auth, email, password);
+  };
 
   const register = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password)
-  }
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
 
   const forgotPassword = (email) => {
     return sendPasswordResetEmail(auth, email, {
       url: `http://localhost:3000/login`,
-    })
-  }
+    });
+  };
 
   const resetPassword = (oobCode, newPassword) => {
-    return confirmPasswordReset(auth, oobCode, newPassword)
-  }
+    return confirmPasswordReset(auth, oobCode, newPassword);
+  };
 
   const logout = () => {
-    return signOut(auth)
-  }
+    return signOut(auth);
+  };
 
   const signInWithGoogle = () => {
-    const provider = new GoogleAuthProvider()
-    return signInWithPopup(auth, provider)
-  }
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider);
+  };
 
   const value = {
     currentUser,
@@ -73,11 +69,11 @@ export default function AuthContextProvider({ children }) {
     logout,
     forgotPassword,
     resetPassword,
-  }
+  };
 
   if (pending) {
-    return <div></div>
+    return <div></div>;
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

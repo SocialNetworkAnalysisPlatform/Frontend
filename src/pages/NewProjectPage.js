@@ -20,6 +20,10 @@ import TextField from '@mui/material/TextField';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
+import { db } from "../utils/firebase";
+import { collection, addDoc } from "firebase/firestore"; 
+
+
 const NewProject = () => {
 
   const [newProject, setNewProject] = useState({id: '', shared: false, name: '', description: ''});
@@ -33,6 +37,29 @@ const NewProject = () => {
   const [inputSearchValue, setInputSearchValue] = useState("");
 
   const [disabledSelect, setDisabledSelect] = useState(true);
+
+  const createNewProject = async (e) => {
+    e.preventDefault();
+
+    if(newProject.name !== '') {
+      try {
+          const docRef = await addDoc(collection(db, "Projects"), {
+            name: newProject.name,
+            description: newProject.description,
+            collaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
+          });
+          console.log("Document written with ID: ", docRef.id);
+          /* TODO: 
+          1. redirect to project page
+          2. add a new project to the user's list of projects
+          */
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      } else {
+        console.log("No project name, cant create project");
+      }
+  }
 
 
   const modalSstyle = {
@@ -75,7 +102,7 @@ const NewProject = () => {
               </FormControl>
               <FormControl>
                 <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description (optional)</FormLabel>
-                <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
+                <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newProject.description} onChange={(e) => setNewProject({...newProject, description: e.target.value}) }/>
               </FormControl>
             </Stack>
 
@@ -111,7 +138,7 @@ const NewProject = () => {
             
             <Divider light sx={{ mt: 3, mb: 3 }}/>
 
-            <Button variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+            <Button onClick={(e) => createNewProject(e)} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
               Create project 
             </Button>
           </Box>

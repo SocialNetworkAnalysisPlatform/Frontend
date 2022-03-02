@@ -17,6 +17,6 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app);
 const storage = getStorage(app);
 const db = getFirestore(app);
-const rtdb = getDatabase(app);
+const rtdb = getDatabase(app, "https://snaplatform.europe-west1.firebasedatabase.app");
 
 export { storage, auth, db, rtdb };

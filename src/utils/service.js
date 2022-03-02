@@ -1,15 +1,23 @@
 import { rtdb } from "../utils/firebase";
 import { ref, set } from "firebase/database";
 
-export const writeUserData = (uid, email, displayName = "User", photoUrl = "") => {
+export class Service {
+  static myInstance = null;
+
+  static getInstance() {
+    return new Service();
+  }
+
+  async writeUserData(uid, email, displayName, photoUrl) {
     try {
-      console.log("writeUserData");
       set(ref(rtdb, `Users/${uid}`), {
         email,
-        displayName,
-        photoUrl,
+        displayName: displayName ? displayName : "User",
+        photoUrl : photoUrl ? photoUrl : "",
       });
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+}
+export default Service;

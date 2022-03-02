@@ -16,6 +16,9 @@ import { Card } from '../components/Card'
 import DividerWithText from '../components/DividerWithText'
 import { Layout } from '../components/Layout'
 import { useAuth } from '../contexts/AuthContext'
+import Service from '../utils/service'
+
+const service = Service.getInstance();
 
 export default function Registerpage() {
   const history = useHistory()
@@ -54,7 +57,11 @@ export default function Registerpage() {
             // your register logic here
             setIsSubmitting(true)
             register(email, password)
-              .then(res => {})
+              .then(res => 
+                {
+                handleRedirectToOrBack();
+                service.writeUserData(res.user.uid, res.user.email, res.user.displayName, res.user.photoURL);
+                })
               .catch(error => {
                 console.log(error.message)
                 toast({
@@ -116,7 +123,10 @@ export default function Registerpage() {
           leftIcon={<FaGoogle />}
           onClick={() =>
             signInWithGoogle()
-              .then(user => console.log(user))
+              .then(res => {
+                handleRedirectToOrBack();
+                service.writeUserData(res.user.uid, res.user.email, res.user.displayName, res.user.photoURL);
+              })
               .catch(e => console.log(e.message))
           }
         >

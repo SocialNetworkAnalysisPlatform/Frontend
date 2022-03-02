@@ -17,6 +17,10 @@ import useMounted from "../hooks/useMounted";
 
 import styled, { keyframes } from 'styled-components';
 import { fadeInDown} from 'react-animations'
+import Service from '../utils/service'
+
+const service = Service.getInstance();
+
 const fadeInUpAnimation = keyframes`${fadeInDown}`;
 const FadeInUpDiv = styled.div`
 animation: 3s ${fadeInUpAnimation};
@@ -89,9 +93,9 @@ export default function Loginpage() {
             type="light" // can be light or dark
             onClick={() => {
               signInWithGoogle()
-                .then((user) => {
+                .then( (res) => {
                   handleRedirectToOrBack();
-                  console.log(user);
+                  service.writeUserData(res.user.uid, res.user.email, res.user.displayName, res.user.photoURL);
                 })
                 .catch((e) => console.log(e.message));
             }}

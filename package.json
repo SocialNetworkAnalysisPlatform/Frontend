@@ -30,6 +30,7 @@
     "react-scripts": "^5.0.0",
     "react-spreadsheet": "^0.6.1",
     "recharts": "^2.1.8",
+    "scheduler": "^0.20.2",
     "styled-components": "^5.3.3",
     "uuid": "^8.3.2",
     "web-vitals": "^1.1.2"

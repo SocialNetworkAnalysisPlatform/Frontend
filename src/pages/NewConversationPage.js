@@ -10,6 +10,9 @@ import { useAuth } from '../contexts/AuthContext'
 import { Link } from 'react-router-dom'
 import Paper from '@mui/material/Paper';
 import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
 
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -75,6 +78,7 @@ const NewConversationPage = (props) => {
     const [selectedFile, setSelectedFile] = useState();
     const [checked, setChecked] = useState(true);
     console.log("checked", checked)
+    const [newConversation, setNewConversation] = useState({id: '', title: '', description: '', source: '', file: selectedFile});
 
 
     const [files, setFiles] = useState([
@@ -118,7 +122,26 @@ const NewConversationPage = (props) => {
     
     return (
         <Layout>
-            <Paper elevation={2} sx={{ mb: 2 }} >
+            <Stack spacing={2}>
+            <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Create a new conversation</Typography>
+
+            <Paper  elevation={2}>
+              <Stack spacing={4} spacing={1} p={2}>
+                <FormControl>
+                  <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Title</FormLabel>
+                  <OutlinedInput size="small" sx={{ width: 300,  }} required value={newConversation.title} onChange={(e) => setNewConversation({...newConversation, title: e.target.value}) }/>
+                </FormControl>
+                <FormControl>
+                  <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description</FormLabel>
+                  <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newConversation.description} onChange={(e) => setNewConversation({...newConversation, description: e.target.value}) }/>
+                </FormControl>
+                <FormControl>
+                  <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Source</FormLabel>
+                  <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newConversation.source} onChange={(e) => setNewConversation({...newConversation, source: e.target.value}) }/>
+                </FormControl>
+              </Stack>
+            </Paper>
+            <Paper elevation={2}>
                 <Stack direction="row" spacing={1} p={2} alignItems="center">
                     <Typography sx={{ mr: 6, fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Please choose import method</Typography>
                     <Typography>Sources</Typography>
@@ -131,6 +154,7 @@ const NewConversationPage = (props) => {
                 checked ? device() : sources()
             }
             </Paper>
+            </Stack>
                 
                 
         </Layout>

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect  } from 'react'
 import { makeStyles } from '@mui/styles';
-
+import ProjectNetwork from '../components/ProjectNetwork';
 import { Layout } from '../components/Layout'
 import { Table } from '../components/Table'
 import { useAuth } from '../contexts/AuthContext'
@@ -42,10 +42,10 @@ const NetworkPage = (props) => {
                     <TabList onChange={handleChange} className={classes.tabs}>
                         <Tab label="Network" value="1" className={classes.tab}  />
                         <Tab label="Table" value="2" className={classes.tab}  />
-                        <Tab label="Item Three" value="3" className={classes.tab} />
+                        <Tab label="Report" value="3" className={classes.tab} />
                     </TabList>
                     </Box>
-                    <TabPanel value="1">Item One</TabPanel>
+                    <TabPanel value="1"><ProjectNetwork/></TabPanel>
                     <TabPanel value="2"><Table/></TabPanel>
                     <TabPanel value="3">Item Three</TabPanel>
                 </TabContext>

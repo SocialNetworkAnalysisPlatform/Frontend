@@ -36,7 +36,7 @@ const Project = (props) => {
         uniqueId: 1,
       }
       //
-
+    
     return (
         <Box sx={{ mt: 3 }}>
             <Divider light sx={{ mb: 3 }}/>
@@ -46,7 +46,7 @@ const Project = (props) => {
             </Stack>
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Box>
-                    { currentUser.uid !== props.project.owner && 
+                    { props.project.collaborated && 
                         <Typography color="textSecondary" sx={{ fontSize: 12, }}>{`Shared from ${props.project.owner.displayName}/${props.project.name}`}</Typography>
                     }
                     <Typography color="textSecondary" sx={{ fontSize: 14, width: '32vw', wordWrap: 'break-word' }}>{props.project.description.length > 170 ? `${props.project.description.substring(0, 170)}...` : props.project.description }</Typography>

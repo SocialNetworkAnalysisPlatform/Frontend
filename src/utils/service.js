@@ -1,5 +1,5 @@
 import { rtdb } from "../utils/firebase";
-import { ref, set } from "firebase/database";
+import { ref, get, set, child } from "firebase/database";
 
 export class Service {
   static myInstance = null;
@@ -19,5 +19,21 @@ export class Service {
       console.log(error);
     }
   }
+
+  async getUserData(uid) {
+    try {
+      const dbRef = ref(rtdb);
+      const snapshot = await get(child(dbRef, `Users/${uid}`));
+        if (snapshot.exists()) {
+          return snapshot.val();
+        } else {
+          return null;
+        }
+    } catch (error) {
+      console.log(error);
+    }
+  
+  }
+
 }
 export default Service;

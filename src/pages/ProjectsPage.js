@@ -16,48 +16,18 @@ import Project from "../components/Project";
 import { db } from "../utils/firebase";
 import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
 
+import Service from '../utils/service'
+
+const service = Service.getInstance();
+
 const ProjectsPage = () => {
   const { currentUser } = useAuth();
-
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      owner: { id: "11111", displayName: "Sagi" },
-      collaborators: [{ id: 10101010, displayName: "Sagi", photoURL: "" }],
-      name: "Doctors Among The World",
-      conversations: [{ id: 1, name: "USA", source: {} }],
-      description:
-        "Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi Sagi",
-      createdAt: "2020-10-05T14:48:00.000Z",
-      collaborators: [
-        { id: 1, displayName: "Sagi", photoURL: "" },
-        { id: 2, displayName: "Linoy", photoURL: "" },
-      ],
-    },
-    {
-      id: 2,
-      owner: { id: "22222", displayName: "Yaron" },
-      collaborators: [{ id: 10101010, displayName: "Sagi", photoURL: "" }],
-      name: "DC111",
-      conversations: [{ id: 1, name: "marvel", source: {} }],
-      description: "Check",
-      createdAt: "2020-10-05T14:48:00.000Z",
-    },
-    {
-      id: 3,
-      owner: { id: "33333", displayName: "Yarin" },
-      collaborators: [{ id: 10101010, displayName: "Sagi", photoURL: "" }],
-      name: "Marvel MCU11",
-      conversations: [{ id: 1, name: "marvel", source: {} }],
-      description: "Check",
-      createdAt: "2020-10-05T14:48:00.000Z",
-    },
-  ]);
-  const [filteredProjects, setFilteredProjects] = useState(projects);
-  const [searchInput, setSearchInput] = useState("");
-
+  const [projects, setProjects] = useState([]);
   const [projectsOwnedByMe, setProjectsOwnedByMe] = useState([]);
   const [projectsCollaboratedWithMe, setCollaboratedWithMe] = useState([]);
+
+  const [filteredProjects, setFilteredProjects] = useState(projects);
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     // Subscribe to query with onSnapshot
@@ -66,43 +36,42 @@ const ProjectsPage = () => {
       where("owner", "==", currentUser.uid),
       orderBy("createdAt", "desc")
     );
+
     const isCollaboratedWithMe = query(
       collection(db, "Projects"),
       where("collaborators", "array-contains", currentUser.uid),
       orderBy("createdAt", "desc")
     );
 
-    onSnapshot(isOwnedByMe, (querySnapshot) => {
-        // Get all documents from collection - with IDs
-        const ownedByMeArray = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-          shared: false,
+    onSnapshot(isOwnedByMe, async (querySnapshot) => {
+        const ownedByMeArray = await Promise.all(querySnapshot.docs.map(async (doc) => {
+          const { owner, createdAt, ...data } = doc.data();
+          const user = await service.getUserData(owner);
+          return {
+            owner: { id: owner, displayName: user ? user.displayName : "User", photoUrl: user ? user.photoUrl : "" },
+            ...data,
+            id: doc.id,
+            collaborated: false,
+            createdAt: createdAt.toDate(),
+          }
         }));
 
         // Update state
         setProjectsOwnedByMe(ownedByMeArray);
       });
-    onSnapshot(isCollaboratedWithMe, (querySnapshot) => {
-      // Get all documents from collection - with IDs
-      const collaboratedWithMeArray = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-        shared: true,
+
+    onSnapshot(isCollaboratedWithMe, async(querySnapshot) => {
+      const collaboratedWithMeArray = await Promise.all(querySnapshot.docs.map(async (doc) => {
+        const { owner, createdAt, ...data } = doc.data();
+        const user = await service.getUserData(owner);
+        return {
+          owner: { id: owner, displayName: user ? user.displayName : "User", photoUrl: user ? user.photoUrl : "" },
+          ...data,
+          id: doc.id,
+          collaborated: true,
+          createdAt: createdAt.toDate(),
+        }
       }));
-
-      // const collaboratedWithMeArray = await Promise.all(querySnapshot.docs.map(async (doc) => {
-      //   const { owner, ...data} = doc.data();
-
-
-      //   return { 
-      //     owner: { id: owner, displayName: currentUser.displayName },
-      //     ...data,
-      //     id: doc.id,
-      //     shared: true,
-      //   }
-        
-      // }));
 
       // Update state
       setCollaboratedWithMe(collaboratedWithMeArray);
@@ -112,8 +81,10 @@ const ProjectsPage = () => {
   useEffect(() => {
     const allProjects = projectsOwnedByMe.concat(projectsCollaboratedWithMe);
     allProjects.sort((a, b) => b.createdAt - a.createdAt)
-    console.log(allProjects);
+    setProjects(allProjects);
+    setFilteredProjects(allProjects);
   }, [projectsOwnedByMe.length, projectsCollaboratedWithMe.length]);
+
 
   const handleSearch = (text) => {
     if (text) {

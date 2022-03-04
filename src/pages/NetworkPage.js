@@ -20,9 +20,9 @@ const useStyles = makeStyles({
         },
     },
     tab: {
-        textTransform: 'none',
+        textTransform: 'none !important',
         '&.Mui-selected': {
-            color: '#6366f1',
+            color: '#6366f1 !important',
         },
     }
   });
@@ -45,9 +45,9 @@ const NetworkPage = (props) => {
                         <Tab label="Report" value="3" className={classes.tab} />
                     </TabList>
                     </Box>
-                    <TabPanel value="1"><ProjectNetwork/></TabPanel>
-                    <TabPanel value="2"><Table/></TabPanel>
-                    <TabPanel value="3">Item Three</TabPanel>
+                    <TabPanel sx={{ pt: 3, pb: 0, pr: 0, pl: 0 }} value="1"><ProjectNetwork/></TabPanel>
+                    <TabPanel sx={{ pt: 3, pb: 0, pr: 0, pl: 0 }} value="2"><Table/></TabPanel>
+                    <TabPanel sx={{ pt: 3, pb: 0, pr: 0, pl: 0 }} value="3">Item Three</TabPanel>
                 </TabContext>
             </Box>
         </Layout>

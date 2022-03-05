@@ -191,7 +191,7 @@ const ProjectPage = (props) => {
         <Layout>
             <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>{project.name}</Typography>
             <Stack direction={"row"} spacing={3} sx={{ mt: 2 }}> 
-                <Button component={Link} to={`/project/${project.id}/new-conversation`} startIcon={<AddIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                <Button component={Link} to={`/projects/${project.id}/new-conversation`} startIcon={<AddIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                     Add conversation
                 </Button>
                 <Button disabled={disabledDelete} startIcon={<DeleteOutlineIcon/>} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
@@ -202,7 +202,7 @@ const ProjectPage = (props) => {
                 </Button>     
             </Stack>
             {isCompare && <Compare compareList={compareList}></Compare> }
-            <Paper sx={{ width: '100%', overflow: 'hidden', mt: 4 }}>
+            <Paper sx={{ width: '100%', overflow: 'hidden', mt: 4 }}>         
                 <TableContainer sx={{ maxHeight: 440 }}>
                     <Stack sx={{ mt: 1, pr: 2, pl: 2, }} direction={"row"} justifyContent={"space-between"}>
                         <OutlinedInput sx={{ width: 500, height: 32 }} placeholder='Find a network...' value={searchInput} onChange={(e) => { setSearchInput(e.target.value); handleSearchAndFilter(e.target.value); } }/> 
@@ -213,7 +213,7 @@ const ProjectPage = (props) => {
                             {
                                 project.collaborators.map((collaborator) => {
                                     return (
-                                        <MenuItem sx={{ pr: 7 }} >
+                                        <MenuItem key={collaborator.id} sx={{ pr: 7 }} >
                                             <Checkbox color='default' sx={{ color: '#6366f1' }} checked={clCreatedBy[`${collaborator.id}`]} onChange={() => {setClCreatedBy({...clCreatedBy, [`${collaborator.id}`]: event.target.checked}); } }/>
                                             <Avatar sx={{ width: 25, height: 25, mr: 2}} src={collaborator.photoURL}/>
                                             <Typography sx={{ wordWrap: 'break-word' }}>{collaborator.displayName}</Typography>     
@@ -233,7 +233,6 @@ const ProjectPage = (props) => {
                             <TableCell align={'left'} style={{ minWidth: 130 }}>Creator</TableCell>
                             <TableCell align={'left'} style={{ minWidth: 130 }}>Created</TableCell>
                             <TableCell align={'center'} style={{ minWidth: 70 }}></TableCell>
-
                         </TableRow>
                     </TableHead>
                     <TableBody>

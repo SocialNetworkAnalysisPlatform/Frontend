@@ -196,11 +196,13 @@ const ProjectNetwork = (props) => {
 
     const zoomOut = () => {
         const zoomInScale = network.getScale() - 0.5
+        if(zoomInScale > 0) {
         network.moveTo({
             scale: zoomInScale,
             offset: {x: 0, y: 0},
             animation: {duration: 1000, easingFunction: "easeInOutQuad"}
         })
+        }
     }
   
 

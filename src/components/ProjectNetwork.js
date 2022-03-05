@@ -56,9 +56,6 @@ const ProjectNetwork = (props) => {
     const [sourceNode, setSourceNode] = useState();
     const [targetNode, setTargetNode] = useState();
 
-    console.log("sourceNode", sourceNode)
-    console.log("targetNode", targetNode)
-
 
     useEffect(() => {
         // #TBD: Get network from DB by if*
@@ -87,32 +84,39 @@ const ProjectNetwork = (props) => {
   // 2 Closeness Centrality
   // 3 Betweenness Centrality
 
-  const graphBuilder = (currNetwork, mode) => {
+  const graphBuilder = (currNetwork, mode, path=null) => {
     const newGraph =  { id: currNetwork.id, title: currNetwork.title, nodes: [], edges: []};
       for (const node of currNetwork.nodes) {
         let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
         switch(mode) {
-          case "degree_centrality":
-            graphNode.value = node.cvalues.d;
-            break;
-          case "closeness_centrality":
-            graphNode.value = node.cvalues.c;
-            break;
-          case "betweenness_centrality":
-            graphNode.value = node.cvalues.b;
-            break;
-          case "radius":
-            if(node.id == currNetwork.GlobalMeasure.radius.key) {
-              graphNode.color = 'green'
-              break;
-            }
-            break;
-          case "diameter":
-            if(node.id == currNetwork.GlobalMeasure.diameter.key) {
-              graphNode.color = 'red'
-              break;
-            }
-            break;
+            case "degree_centrality":
+                graphNode.value = node.cvalues.d;
+                break;
+            case "closeness_centrality":
+                graphNode.value = node.cvalues.c;
+                break;
+            case "betweenness_centrality":
+                graphNode.value = node.cvalues.b;
+                break;
+            case "radius":
+                if(node.id == currNetwork.GlobalMeasure.radius.key) {
+                    graphNode.color = 'green'
+                    break;
+                }
+                break;
+            case "diameter":
+                if(node.id == currNetwork.GlobalMeasure.diameter.key) {
+                    graphNode.color = 'red'
+                    break;
+                }
+                break;
+            case "shortest path":
+                console.log(path)
+                if(path && path.includes(node.label)) {
+                    graphNode.color = 'pink'
+                    break;
+                }
+                break;
           default:
         }
         newGraph.nodes.push(graphNode);
@@ -169,6 +173,16 @@ const ProjectNetwork = (props) => {
             graphBuilder(networkData, selectedIndividual)
         }
     }, [selectedIndividual]);
+
+
+    const searchShortestPath = () => {
+        if(sourceNode && targetNode) {
+            // Compute shortest paths in the graph.
+        }
+        let path = ['Node 1', 'Node 2', 'Node 3']
+        graphBuilder(networkData, 'shortest path', path)
+
+    }
     
 
     const zoomIn = () => {
@@ -242,7 +256,7 @@ const ProjectNetwork = (props) => {
                                     <Autocomplete disablePortal options={networkData.nodes} onChange={(event, value) => setTargetNode(value)} 
                                     renderInput={(params) => <TextField {...params} className={classes.autoComplete} size="small" variant="outlined" label='Target node'/>}
                                     />
-                                    <Button variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Search </Button>
+                                    <Button onClick={searchShortestPath} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Search </Button>
                                 </Stack>
                             }
 

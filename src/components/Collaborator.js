@@ -15,19 +15,22 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import IconButton from '@mui/material/IconButton';
 
 const Collaborator = (props) => {
+    const handleDelete = () => {
+        props.delete(props.collaborator.id)
+    };
 
     return (
         <>
             <ListItem>
                 <ListItemAvatar>
-                    <Avatar alt={`${props.collaborator.displayName}`} src={props.collaborator.photoURL} />
+                    <Avatar alt={`${props.collaborator.displayName}`} src={props.collaborator.photoUrl} />
                 </ListItemAvatar>
                 <ListItemText primary={`${props.collaborator.displayName}`} secondary="Collaborator" />
-                <IconButton color="default" component="span">
+                <IconButton onClick={handleDelete} color="default" component="span">
                     <DeleteOutlineIcon />
                 </IconButton>
             </ListItem>
-            { props.index % 2 == 0 && <Divider variant="inset" />}
+            { props.index != props.amount-1 && <Divider variant="inset" />}
         </>
     )
 }

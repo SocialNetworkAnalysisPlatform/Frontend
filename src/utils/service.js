@@ -1,5 +1,6 @@
-import { rtdb } from "../utils/firebase";
+import { rtdb, db } from "../utils/firebase";
 import { ref, get, set, child } from "firebase/database";
+import { doc, getDoc } from "firebase/firestore";
 
 export class Service {
   static myInstance = null;
@@ -13,27 +14,60 @@ export class Service {
       set(ref(rtdb, `Users/${uid}`), {
         email,
         displayName: displayName ? displayName : "User",
-        photoUrl : photoUrl ? photoUrl : "",
+        photoUrl: photoUrl ? photoUrl : "",
       });
     } catch (error) {
       console.log(error);
     }
   }
 
-  async getUserData(uid) {
+  async readUserData(uid) {
     try {
       const dbRef = ref(rtdb);
       const snapshot = await get(child(dbRef, `Users/${uid}`));
-        if (snapshot.exists()) {
-          return snapshot.val();
-        } else {
-          return null;
-        }
+      if (snapshot.exists()) {
+        return snapshot.val();
+      } else {
+        return null;
+      }
     } catch (error) {
       console.log(error);
     }
-  
   }
 
+  async getProjectCollaborators(id) {
+    try {
+      const docRef = doc(db, "Projects", id);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        return docSnap.data().collaborators;
+      } else {
+        return null
+      }
+
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  }
+
+  async getProjectConversations(id) {
+    try {
+      const docRef = doc(db, "Conversations", id);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        return docSnap.data().conversations;
+      } else {
+        return null
+      }
+
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  
+  }
 }
 export default Service;

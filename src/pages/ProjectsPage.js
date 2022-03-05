@@ -46,7 +46,7 @@ const ProjectsPage = () => {
     onSnapshot(isOwnedByMe, async (querySnapshot) => {
         const ownedByMeArray = await Promise.all(querySnapshot.docs.map(async (doc) => {
           const { owner, createdAt, ...data } = doc.data();
-          const user = await service.getUserData(owner);
+          const user = await service.readUserData(owner);
           return {
             owner: { id: owner, displayName: user ? user.displayName : "User", photoUrl: user ? user.photoUrl : "" },
             ...data,
@@ -63,7 +63,7 @@ const ProjectsPage = () => {
     onSnapshot(isCollaboratedWithMe, async(querySnapshot) => {
       const collaboratedWithMeArray = await Promise.all(querySnapshot.docs.map(async (doc) => {
         const { owner, createdAt, ...data } = doc.data();
-        const user = await service.getUserData(owner);
+        const user = await service.readUserData(owner);
         return {
           owner: { id: owner, displayName: user ? user.displayName : "User", photoUrl: user ? user.photoUrl : "" },
           ...data,

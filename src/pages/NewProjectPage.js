@@ -1,5 +1,5 @@
 
-import React, {useState} from 'react'
+import React, { useState, useEffect  } from 'react'
 import { Layout } from '../components/Layout'
 import Collaborator from '../components/Collaborator';
 import { useAuth } from '../contexts/AuthContext'
@@ -20,25 +20,38 @@ import TextField from '@mui/material/TextField';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
-
-import { db } from "../utils/firebase";
+import { db, rtdb } from "../utils/firebase";
 import { collection, addDoc } from "firebase/firestore"; 
+import { ref, onValue} from "firebase/database";
+
+import { Link, useHistory, useLocation } from "react-router-dom";
 
 const NewProject = () => {
+  const history = useHistory();
   const { currentUser } = useAuth();
   
   const [newProject, setNewProject] = useState({id: '', shared: false, name: '', description: ''});
-  const [collaborators, setCollaborators] = useState([
-    { id: 1, displayName: 'Maya', email: 'maya@gmail.com', photoURL: '' },
-    { id: 2, displayName: 'Edgar', email: 'edgar@gmail.com', photoURL: '' },
-  ]);
+
+  const [users, setUsers] = useState([]);
+  const [collaborator, setCollaborator] = useState();
+  const [collaborators, setCollaborators] = useState([]);
+
   const [openModal, setOpenModal] = useState(false);
-  
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [inputSearchValue, setInputSearchValue] = useState("");
-
   const [disabledSelect, setDisabledSelect] = useState(true);
 
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    boxShadow: 10,
+    borderRadius: 2,
+    p: 4,
+  };
   const createNewProject = async (e) => {
     e.preventDefault();
 
@@ -50,44 +63,51 @@ const NewProject = () => {
             collaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
             owner: currentUser.uid,
             createdAt: new Date(),
-            conversations: [],
           });
-          console.log("Document written with ID: ", docRef.id);
-          /* TODO: 
-          1. redirect to project page
-          2. add a new project to the user's list of projects
-          */
+          history.replace(location.state?.from ?? "/projects");
+          window.scrollTo(0, 0);
         } catch (e) {
           console.error("Error adding document: ", e);
         }
       } else {
-        console.log("No project name, can't create project");
+        alert("Project name missing, can't create new project");
       }
   }
 
+  useEffect(() => {
+    const dbRef = ref(rtdb, 'Users/');
+    onValue(dbRef, async (snapshot) => {
+      const data = snapshot.val();
+      let users = Object.entries(data).map(([key, value]) => ({ id: key , ...value}));
+      users = users.filter((user) => user.id !== currentUser.uid) 
+      setUsers(users);
+    });
+  }, []);
 
-  const modalSstyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    boxShadow: 10,
-    borderRadius: 2,
-    p: 4,
+  const deleteCollaborator = (id) => {
+    setCollaborators(prevState => (
+      prevState.filter((collaborator) => collaborator.id !== id)
+  ))
   };
 
-  const users = [
-  { name: 'Hercules', email: 'herc@gmail.com' },
-  { name: 'Edgar', email: 'edgar@gmail.com' },
-  { name: 'Pikachu', email: 'pikapika@gmail.com' },
-  { name: 'Maya', email: 'maya@gmail.com' },
-];
-
-
   const eachCollaborator = (item, index) => {
-    return  (<Collaborator key={item.id} index={index} collaborator={item}></Collaborator>)
+    return  (<Collaborator key={item.id} index={index} collaborator={item} amount={collaborators.length} delete={deleteCollaborator}></Collaborator>)
+  };
+
+  const handleSelect = (event, value) => {
+    setOpenModal(false);
+   
+    if(collaborator) {
+      if(collaborators.find(collaboratorOption => collaboratorOption.id === collaborator.id)) {
+        console.log("Collaborator already exists");
+      } else {
+      setCollaborators(prevState => ([
+        ...prevState, 
+           collaborator     
+        ]));
+      setCollaborator(null);
+    } 
+    }
   };
 
   return (
@@ -147,7 +167,7 @@ const NewProject = () => {
       </Layout>
 
       <Modal open={openModal} onClose={() => setOpenModal(false)} > 
-        <Stack sx={modalSstyle} >
+        <Stack sx={modalStyle} >
           <Box sx={{ textAlign:'right', mt: -2 }}>
             <IconButton onClick={() => setOpenModal(false)} color="default" component="span">
               <CloseIcon sx={{ fontSize: 16 }} />
@@ -155,7 +175,7 @@ const NewProject = () => {
           </Box>
           <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#000000DE" }}>Add a collaborator to your project</Typography>
         
-          <Autocomplete open={openAutocomplete} sx={{ mt: 2 }} 
+           <Autocomplete open={openAutocomplete} sx={{ mt: 2 }} 
             onOpen={() => {
               if (inputSearchValue) {
                 setOpenAutocomplete(true);
@@ -170,18 +190,21 @@ const NewProject = () => {
               }
             }}
             onChange={(e, value, reason) => {
+              setCollaborator(value);
               setDisabledSelect(false)
               if (!value) {
                 setDisabledSelect(true)
               }
             }}
             options={users}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => option.email}
+   
             renderInput={(params) => (
-              <TextField {...params} variant="outlined" placeholder='Search by name or email'/>
+              <TextField {...params} variant="outlined" placeholder='Search by email'/>
             )}
-          />
-          <Button disabled={disabledSelect} onClick={() => setOpenModal(false)} variant="contained" sx={{ mt: 3,  backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+          /> 
+          
+          <Button disabled={disabledSelect} onClick={handleSelect} variant="contained" sx={{ mt: 3,  backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
             Select 
           </Button>
         </Stack>

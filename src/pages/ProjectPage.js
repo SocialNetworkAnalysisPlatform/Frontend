@@ -32,9 +32,10 @@ import IconButton from '@mui/material/IconButton';
 import Network from '../components/Network'
 import { AlertDialog } from '@chakra-ui/react'
 import Compare from '../components/Compare'
+import { useParams } from "react-router-dom";
 
 const ProjectPage = (props) => {
-
+    const params = useParams();
     const [disabledDelete, setDisabledDelete] = useState(true);
     const [disabledCompare, setDisabledCompare] = useState(true);
     const [isCompare, setIsCompare] = useState(false);
@@ -50,7 +51,6 @@ const ProjectPage = (props) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
-
 
     const [projectNetworks, setProjectNetworks] = useState([
             {id:1, title: "Social", description: 'first', source: "Linoy",
@@ -76,14 +76,14 @@ const ProjectPage = (props) => {
         conversations: projectNetworks
     }
 
-    const [filteredNetworks, setFilteredNetworks] = useState(project.conversations);
+    const [filteredNetworks, setFilteredNetworks] = useState(projectNetworks);
 
     const [searchInput, setSearchInput] = useState('');
 
     const popupState = usePopupState({ variant: 'popover', popupId: 'demoMenu' })
 
     // Create dynamic key & value: collaborator id : false
-    let collaborators = {}
+    const collaborators = {}
     project.collaborators.map((collaborator) => {
         collaborators[`${collaborator.id}`] = true
     })
@@ -94,6 +94,11 @@ const ProjectPage = (props) => {
         // When checkbox of one of clCreatedBy list changed
         handleSearchAndFilter(searchInput);
     }, [clCreatedBy]);
+
+    useEffect(() => {
+        console.log(params.id);
+    }, []);
+
 
 
     const handleSearchAndFilter = (text) => {

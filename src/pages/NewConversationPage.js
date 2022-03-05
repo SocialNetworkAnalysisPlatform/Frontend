@@ -74,8 +74,6 @@ const NewConversationPage = (props) => {
 
     const [selectedFile, setSelectedFile] = useState();
     const [checked, setChecked] = useState(true);
-    console.log("checked", checked)
-
 
     const [files, setFiles] = useState([
         { id: 1, name: "File1"},

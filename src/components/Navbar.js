@@ -81,14 +81,14 @@ export const Navbar = () => {
         </List>
         <Divider />
 
-        <List>
+        {/* <List>
         <ListItem sx={{fontFamily: 'Roboto', fontSize:14, fontWeight: 700}}>Latest Projects</ListItem>
           {['Marvel MCU', 'DC', 'Doctors in USA'].map((text, index) => (
             <ListItem button key={text} sx={{height: 30, "&:hover": { background: 'none', color: '#6366f1' },}}>
                 <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14}}>{text}</Typography>} />
             </ListItem>
           ))}
-        </List>
+        </List> */}
         {/* <List>
           {['All mail', 'Trash', 'Spam'].map((text, index) => (
             <ListItem button key={text}>

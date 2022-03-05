@@ -30,7 +30,7 @@ const Compare = (props) => {
   const graphBuilder = (currNetwork, mode) => {
     const newGraph =  { id: currNetwork.id, title: currNetwork.title, nodes: [], edges: []};
       for (const node of currNetwork.nodes) {
-        let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: 'blue'} // default node
+        let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
         switch(mode) {
           case "degree_centrality":
             graphNode.value = node.cvalues.d;

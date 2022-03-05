@@ -29,7 +29,10 @@ const ProjectsPage = () => {
   const [filteredProjects, setFilteredProjects] = useState(projects);
   const [searchInput, setSearchInput] = useState("");
 
+
   useEffect(() => {
+    let isMounted = true;               // note mutable flag
+
     // Subscribe to query with onSnapshot
     const isOwnedByMe = query(
       collection(db, "Projects"),
@@ -57,7 +60,9 @@ const ProjectsPage = () => {
         }));
 
         // Update state
+        if (isMounted) {
         setProjectsOwnedByMe(ownedByMeArray);
+        }
       });
 
     onSnapshot(isCollaboratedWithMe, async(querySnapshot) => {
@@ -74,8 +79,12 @@ const ProjectsPage = () => {
       }));
 
       // Update state
+      if (isMounted) {
       setCollaboratedWithMe(collaboratedWithMeArray);
+      }
     });
+
+    return () => { isMounted = false };
   }, []);
 
   useEffect(() => {

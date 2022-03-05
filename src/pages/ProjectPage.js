@@ -99,8 +99,6 @@ const ProjectPage = (props) => {
         console.log(params.id);
     }, []);
 
-
-
     const handleSearchAndFilter = (text) => {
         const isFilteredByCreatedBy = () => {
             for (let [key, value] of Object.entries(clCreatedBy)) {

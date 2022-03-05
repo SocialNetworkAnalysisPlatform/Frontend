@@ -16,6 +16,8 @@ import Collapse from '@mui/material/Collapse';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import Grid from '@mui/material/Grid';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 
 
 const useStyles = makeStyles({
@@ -23,6 +25,16 @@ const useStyles = makeStyles({
         textTransform: 'none !important',
         '&.Mui-selected': {
             color: '#6366f1 !important',
+        },
+    },
+    autoComplete: {
+        "& label.Mui-focused": {
+            color: '#6366f1 !important'
+        },
+        "& .MuiOutlinedInput-root": {
+            "&.Mui-focused fieldset": {
+              borderColor: '#6366f1 !important'
+            }
         },
     }
   });
@@ -40,6 +52,13 @@ const ProjectNetwork = (props) => {
     const [selectedGlobal, setSelectedGlobal] = useState();
     const [selectedLocal, setSelectedLocal] = useState();
     const [selectedIndividual, setSelectedIndividual] = useState();
+
+    const [sourceNode, setSourceNode] = useState();
+    const [targetNode, setTargetNode] = useState();
+
+    console.log("sourceNode", sourceNode)
+    console.log("targetNode", targetNode)
+
 
     useEffect(() => {
         // #TBD: Get network from DB by if*
@@ -201,7 +220,7 @@ const ProjectNetwork = (props) => {
                             </ToggleButtonGroup>
                             { selectedMeasure === "global measures" &&
                                 <ToggleButtonGroup color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
-                                    <ToggleButton className={classes.toggleBtn} value="shortest_path">Shortest Path</ToggleButton>
+                                    <ToggleButton className={classes.toggleBtn} value="shortest path">Shortest Path</ToggleButton>
                                     <ToggleButton  className={classes.toggleBtn} value="radius">
                                     <Tooltip title="The radius is the minimum eccentricity." arrow>
                                         <Typography>Radius</Typography>
@@ -213,6 +232,18 @@ const ProjectNetwork = (props) => {
                                         </Tooltip>
                                     </ToggleButton>
                                 </ToggleButtonGroup>
+                            }
+
+                            { selectedMeasure === "global measures" && selectedGlobal === "shortest path" &&
+                                <Stack direction={'column'} spacing={2} sx={{ mt: 2 }}>
+                                    <Autocomplete disablePortal options={networkData.nodes} onChange={(event, value) => setSourceNode(value)} 
+                                    renderInput={(params) => <TextField {...params} className={classes.autoComplete} size="small" variant="outlined" label='Source node' /> }
+                                    />
+                                    <Autocomplete disablePortal options={networkData.nodes} onChange={(event, value) => setTargetNode(value)} 
+                                    renderInput={(params) => <TextField {...params} className={classes.autoComplete} size="small" variant="outlined" label='Target node'/>}
+                                    />
+                                    <Button variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Search </Button>
+                                </Stack>
                             }
 
                             { selectedMeasure === "local measures" &&

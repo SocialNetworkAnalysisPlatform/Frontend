@@ -65,7 +65,6 @@ const NewProject = () => {
             createdAt: new Date(),
           });
           history.replace(location.state?.from ?? "/projects");
-          window.scrollTo(0, 0);
         } catch (e) {
           console.error("Error adding document: ", e);
         }

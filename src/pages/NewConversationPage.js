@@ -124,8 +124,8 @@ const NewConversationPage = (props) => {
             <Stack spacing={2}>
             <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Create a new conversation</Typography>
 
-            <Paper  elevation={2}>
-              <Stack spacing={4} spacing={1} p={2}>
+            <Paper elevation={2}>
+              <Stack spacing={4} p={2}>
                 <FormControl>
                   <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Title</FormLabel>
                   <OutlinedInput size="small" sx={{ width: 300,  }} required value={newConversation.title} onChange={(e) => setNewConversation({...newConversation, title: e.target.value}) }/>
@@ -144,7 +144,7 @@ const NewConversationPage = (props) => {
                 <Stack direction="row" spacing={1} p={2} alignItems="center">
                     <Typography sx={{ mr: 6, fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Please choose import method</Typography>
                     <Typography>Sources</Typography>
-                    <IOSSwitch checked={checked} onChange={(event) => setChecked(event.target.checked)} sx={{ m: 1 }} defaultChecked />
+                    <IOSSwitch checked={checked} onChange={(event) => setChecked(event.target.checked)} sx={{ m: 1 }} />
                     <Typography>Device</Typography>
                 </Stack>
             </Paper>

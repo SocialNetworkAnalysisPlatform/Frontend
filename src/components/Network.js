@@ -26,8 +26,12 @@ const Network = (props) => {
         props.checkedStatus(props.network.id, checkValue)
     }
 
+    const handleVisibility = () => {
+        props.visibility(props.network.id, !props.network.isPublished)
+    }
+
     return (
-        <TableRow hover role="checkbox" tabIndex={-1} key={props.network.id} onClick={() => setChecked(true)}>
+        <TableRow hover role="checkbox" tabIndex={-1} key={props.network.id} >
             <TableCell padding="checkbox">
                 <Checkbox color='default' sx={{ color: '#6366f1' }} checked={checked} onChange={() => handleChecked(event.target.checked)}  />
             </TableCell>
@@ -47,18 +51,17 @@ const Network = (props) => {
             {
                 props.network.isPublished ?
                 <Tooltip title="Click to unshare with the community" arrow placement="right">
-                    <IconButton color="default" component="span">
+                    <IconButton color="default" component="span" onClick={handleVisibility}>
                         <VisibilityOutlinedIcon/>
                     </IconButton>
                 </Tooltip>
                 :
                 <Tooltip title="Click to share with the community" arrow placement="right">
-                    <IconButton color="default" component="span">
+                    <IconButton color="default" component="span" onClick={handleVisibility}>
                         <VisibilityOffOutlinedIcon/>
                     </IconButton>
                 </Tooltip>
             }
-             
             </TableCell>
 
     </TableRow>

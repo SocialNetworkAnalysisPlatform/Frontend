@@ -20,6 +20,7 @@ import Divider from '@mui/material/Divider';
 import Dropzone from '../components/Drop'
 import DividerWithText from '../components/DividerWithText'
 import Switch from '@mui/material/Switch';
+import { v4 as uuidv4 } from 'uuid';
 
 const IOSSwitch = styled((props) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -76,8 +77,7 @@ const NewConversationPage = (props) => {
 
     const [selectedFile, setSelectedFile] = useState();
     const [checked, setChecked] = useState(true);
-    console.log("checked", checked)
-    const [newConversation, setNewConversation] = useState({id: '', title: '', description: '', source: '', file: selectedFile});
+    const [newConversation, setNewConversation] = useState({id: uuidv4().slice(0, 20), title: '', description: '', source: '', file: selectedFile});
 
 
     const [files, setFiles] = useState([
@@ -100,7 +100,7 @@ const NewConversationPage = (props) => {
         return (
             <Stack p={2} spacing={1}>
                 <Typography sx={{ mb: 3, fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Import a new conversation from your device</Typography>
-                <Dropzone/>
+                <Dropzone newConversation={newConversation}/>
             </Stack>
         )
     }

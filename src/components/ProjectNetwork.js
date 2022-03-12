@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect  } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import Draggable from 'react-draggable';
 import { makeStyles } from '@mui/styles';
 import Graph from "react-graph-vis";
 import Box from '@mui/material/Box';
@@ -56,6 +57,7 @@ const ProjectNetwork = (props) => {
     const [sourceNode, setSourceNode] = useState();
     const [targetNode, setTargetNode] = useState();
 
+    const nodeRef = React.useRef(null);
 
     useEffect(() => {
         // #TBD: Get network from DB by if*
@@ -208,18 +210,18 @@ const ProjectNetwork = (props) => {
 
 
     return (
-        <Box>
+        <Box sx={{position: 'relative'}}>
             <Stack direction={'column'} gap={1} position={'absolute'} zIndex={'1'} > 
-                <IconButton color="default" size="large" sx={{ backgroundColor: '#F5F5F5', color: '#6366f1'}}>
-                    <AddIcon onClick={zoomIn} />
+                <IconButton onClick={zoomIn} color="default" size="large" sx={{ backgroundColor: '#F5F5F5', color: '#6366f1'}}>
+                    <AddIcon/>
                 </IconButton>
-                <IconButton color="default" size="large" sx={{ backgroundColor: '#F5F5F5', color: '#6366f1'}}>
-                    <RemoveIcon onClick={zoomOut} />
+                <IconButton onClick={zoomOut} color="default" size="large" sx={{ backgroundColor: '#F5F5F5', color: '#6366f1'}}>
+                    <RemoveIcon/>
                 </IconButton>
             </Stack>
             
-            <Grid container justifyContent="flex-end">
-                <Box sx={{ align: 'right', width: '25%', backgroundColor: '#F5F5F5', p: 1, position: 'absolute', zIndex: 1}}> 
+            <Draggable nodeRef={nodeRef} bounds="parent">
+                <Box ref={nodeRef} sx={{ align: 'right', width: 320, backgroundColor: '#F5F5F5', p: 1, position: 'absolute', zIndex: 1, right: 0}}> 
                     <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                         <Typography sx={{ color: '#6366f1' }}>SNAP Analysis</Typography>
                         <IconButton onClick={() => setExpanded(!expanded)}>
@@ -280,7 +282,8 @@ const ProjectNetwork = (props) => {
                         </Stack>
                     </Collapse>
                 </Box>
-            </Grid>
+            </Draggable>
+
             <Box sx={{ width: '100%', height: '70vh'}}>
                 { graph && <Graph style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
             </Box>

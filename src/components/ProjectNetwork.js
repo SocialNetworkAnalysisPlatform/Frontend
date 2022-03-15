@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react'
+import { v4 as uuidv4 } from "uuid";
 import Draggable from 'react-draggable';
 import { makeStyles } from '@mui/styles';
 import Graph from "react-graph-vis";
@@ -47,9 +48,9 @@ const ProjectNetwork = (props) => {
     const [network, setNetwork] = useState();
 
     const [networkData, setNetworkData] = useState();
-    const [graph, setGraph] = useState();
+    const [graph, setGraph] = useState(null);
 
-    const [selectedMeasure, setSelectedMeasure] = useState('global measures');
+    const [selectedMeasure, setSelectedMeasure] = useState();
     const [selectedGlobal, setSelectedGlobal] = useState();
     const [selectedLocal, setSelectedLocal] = useState();
     const [selectedIndividual, setSelectedIndividual] = useState();
@@ -69,76 +70,123 @@ const ProjectNetwork = (props) => {
                 { id: 5, label: "Node 5", title: "node 5 tootip text",shape: 'dot' ,cvalues: { d: 3, b: 2, c: 22  }},
             ]
             const edges = [
-                { from: 1, to: 2 },
-                { from: 2, to: 3 },
+                { from: 1, to: 4 },
                 { from: 4, to: 5 },
+                { from: 5, to: 4 },
+                { from: 4, to: 3 },
+                { from: 3, to: 4 },
             ]
             const data = 
-              {id: 1, title: 'Network 1', description: '1111', nodes, edges, GlobalMeasure:{ radius: { key: 2, value: 5 }, diameter: { key: 1, value: 10 } } }
-            
+              {id: uuidv4(), title: 'Network 1', description: '1111', nodes, edges, GlobalMeasure:{ radius: { key: 2, value: 5 }, diameter: { key: 1, value: 10 } } }
             
             setNetworkData(data);
-            graphBuilder(data);
+            graphBuilder(data, "init");
       }, []);
-  
-  // 0 default
-  // 1 Degree Centrality
-  // 2 Closeness Centrality
-  // 3 Betweenness Centrality
 
-  const graphBuilder = (currNetwork, mode, path=null) => {
-    const newGraph =  { id: currNetwork.id, title: currNetwork.title, nodes: [], edges: []};
-      for (const node of currNetwork.nodes) {
-        let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-        switch(mode) {
-            case "degree_centrality":
-                graphNode.value = node.cvalues.d;
-                break;
-            case "closeness_centrality":
-                graphNode.value = node.cvalues.c;
-                break;
-            case "betweenness_centrality":
-                graphNode.value = node.cvalues.b;
-                break;
-            case "radius":
-                if(node.id == currNetwork.GlobalMeasure.radius.key) {
-                    graphNode.color = 'green'
-                    break;
-                }
-                break;
-            case "diameter":
-                if(node.id == currNetwork.GlobalMeasure.diameter.key) {
-                    graphNode.color = 'red'
-                    break;
-                }
-                break;
-            case "shortest path":
-                console.log(path)
-                if(path && path.includes(node.label)) {
-                    graphNode.color = 'pink'
-                    break;
-                }
-                break;
-          default:
+      const graphBuilder = (currNetwork, mode, path=null) => {
+        let newGraph =  { id: uuidv4(), title: currNetwork.title, nodes: [], edges: [...currNetwork.edges]};
+        
+        // Reset edges color
+        for (let j = 0; j < (newGraph.edges).length; j++) {   
+            newGraph.edges[j].color = '#000000' 
         }
-        newGraph.nodes.push(graphNode);
-      }
-      newGraph.edges = currNetwork.edges;
-      
-
-        setGraph(newGraph)
-     
-      
-
+        
+        switch(mode) {
+            case "init": {
+                for (const node of currNetwork.nodes) {
+                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: node.color} // default node
+                    newGraph.nodes.push(graphNode);
+                } 
+                setGraph(newGraph)
+                break;
+            }
+            case "degree_centrality": {
+                for (const node of currNetwork.nodes) {
+                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    graphNode.value = node.cvalues.d;
+                    newGraph.nodes.push(graphNode);
+                }
+                setGraph(newGraph)
+                break;
+            }
+            case "closeness_centrality": {
+                for (const node of currNetwork.nodes) {
+                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    graphNode.value = node.cvalues.c;
+                    newGraph.nodes.push(graphNode);
+                }
+                setGraph(newGraph)
+                break;
+            }
+            case "betweenness_centrality": {
+                for (const node of currNetwork.nodes) {
+                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    graphNode.value = node.cvalues.b;
+                    newGraph.nodes.push(graphNode);
+                }
+                setGraph(newGraph)
+                break;
+            }
+            case "radius": {
+                for (const node of currNetwork.nodes) {
+                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    if(node.id == currNetwork.GlobalMeasure.radius.key) {
+                        graphNode.color = 'green'
+                    }
+                    newGraph.nodes.push(graphNode);
+                }
+                setGraph(newGraph)
+                break;
+            }
+            case "diameter": {
+                for (const node of currNetwork.nodes) {
+                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    if(node.id == currNetwork.GlobalMeasure.diameter.key) {
+                        graphNode.color = 'red'
+                    }
+                    newGraph.nodes.push(graphNode);
+                }
+                setGraph(newGraph)
+                break;
+            }
+            case "search_shortest_path": { 
+                if(path) {
+                    // Colorize nodes
+                    for (const node of currNetwork.nodes) {
+                        let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                        if(path.includes(node.id)) {
+                            graphNode.color = 'red'
+                        }
+                        newGraph.nodes.push(graphNode);
+                    }
+                    // Colorize edges
+                    for (let i = 0; i < path.length - 1; i++) {
+                        for (let j = 0; j < (newGraph.edges).length; j++) {   
+                            // console.log(`path[i]: ${path[i]} == from: ${newGraph.edges[j].from} && path[i+1]: ${path[i+1]} == to: ${newGraph.edges[j].to}`)
+                            if( (path[i] == newGraph.edges[j].from) && (path[i+1] == newGraph.edges[j].to) ) {
+                                newGraph.edges[j].color = 'red'
+                                break;
+                            }
+                        }
+                    }
+                }
+                setGraph(newGraph)     
+                break;
+            }       
+        }      
     }
-    
+
 
     const options = {
         layout: {
             hierarchical: false
         },
+        nodes: {
+            shape: 'dot',
+            color: '#6366f1'
+        },
         edges: {
-            color: "#000000",
+            color: '#000000',
             smooth:{
                 enabled: true
             }
@@ -177,13 +225,13 @@ const ProjectNetwork = (props) => {
     }, [selectedIndividual]);
 
 
-    const searchShortestPath = () => {
-        if(sourceNode && targetNode) {
+    const searchShortestPath = (e) => {
+        e.preventDefault()
+        if (sourceNode && targetNode) {
             // Compute shortest paths in the graph.
         }
-        let path = ['Node 1', 'Node 2', 'Node 3']
-        graphBuilder(networkData, 'shortest path', path)
-
+        let path = [1, 4, 5]
+        graphBuilder(networkData, 'search_shortest_path', path)
     }
     
 
@@ -285,7 +333,7 @@ const ProjectNetwork = (props) => {
             </Draggable>
 
             <Box sx={{ width: '100%', height: '70vh'}}>
-                { graph && <Graph style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
+                { graph && <Graph key={graph.id} style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
             </Box>
         </Box>
     )

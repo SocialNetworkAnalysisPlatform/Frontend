@@ -97,8 +97,6 @@ const ProjectPage = (props) => {
   ]);
 
 
-  
-
   // Create dynamic key & value: network id : false
   let networks = {};
   conversations.map((network) => {
@@ -230,6 +228,7 @@ const ProjectPage = (props) => {
               ...data,
               createdAt: createdAt.toDate(),
             }
+            setProject(project);
             console.log(project);
         }
       }
@@ -405,7 +404,7 @@ const ProjectPage = (props) => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={project ? project.conversations.length : 0 }
+          count={project?.conversations ? project.conversations.length : 0 }
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

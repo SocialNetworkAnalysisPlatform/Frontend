@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { useAuth } from "../contexts/AuthContext";
 
 const baseStyle = {
   flex: 1,
@@ -54,25 +55,44 @@ const formatBytes = (bytes, decimals = 2) => {
 };
 
 export default function Dropzone(props) {
+  const { currentUser } = useAuth();
+
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [disabledUpload, setDisabledUpload] = useState(true);
   const [checked, setChecked] = useState(false);
+
+  // console log the u
 
 
   const handleUpload = (e) => {
     e.preventDefault();
 
-    if (!file) {
+    if (!props.newConversation || !file) {
+      alert("Please select a conversation to import and fill all the missing fields");
       return;
+    }
+
+    if (props.newConversation) {
+      const isTitleValid = props.newConversation.title && props.newConversation.title.length > 0;
+      const isDescriptionValid = props.newConversation.description && props.newConversation.description.length > 0;
+      const isSourceValid = props.newConversation.source && props.newConversation.source.length > 0;
+
+      if (!isTitleValid || !isDescriptionValid || !isSourceValid) {
+        alert("Please fill all the missing fields");
+        return;
+      }
     }
 
     console.log("Uploading");
 
-    const filePath = `Projects/projectid/userid/${file.name}`;
-    const storageRef = ref(storage, filePath);
-    const uploadFile = uploadBytesResumable(storageRef, file);
+    const projectId =  window.location.pathname.split("/")[2]; // TODO: Verify if there is project id
+    const conversationId = props.newConversation.id; 
+    const fileName = file.name;
+    const filePath = `Projects/${projectId}/${conversationId}/`;
 
+    
+    const storageRef = ref(storage, `${filePath}${fileName}`);
+    const uploadFile = uploadBytesResumable(storageRef, file);
     uploadFile.on(
       "state_changed",
       (snapshot) => {
@@ -86,27 +106,41 @@ export default function Dropzone(props) {
       },
       async () => {
         // On complete
-        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/function-1`, {
-          method: "POST",
-          body: JSON.stringify({filePath}), 
-          headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-          }})
-          .then(response =>
-            response.json())
-          .then(response => {
-              console.log(response);
-          })
-          .catch(error => console.error("Error:", error));
+
+        const conversation = {
+          title: props.newConversation.title,
+          description: props.newConversation.description,
+          source: props.newConversation.source,
+          creator: currentUser.uid,
+          futureUse: checked,
+          projectId,
+          conversationId,
+          fileName,
+          filePath,
+        }
+
+        console.log("conversation", conversation)
+
+        // await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/function-1`, {
+        //   method: "POST",
+        //   body: JSON.stringify({ 
+        //     conversation
+        //  }),
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'Accept': 'application/json'
+        //   }
+        // })
+        //   .then(response =>
+        //     response.json())
+        //   .then(response => {
+        //     console.log(response);
+        //   })
+        //   .catch(error => console.error("Error:", error));
       }
     );
-    
-  };
 
-  useEffect(() => {
-    console.log(file);
-  }, [file]);
+  };
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach((file) => {
@@ -129,51 +163,51 @@ export default function Dropzone(props) {
 
   const CircularProgressWithLabel = (props) => {
     return (
-        <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-          <CircularProgress variant="determinate" {...props} />
-          <Box
-            sx={{
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              position: 'absolute',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Typography variant="caption" component="div" color="text.secondary">
-              {`${Math.round(props.value)}%`}
-            </Typography>
-          </Box>
+      <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+        <CircularProgress variant="determinate" {...props} />
+        <Box
+          sx={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography variant="caption" component="div" color="text.secondary">
+            {`${Math.round(props.value)}%`}
+          </Typography>
         </Box>
-      );
+      </Box>
+    );
   }
 
   return (
     <Stack gap={2}>
-        <Box {...getRootProps({ style })}>
-            <input {...getInputProps()} />
-            {file ? (
-            <p>
-                {file.name} ({formatBytes(file.size)})
-            </p>
-            ) : (
-            <Box>
-                <p>Drop conversation here</p>
-                <em>Only *.txt will be accepted (100MB Limit)</em>
-            </Box>
-            )}
-        </Box>
-        <FormControlLabel
-            label="Save the conversation for future use"
-            control={<Checkbox color='default' sx={{ color: '#6366f1' }} checked={checked} onChange={() => setChecked(event.target.checked)} />}
-        />
-        <Stack direction="row" gap={2}>
-            <Button onClick={handleUpload} disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Import </Button>
-            { progress > 0 && <CircularProgressWithLabel value={progress} /> }
-        </Stack>
+      <Box {...getRootProps({ style })}>
+        <input {...getInputProps()} />
+        {file ? (
+          <p>
+            {file.name} ({formatBytes(file.size)})
+          </p>
+        ) : (
+          <Box>
+            <p>Drop conversation here</p>
+            {/* <em>Only *.txt will be accepted (100MB Limit)</em> */}
+          </Box>
+        )}
+      </Box>
+      <FormControlLabel
+        label="Save the conversation for future use"
+        control={<Checkbox color='default' sx={{ color: '#6366f1' }} checked={checked} onChange={() => setChecked(event.target.checked)} />}
+      />
+      <Stack direction="row" gap={2}>
+        <Button onClick={handleUpload} disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none", }} > Import </Button>
+        {progress > 0 && <CircularProgressWithLabel value={progress} />}
+      </Stack>
     </Stack>
   );
 }

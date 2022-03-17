@@ -84,7 +84,7 @@ const ProjectNetwork = (props) => {
       }, []);
 
       const graphBuilder = (currNetwork, mode, path=null) => {
-        let newGraph =  { id: uuidv4(), title: currNetwork.title, nodes: [], edges: [...currNetwork.edges]};
+        let newGraph =  { id: uuidv4(), networkId: currNetwork.id, title: currNetwork.title, nodes: [], edges: [...currNetwork.edges]};
         
         // Reset edges color
         for (let j = 0; j < (newGraph.edges).length; j++) {   

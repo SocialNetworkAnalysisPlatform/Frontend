@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect } from 'react'
+import { makeStyles } from '@mui/styles';
+import { v4 as uuidv4 } from "uuid";
 import NewWindow from 'react-new-window'
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -10,8 +12,17 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import VisGraph from './VisGraph'
 
+const useStyles = makeStyles({
+  toggleBtn: {
+      textTransform: 'none !important',
+      '&.Mui-selected': {
+          color: '#6366f1 !important',
+      },
+  },
+});
 
 const Compare = (props) => {
+  const classes = useStyles();
   const [selectedMeasure, setSelectedMeasure] = useState();
   const [selectedGlobal, setSelectedGlobal] = useState();
   const [selectedLocal, setSelectedLocal] = useState();
@@ -28,48 +39,98 @@ const Compare = (props) => {
   // 3 Betweenness Centrality
 
   const graphBuilder = (currNetwork, mode) => {
-    const newGraph =  { id: currNetwork.id, title: currNetwork.title, nodes: [], edges: []};
-      for (const node of currNetwork.nodes) {
-        let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-        switch(mode) {
-          case "degree_centrality":
-            graphNode.value = node.cvalues.d;
+    let newGraph =  { id: uuidv4(), networkId: currNetwork.id, title: currNetwork.title, nodes: [], edges: [...currNetwork.edges]};
+        
+    // Reset edges color
+    for (let j = 0; j < (newGraph.edges).length; j++) {   
+        newGraph.edges[j].color = '#000000' 
+    }
+    
+    switch(mode) {
+        case "init": {
+            for (const node of currNetwork.nodes) {
+                let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: node.color} // default node
+                newGraph.nodes.push(graphNode);
+            } 
             break;
-          case "closeness_centrality":
-            graphNode.value = node.cvalues.c;
-            break;
-          case "betweenness_centrality":
-            graphNode.value = node.cvalues.b;
-            break;
-          case "radius":
-            if(node.id == currNetwork.GlobalMeasure.radius.key) {
-              graphNode.color = 'green'
-              break;
-            }
-            break;
-          case "diameter":
-            if(node.id == currNetwork.GlobalMeasure.diameter.key) {
-              graphNode.color = 'red'
-              break;
-            }
-            break;
-          default:
         }
-        newGraph.nodes.push(graphNode);
-      }
-      newGraph.edges = currNetwork.edges;
+        case "degree_centrality": {
+            for (const node of currNetwork.nodes) {
+                let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                graphNode.value = node.cvalues.d;
+                newGraph.nodes.push(graphNode);
+            }
+            break;
+        }
+        case "closeness_centrality": {
+            for (const node of currNetwork.nodes) {
+                let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                graphNode.value = node.cvalues.c;
+                newGraph.nodes.push(graphNode);
+            }
+            break;
+        }
+        case "betweenness_centrality": {
+            for (const node of currNetwork.nodes) {
+                let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                graphNode.value = node.cvalues.b;
+                newGraph.nodes.push(graphNode);
+            }
+            break;
+        }
+        case "radius": {
+            for (const node of currNetwork.nodes) {
+                let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                if(node.id == currNetwork.GlobalMeasure.radius.key) {
+                    graphNode.color = 'green'
+                }
+                newGraph.nodes.push(graphNode);
+            }
+            break;
+        }
+        case "diameter": {
+            for (const node of currNetwork.nodes) {
+                let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                if(node.id == currNetwork.GlobalMeasure.diameter.key) {
+                    graphNode.color = 'red'
+                }
+                newGraph.nodes.push(graphNode);
+            }
+            break;
+        }
+        // case "search_shortest_path": { 
+        //     if(path) {
+        //         // Colorize nodes
+        //         for (const node of currNetwork.nodes) {
+        //             let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+        //             if(path.includes(node.id)) {
+        //                 graphNode.color = 'red'
+        //             }
+        //             newGraph.nodes.push(graphNode);
+        //         }
+        //         // Colorize edges
+        //         for (let i = 0; i < path.length - 1; i++) {
+        //             for (let j = 0; j < (newGraph.edges).length; j++) {   
+        //                 // console.log(`path[i]: ${path[i]} == from: ${newGraph.edges[j].from} && path[i+1]: ${path[i+1]} == to: ${newGraph.edges[j].to}`)
+        //                 if( (path[i] == newGraph.edges[j].from) && (path[i+1] == newGraph.edges[j].to) ) {
+        //                     newGraph.edges[j].color = 'red'
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     break;
+        // }       
+    }    
       
-
       if(graphs.length > 0) {
         setGraphs(prevState => prevState.map(
-          data => data.id !== currNetwork.id ? data : newGraph))
+          data => data.networkId !== currNetwork.id ? data : newGraph))
       }
       else {
         setGraphs(prevState => [...prevState, newGraph])
       }
      
-      
-
     }
 
     useEffect(() => {
@@ -89,13 +150,13 @@ const Compare = (props) => {
               { from: 4, to: 5 },
           ]
           const data = [
-            {id: 1, title: 'Network 1', description: '1111', nodes, edges, GlobalMeasure:{ radius: { key: 2, value: 5 }, diameter: { key: 1, value: 10 } } },
-            {id: 2, title: 'Network 2', description: '2222', nodes, edges, GlobalMeasure:{ radius: { key: 3, value: 5 }, diameter: { key: 5, value: 20 } } },
-            {id: 3, title: 'Network 3', description: '3333', nodes, edges, GlobalMeasure:{ radius: { key: 4, value: 5 }, diameter: { key: 3, value: 30 } } },
+            {id: uuidv4(), title: 'Network 1', description: '1111', nodes, edges, GlobalMeasure:{ radius: { key: 2, value: 5 }, diameter: { key: 1, value: 10 } } },
+            {id: uuidv4(), title: 'Network 2', description: '2222', nodes, edges, GlobalMeasure:{ radius: { key: 3, value: 5 }, diameter: { key: 5, value: 20 } } },
+            {id: uuidv4(), title: 'Network 3', description: '3333', nodes, edges, GlobalMeasure:{ radius: { key: 4, value: 5 }, diameter: { key: 3, value: 30 } } },
           ]
           setNetworks(data);
           data.forEach( (item, index) => {
-            graphBuilder(item)
+            graphBuilder(item, "init")
           });
 
     }, []);
@@ -123,11 +184,10 @@ const Compare = (props) => {
 
 
 
-
   const eachNetwork = (item, index) => {
     return  (
-              <Box sx={{  display: 'flex',flexDirection: 'column',  justifyContent: 'center', width: '45vw',  height: '40vh', backgroundColor: '#f5f5f5', border: '1px #dddddd solid'}} >
-                <Typography>{ item.title }</Typography>
+              <Box sx={{  display: 'flex',flexDirection: 'column', width: '45vw',  height: '40vh', backgroundColor: '#f5f5f5', border: '1px #dddddd solid'}} >
+                <Typography sx={{ position: 'absolute', zIndex: 1 }}>{ item.title }</Typography>
                 <VisGraph key={item.id} index={index} graph={item}></VisGraph>
               </Box>
     )
@@ -140,9 +200,9 @@ const Compare = (props) => {
               <Box sx={{ mt: 2}} >
                   <Typography>Measure Type:</Typography>
                   <ToggleButtonGroup color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
-                      <ToggleButton  sx={{ textTransform: 'none' }} value="global measures">Global Measures</ToggleButton>
-                      <ToggleButton  sx={{ textTransform: 'none' }} value="local measures">Local Measures</ToggleButton>
-                      <ToggleButton  sx={{ textTransform: 'none' }} value="individual measures">Individual Measures</ToggleButton>
+                      <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="global measures">Global Measures</ToggleButton>
+                      <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="local measures">Local Measures</ToggleButton>
+                      <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="individual measures">Individual Measures</ToggleButton>
                   </ToggleButtonGroup>
               </Box>
 
@@ -151,13 +211,13 @@ const Compare = (props) => {
                 <>
                     <Typography>Global Measure Type:</Typography>
                     <ToggleButtonGroup color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
-                        <ToggleButton  sx={{ textTransform: 'none' }} value="shortest_path">Shortest Path</ToggleButton>
-                        <ToggleButton  sx={{ textTransform: 'none' }} value="radius">
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="shortest_path">Shortest Path</ToggleButton>
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="radius">
                         <Tooltip title="The radius is the minimum eccentricity." arrow>
                             <Typography>Radius</Typography>
                         </Tooltip>
                         </ToggleButton>
-                          <ToggleButton  sx={{ textTransform: 'none' }} value="diameter">
+                          <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="diameter">
                             <Tooltip title="The diameter is the maximum eccentricity." arrow>
                               <Typography>Diameter</Typography>
                             </Tooltip>
@@ -171,9 +231,9 @@ const Compare = (props) => {
                 <>
                     <Typography>Local Measure Type:</Typography>
                     <ToggleButtonGroup color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                        <ToggleButton  sx={{ textTransform: 'none' }} value="clustering">Clustering</ToggleButton>
-                        <ToggleButton  sx={{ textTransform: 'none' }} value="transitivity">Transitivity</ToggleButton>
-                        <ToggleButton  sx={{ textTransform: 'none' }} value="reciprocity">Reciprocity</ToggleButton>
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="clustering">Clustering</ToggleButton>
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="transitivity">Transitivity</ToggleButton>
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="reciprocity">Reciprocity</ToggleButton>
                     </ToggleButtonGroup>
                 </>
                 }
@@ -182,9 +242,9 @@ const Compare = (props) => {
                 <>
                     <Typography>Individual Measure Type:</Typography>
                     <ToggleButtonGroup color="primary" value={selectedIndividual} exclusive onChange={(e, value) => setSelectedIndividual(value)} >
-                        <ToggleButton  sx={{ textTransform: 'none' }} value="degree_centrality">Degree Centrality</ToggleButton>
-                        <ToggleButton  sx={{ textTransform: 'none' }} value="closeness_centrality">Closeness Centrality</ToggleButton>
-                        <ToggleButton  sx={{ textTransform: 'none' }} value="betweenness_centrality">Betweenness Centrality</ToggleButton>
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="degree_centrality">Degree Centrality</ToggleButton>
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="closeness_centrality">Closeness Centrality</ToggleButton>
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="betweenness_centrality">Betweenness Centrality</ToggleButton>
                     </ToggleButtonGroup>
                 </>
                 }

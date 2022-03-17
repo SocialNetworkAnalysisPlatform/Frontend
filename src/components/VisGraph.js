@@ -41,7 +41,7 @@ const VisGraph = (props) => {
  
 
     return (
-        <Graph style={{width: '100%', height: '90%'}} graph={props.graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/>
+        <Graph style={{width: '100%', height: '90%'}} key={props.graph.id} graph={props.graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/>
     )
 }
 export default VisGraph;

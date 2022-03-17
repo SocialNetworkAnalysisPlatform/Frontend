@@ -75,9 +75,9 @@ export default function Dropzone(props) {
     if (props.newConversation) {
       const isTitleValid = props.newConversation.title && props.newConversation.title.length > 0;
       const isDescriptionValid = props.newConversation.description && props.newConversation.description.length > 0;
-      const isSourceValid = props.newConversation.source && props.newConversation.source.length > 0;
+      const isFileOwnerValid = props.newConversation.fileOwner && props.newConversation.fileOwner.length > 0;
 
-      if (!isTitleValid || !isDescriptionValid || !isSourceValid) {
+      if (!isTitleValid || !isDescriptionValid || !isFileOwnerValid) {
         alert("Please fill all the missing fields");
         return;
       }
@@ -110,7 +110,7 @@ export default function Dropzone(props) {
         const conversation = {
           title: props.newConversation.title,
           description: props.newConversation.description,
-          source: props.newConversation.source,
+          fileOwner: props.newConversation.fileOwner,
           creator: currentUser.uid,
           futureUse: checked,
           projectId,
@@ -119,24 +119,28 @@ export default function Dropzone(props) {
           filePath,
         }
 
-        console.log("conversation", conversation)
 
-        // await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/function-1`, {
-        //   method: "POST",
-        //   body: JSON.stringify({ 
-        //     conversation
-        //  }),
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Accept': 'application/json'
-        //   }
-        // })
-        //   .then(response =>
-        //     response.json())
-        //   .then(response => {
-        //     console.log(response);
-        //   })
-        //   .catch(error => console.error("Error:", error));
+        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/import`, {
+           method: "POST",
+           body: JSON.stringify({ 
+             conversation
+          }),
+           headers: {
+             'Content-Type': 'application/json',
+             'Accept': 'application/json'
+           }
+         })
+           .then(response =>
+             response.json())
+           .then(response => {
+             console.log(response);
+             if(!response?.status) {
+              alert("File upload failed due it's content, please select another file");
+             }
+          })
+           .catch(error => {
+             console.error("Error:", error)
+            });
       }
     );
 

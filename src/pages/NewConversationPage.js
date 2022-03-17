@@ -77,7 +77,7 @@ const NewConversationPage = (props) => {
 
     const [selectedFile, setSelectedFile] = useState();
     const [checked, setChecked] = useState(true);
-    const [newConversation, setNewConversation] = useState({id: uuidv4().slice(0, 20), title: '', description: '', source: '', file: selectedFile});
+    const [newConversation, setNewConversation] = useState({id: uuidv4().slice(0, 20), title: '', description: '', fileOwner: '', file: selectedFile});
 
 
     const [files, setFiles] = useState([
@@ -135,8 +135,8 @@ const NewConversationPage = (props) => {
                   <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newConversation.description} onChange={(e) => setNewConversation({...newConversation, description: e.target.value}) }/>
                 </FormControl>
                 <FormControl>
-                  <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Source</FormLabel>
-                  <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newConversation.source} onChange={(e) => setNewConversation({...newConversation, source: e.target.value}) }/>
+                  <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Owner</FormLabel>
+                  <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newConversation.fileOwner} onChange={(e) => setNewConversation({...newConversation, fileOwner: e.target.value}) }/>
                 </FormControl>
               </Stack>
             </Paper>

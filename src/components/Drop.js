@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { storage } from "../utils/firebase";
 import { ref, uploadBytesResumable } from "firebase/storage";
 
+import { makeStyles } from '@mui/styles';
 import Button from "@mui/material/Button";
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
@@ -10,7 +11,29 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+
 import { useAuth } from "../contexts/AuthContext";
+
+const useStyles = makeStyles({
+  label: {
+    fontSize: 14,
+    fontWeight: 500,
+    "&.Mui-focused": {
+      color: '#6366f1 !important'
+    },
+  },
+  field: {
+      width: '35vw',
+      "&.MuiOutlinedInput-root": {
+          "&.Mui-focused fieldset": {
+            borderColor: '#6366f1 !important'
+          }
+      },
+  }
+});
 
 const baseStyle = {
   flex: 1,
@@ -26,7 +49,7 @@ const baseStyle = {
   color: "#bdbdbd",
   outline: "none",
   transition: "border .24s ease-in-out",
-  width: 400,
+  width: '35vw',
   height: 200,
 };
 
@@ -55,11 +78,13 @@ const formatBytes = (bytes, decimals = 2) => {
 };
 
 export default function Dropzone(props) {
+  const classes = useStyles();
   const { currentUser } = useAuth();
 
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(0);
   const [checked, setChecked] = useState(false);
+  const [fileOwner, setFileOwner] = useState('');
 
   // console log the u
 
@@ -110,7 +135,7 @@ export default function Dropzone(props) {
         const conversation = {
           title: props.newConversation.title,
           description: props.newConversation.description,
-          fileOwner: props.newConversation.fileOwner,
+          fileOwner: fileOwner,
           creator: currentUser.uid,
           futureUse: checked,
           projectId,
@@ -191,6 +216,10 @@ export default function Dropzone(props) {
 
   return (
     <Stack gap={2}>
+        <FormControl>
+          <FormLabel className={classes.label} >Owner</FormLabel>
+          <OutlinedInput size="small" className={classes.field} required value={fileOwner} onChange={(e) => setFileOwner(e.target.value) }/>
+        </FormControl>
       <Box {...getRootProps({ style })}>
         <input {...getInputProps()} />
         {file ? (

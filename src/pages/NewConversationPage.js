@@ -1,6 +1,6 @@
 import React, { useState, useEffect  } from 'react'
 import { styled } from '@mui/material/styles';
-
+import { makeStyles } from '@mui/styles';
 import { Layout } from '../components/Layout'
 import { File } from '../components/File'
 import RadioGroup from '@mui/material/RadioGroup';
@@ -73,11 +73,29 @@ const IOSSwitch = styled((props) => (
     },
   }));
 
+  const useStyles = makeStyles({
+    label: {
+      fontSize: 14,
+      fontWeight: 500,
+      "&.Mui-focused": {
+        color: '#6366f1 !important'
+      },
+    },
+    field: {
+        width: '35vw',
+        "&.MuiOutlinedInput-root": {
+            "&.Mui-focused fieldset": {
+              borderColor: '#6366f1 !important'
+            }
+        },
+    }
+  });
+  
 const NewConversationPage = (props) => {
-
+    const classes = useStyles();
     const [selectedFile, setSelectedFile] = useState();
     const [checked, setChecked] = useState(true);
-    const [newConversation, setNewConversation] = useState({id: uuidv4().slice(0, 20), title: '', description: '', fileOwner: '', file: selectedFile});
+    const [newConversation, setNewConversation] = useState({id: uuidv4().slice(0, 20), title: '', description: '', file: selectedFile});
 
 
     const [files, setFiles] = useState([
@@ -127,16 +145,12 @@ const NewConversationPage = (props) => {
             <Paper elevation={2}>
               <Stack spacing={4} p={2}>
                 <FormControl>
-                  <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Title</FormLabel>
-                  <OutlinedInput size="small" sx={{ width: 300,  }} required value={newConversation.title} onChange={(e) => setNewConversation({...newConversation, title: e.target.value}) }/>
+                  <FormLabel className={classes.label} >Title</FormLabel>
+                  <OutlinedInput size="small" className={classes.field} required value={newConversation.title} onChange={(e) => setNewConversation({...newConversation, title: e.target.value}) }/>
                 </FormControl>
                 <FormControl>
-                  <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description</FormLabel>
-                  <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newConversation.description} onChange={(e) => setNewConversation({...newConversation, description: e.target.value}) }/>
-                </FormControl>
-                <FormControl>
-                  <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Owner</FormLabel>
-                  <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newConversation.fileOwner} onChange={(e) => setNewConversation({...newConversation, fileOwner: e.target.value}) }/>
+                  <FormLabel className={classes.label}>Description</FormLabel>
+                  <OutlinedInput size="small" className={classes.field} required multiline maxRows={2} value={newConversation.description} onChange={(e) => setNewConversation({...newConversation, description: e.target.value}) }/>
                 </FormControl>
               </Stack>
             </Paper>

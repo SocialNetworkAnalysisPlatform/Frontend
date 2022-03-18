@@ -100,9 +100,9 @@ export default function Dropzone(props) {
     if (props.newConversation) {
       const isTitleValid = props.newConversation.title && props.newConversation.title.length > 0;
       const isDescriptionValid = props.newConversation.description && props.newConversation.description.length > 0;
-      const isFileOwnerValid = props.newConversation.fileOwner && props.newConversation.fileOwner.length > 0;
+      const isFileOwnerValid = fileOwner && fileOwner.length > 0;
 
-      if (!isTitleValid || !isDescriptionValid || !isFileOwnerValid) {
+      if (!isTitleValid || !isDescriptionValid || checked && !isFileOwnerValid) {
         alert("Please fill all the missing fields");
         return;
       }

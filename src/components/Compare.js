@@ -186,9 +186,9 @@ const Compare = (props) => {
 
   const eachNetwork = (item, index) => {
     return  (
-              <Box sx={{  display: 'flex',flexDirection: 'column', width: '45vw',  height: '40vh', backgroundColor: '#f5f5f5', border: '1px #dddddd solid'}} >
+              <Box key={item.id} index={index} sx={{  display: 'flex',flexDirection: 'column', width: '45vw',  height: '40vh', backgroundColor: '#f5f5f5', border: '1px #dddddd solid'}} >
                 <Typography sx={{ position: 'absolute', zIndex: 1 }}>{ item.title }</Typography>
-                <VisGraph key={item.id} index={index} graph={item}></VisGraph>
+                <VisGraph graph={item}></VisGraph>
               </Box>
     )
   };

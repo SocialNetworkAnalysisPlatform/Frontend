@@ -187,8 +187,9 @@ const ProjectPage = (props) => {
 
             const conversationsData = [];
             // for loop conversations and get doc data
+            if(conversations?.length > 0) {
             const conversationsRef = await Promise.all(
-                conversations?.map(async(conversationRef) => {
+                conversations.map(async(conversationRef) => {
 
                   const docSnap = await getDoc(conversationRef);
                   if (docSnap.exists()) {
@@ -217,7 +218,7 @@ const ProjectPage = (props) => {
               clNetworks[`${network.id}`] = false;
             });
             setClConversations(clNetworks);
-
+          }
           }
       }
     });

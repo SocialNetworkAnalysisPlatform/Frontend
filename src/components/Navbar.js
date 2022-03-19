@@ -5,7 +5,7 @@ import Navlink from './Navlink'
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { NavLink } from 'react-router-dom'
+import { NavLink, useHistory } from 'react-router-dom'
 import Avatar from '@mui/material/Avatar';
 
 import Drawer from '@mui/material/Drawer';
@@ -26,6 +26,11 @@ const drawerWidth = 240;
 
 export const Navbar = () => {
   const { logout, currentUser } = useAuth()
+  const history = useHistory();
+
+  function handleRedirectToOrBack() {
+    history.replace(location.state?.from ?? "/explore");
+  }
 
   if (currentUser) {
   return (
@@ -44,6 +49,7 @@ export const Navbar = () => {
             <Button component={NavLink} to="/" variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none'}}
             onClick={ e => {
               e.preventDefault()
+              handleRedirectToOrBack()
               logout();
             }}
             >Logout</Button>

@@ -3,6 +3,10 @@
   padding: 0;
 }
 
+body { 
+  background-color: #f0f3f7 !important;
+} 
+
 div.vis-tooltip {
   position: absolute;
   visibility: hidden;

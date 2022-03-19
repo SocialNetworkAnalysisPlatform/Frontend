@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Layout } from '../components/Layout'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -24,6 +24,12 @@ const ExplorePage = () => {
     { id: 6, title: 'Project', description: 'description', img: '', views: 123  },
   ]);
 
+    // Scroll to top on page load
+    useEffect(() => {
+      window.scrollTo(0, 0)
+    }, [])
+
+    
   return (
     <Layout>
       <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Explore</Typography>
@@ -32,12 +38,12 @@ const ExplorePage = () => {
         { cards.map((card, index) => {
           return (
             <Card key={card.id} index={index} sx={{ width: '28%', mr: 5, mb: 5 }}>
-            <CardMedia
+            {/* <CardMedia
               component="img"
               height="140"
               image={card.img}
               alt={card.title}
-            />
+            /> */}
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
                 {card.title}

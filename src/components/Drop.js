@@ -16,6 +16,7 @@ import FormLabel from "@mui/material/FormLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
 import { useAuth } from "../contexts/AuthContext";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
   label: {
@@ -78,6 +79,7 @@ const formatBytes = (bytes, decimals = 2) => {
 };
 
 export default function Dropzone(props) {
+  const history = useHistory();
   const classes = useStyles();
   const { currentUser } = useAuth();
 
@@ -159,6 +161,9 @@ export default function Dropzone(props) {
              console.log(response);
              if(!response?.status) {
               alert("File upload failed due it's content, please select another file");
+             } else {
+              history.replace(location.state?.from ?? `/projects/${projectId}`);
+              console.log("File uploaded");
              }
           })
            .catch(error => {

@@ -35,6 +35,12 @@ const NetworkPage = (props) => {
         setValue(newValue);
     };
 
+    // Scroll to top on page load
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
+
+
     return (
         <Layout>
              <Box sx={{ width: '100%', typography: 'body1' }}>

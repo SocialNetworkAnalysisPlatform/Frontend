@@ -72,6 +72,12 @@ const NewProject = () => {
         alert("Project name missing, can't create new project");
       }
   }
+  
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0)
+}, [])
+
 
   useEffect(() => {
     const dbRef = ref(rtdb, 'Users/');

@@ -145,6 +145,12 @@ const ProjectPage = (props) => {
     }
   };
 
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+
   useEffect(() => {
     const projectId = params.id;
 

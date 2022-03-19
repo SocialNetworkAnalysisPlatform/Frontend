@@ -135,6 +135,11 @@ const NewConversationPage = (props) => {
         )
     }
 
+      // Scroll to top on page load
+      useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
+
     
     
     return (

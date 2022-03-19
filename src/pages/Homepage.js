@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { useAuth } from '../contexts/AuthContext'
@@ -12,6 +12,12 @@ import Bg from '../assets/images/bg.jpg';
 import Logo from '../assets/images/snap-logo.png';
 
 const Homepage = () => {
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+
   return (
     <Box>
       <Stack direction="row">

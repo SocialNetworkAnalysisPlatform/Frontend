@@ -29,6 +29,10 @@ const ProjectsPage = () => {
   const [filteredProjects, setFilteredProjects] = useState(projects);
   const [searchInput, setSearchInput] = useState("");
 
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   useEffect(() => {
     let isMounted = true;               // note mutable flag

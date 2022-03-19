@@ -86,8 +86,6 @@ export default function Dropzone(props) {
   const [checked, setChecked] = useState(false);
   const [fileOwner, setFileOwner] = useState('');
 
-  // console log the u
-
 
   const handleUpload = (e) => {
     e.preventDefault();
@@ -217,7 +215,7 @@ export default function Dropzone(props) {
   return (
     <Stack gap={2}>
         <FormControl>
-          <FormLabel className={classes.label} >Owner</FormLabel>
+          <FormLabel className={classes.label}>Received by</FormLabel>
           <OutlinedInput size="small" className={classes.field} required value={fileOwner} onChange={(e) => setFileOwner(e.target.value) }/>
         </FormControl>
       <Box {...getRootProps({ style })}>

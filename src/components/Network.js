@@ -42,8 +42,8 @@ const Network = (props) => {
             <TableCell align={'left'}>{props.network.source}</TableCell>
             <TableCell align={'left'}>
                 <Stack direction={"row"} alignItems={"center"}>
-                    <Avatar sx={{ width: 25, height: 25, mr: 2 }} src={props.network.createdBy.photoURL}/>
-                    {props.network.createdBy.displayName}
+                    <Avatar sx={{ width: 25, height: 25, mr: 2 }} src={props.network.creator.photoUrl}/>
+                    {props.network.creator.displayName}
                 </Stack>
             </TableCell>
             <TableCell align={'left'}>{dateFormat(new Date(props.network.createdAt), "dd/mm/yyyy")}</TableCell>

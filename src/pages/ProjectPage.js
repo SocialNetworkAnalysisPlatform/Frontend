@@ -38,7 +38,7 @@ import Compare from "../components/Compare";
 import { useParams } from "react-router-dom";
 
 import { db } from "../utils/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, getDoc } from "firebase/firestore";
 import Service from '../utils/service'
 
 const service = Service.getInstance();
@@ -54,63 +54,25 @@ const ProjectPage = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [project, setProject] = useState();
-  const [conversations, setConversations] = useState([
-    {
-      id: 1,
-      title: "Social",
-      description: "first",
-      source: "Linoy",
-      createdBy: { id: 10101010, displayName: "Sagi", photoUrl: "" },
-      createdAt: "2020-10-05T14:48:00.000Z",
-      isPublished: false,
-    },
-
-    {
-      id: 2,
-      title: "Social2",
-      description: "second",
-      source: "Linoy",
-      createdBy: { id: 2, displayName: "Linoy", photoUrl: "" },
-      createdAt: "2020-10-05T14:48:00.000Z",
-      isPublished: false,
-    },
-
-    {
-      id: 3,
-      title: "Soc",
-      description: "second",
-      source: "Linoy",
-      createdBy: { id: 2, displayName: "Linoy", photoUrl: "" },
-      createdAt: "2020-10-05T14:48:00.000Z",
-      isPublished: false,
-    },
-
-    {
-      id: 4,
-      title: "sada",
-      description: "first",
-      source: "Linoy",
-      createdBy: { id: 10101010, displayName: "Sagi", photoUrl: "" },
-      createdAt: "2020-10-05T14:48:00.000Z",
-      isPublished: false,
-    },
-  ]);
-
+  const [conversations, setConversations] = useState([]);
 
   // Create dynamic key & value: network id : false
   let networks = {};
   conversations.map((network) => {
     networks[`${network.id}`] = false;
   });
+  console.log("networks", networks);
   
   // Create dynamic key & value: collaborator id : false
   const collaborators = {};
   project?.collaborators.map((collaborator) => {
     collaborators[`${collaborator.id}`] = true;
   });
+  console.log("collaborators", collaborators);
 
 
-  const [filteredNetworks, setFilteredNetworks] = useState(conversations);
+
+  const [filteredNetworks, setFilteredNetworks] = useState([]);
 
   const [searchInput, setSearchInput] = useState("");
 
@@ -204,7 +166,7 @@ const ProjectPage = (props) => {
     const unsub = onSnapshot(doc(db, "Projects", projectId), async(doc) => {
       const docData = doc.data();
       if (docData) {
-        const { owner, collaborators, createdAt, ...data } = docData;
+        const { owner, collaborators, createdAt, conversations, ...data } = docData;
         // Check if user have access to project
         if (
           owner == currentUser.uid ||
@@ -229,8 +191,31 @@ const ProjectPage = (props) => {
               createdAt: createdAt.toDate(),
             }
             setProject(project);
-            console.log(project);
-        }
+
+            const conversationsData = [];
+            // for loop conversations and get doc data
+            const conversationsRef = await Promise.all(
+                conversations.map(async(conversationRef) => {
+
+                  const docSnap = await getDoc(conversationRef);
+                  if (docSnap.exists()) {
+                    const docData = docSnap.data();
+                    const { creator, createdAt, source, ...data } = docData;
+                    const creatorData = await service.readUserData(creator);
+
+                    conversationsData.push({ 
+                      id: docSnap.id,
+                      creator: { id: creator, displayName: creatorData.displayName, photoUrl: creatorData.photoUrl },
+                      createdAt: createdAt.toDate(),
+                      source: source.owner,
+                      ...data,
+                    });
+                  } 
+                }
+            ));
+            setConversations(conversationsData);
+            setFilteredNetworks(conversationsData);
+          }
       }
     });
 
@@ -380,7 +365,7 @@ const ProjectPage = (props) => {
                   Description
                 </TableCell>
                 <TableCell align={"left"} style={{ minWidth: 130 }}>
-                  Source
+                  Received by
                 </TableCell>
                 <TableCell align={"left"} style={{ minWidth: 130 }}>
                   Creator
@@ -404,7 +389,7 @@ const ProjectPage = (props) => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={project?.conversations ? project.conversations.length : 0 }
+          count={conversations ? conversations.length : 0 }
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

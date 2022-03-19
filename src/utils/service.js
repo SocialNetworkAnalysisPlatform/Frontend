@@ -69,5 +69,19 @@ export class Service {
     }
   
   }
+
+  async getNetworkShortestPath(path) {
+    try {
+      const dbRef = ref(rtdb);
+      const snapshot = await get(child(dbRef, `${path}/shortestPath`));
+      if (snapshot.exists()) {
+        return snapshot.val();
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 export default Service;

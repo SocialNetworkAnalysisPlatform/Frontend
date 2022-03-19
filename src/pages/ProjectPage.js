@@ -188,7 +188,7 @@ const ProjectPage = (props) => {
             const conversationsData = [];
             // for loop conversations and get doc data
             const conversationsRef = await Promise.all(
-                conversations.map(async(conversationRef) => {
+                conversations?.map(async(conversationRef) => {
 
                   const docSnap = await getDoc(conversationRef);
                   if (docSnap.exists()) {

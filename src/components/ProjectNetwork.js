@@ -17,10 +17,8 @@ import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
-import Grid from '@mui/material/Grid';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-
 
 const useStyles = makeStyles({
     toggleBtn: {
@@ -61,40 +59,22 @@ const ProjectNetwork = (props) => {
     const nodeRef = React.useRef(null);
 
     useEffect(() => {
-        // #TBD: Get network from DB by if*
-            const nodes = [
-                { id: 1, label: "Node 1", title: "node 1 tootip text", shape: 'dot', cvalues: { d: 10, b: 43, c: 5  }},
-                { id: 2, label: "Node 2", title: "node 2 tootip text",shape: 'dot', cvalues: { d: 23, b: 3, c: 50  }},
-                { id: 3, label: "Node 3", title: "node 3 tootip text",shape: 'dot', cvalues: { d: 54, b: 4, c: 7  }},
-                { id: 4, label: "Node 4", title: "node 4 tootip text",shape: 'dot', cvalues: { d: 1, b: 56, c: 10  }},
-                { id: 5, label: "Node 5", title: "node 5 tootip text",shape: 'dot' ,cvalues: { d: 3, b: 2, c: 22  }},
-            ]
-            const edges = [
-                { from: 1, to: 4 },
-                { from: 4, to: 5 },
-                { from: 5, to: 4 },
-                { from: 4, to: 3 },
-                { from: 3, to: 4 },
-            ]
-            const data = 
-              {id: uuidv4(), title: 'Network 1', description: '1111', nodes, edges, GlobalMeasure:{ radius: { key: 2, value: 5 }, diameter: { key: 1, value: 10 } } }
-            
-            setNetworkData(data);
-            graphBuilder(data, "init");
+        setNetworkData(props.network);
+        graphBuilder(props.network, "init");
       }, []);
 
       const graphBuilder = (currNetwork, mode, path=null) => {
         let newGraph =  { id: uuidv4(), networkId: currNetwork.id, title: currNetwork.title, nodes: [], edges: [...currNetwork.edges]};
-        
+
         // Reset edges color
         for (let j = 0; j < (newGraph.edges).length; j++) {   
-            newGraph.edges[j].color = '#000000' 
+            newGraph.edges[j].color = { inherit: "from" }
         }
         
         switch(mode) {
             case "init": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: node.color} // default node
+                    let graphNode = { id: node.label, label: node.label, title: node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     newGraph.nodes.push(graphNode);
                 } 
                 setGraph(newGraph)
@@ -102,8 +82,8 @@ const ProjectNetwork = (props) => {
             }
             case "degree_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-                    graphNode.value = node.cvalues.d;
+                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    graphNode.value = node.centrality.degree;
                     newGraph.nodes.push(graphNode);
                 }
                 setGraph(newGraph)
@@ -111,8 +91,8 @@ const ProjectNetwork = (props) => {
             }
             case "closeness_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-                    graphNode.value = node.cvalues.c;
+                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    graphNode.value = node.centrality.closeness;
                     newGraph.nodes.push(graphNode);
                 }
                 setGraph(newGraph)
@@ -120,8 +100,8 @@ const ProjectNetwork = (props) => {
             }
             case "betweenness_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-                    graphNode.value = node.cvalues.b;
+                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    graphNode.value = node.centrality.betweenness;
                     newGraph.nodes.push(graphNode);
                 }
                 setGraph(newGraph)
@@ -129,7 +109,7 @@ const ProjectNetwork = (props) => {
             }
             case "radius": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     if(node.id == currNetwork.GlobalMeasure.radius.key) {
                         graphNode.color = 'green'
                     }
@@ -140,7 +120,7 @@ const ProjectNetwork = (props) => {
             }
             case "diameter": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     if(node.id == currNetwork.GlobalMeasure.diameter.key) {
                         graphNode.color = 'red'
                     }
@@ -153,7 +133,7 @@ const ProjectNetwork = (props) => {
                 if(path) {
                     // Colorize nodes
                     for (const node of currNetwork.nodes) {
-                        let graphNode = { id: node.id , label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                        let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
                         if(path.includes(node.id)) {
                             graphNode.color = 'red'
                         }
@@ -172,37 +152,48 @@ const ProjectNetwork = (props) => {
                 }
                 setGraph(newGraph)     
                 break;
-            }       
+            }   
         }      
     }
 
-
     const options = {
         layout: {
-            hierarchical: false
+            hierarchical: false,       
         },
         nodes: {
             shape: 'dot',
-            color: '#6366f1'
+            color: '#6366f1',
+            font: {
+                size: 12,
+                face: "Calibri"
+            }
         },
         edges: {
-            color: '#000000',
-            smooth:{
-                enabled: true
-            }
+            smooth: {
+                enabled: true,
+                type: "continuous",
+                forceDirection: "none",
+                roundness: 0.5
+            },
         },
         autoResize: true,
         interaction: {
             zoomView: false
-        }
+        },
+        physics: {
+            maxVelocity: 10,
+            solver: "forceAtlas2Based",
+            timestep: 0.005,
+            stabilization: {
+                iterations: 1,
+            },
 
-    
+          },
     };
 
     const events = {
         select: function(event) {
         var { nodes, edges } = event;
-
         },
     };
 
@@ -259,7 +250,7 @@ const ProjectNetwork = (props) => {
 
     return (
         <Box sx={{position: 'relative'}}>
-            <Stack direction={'column'} gap={1} position={'absolute'} zIndex={'1'} > 
+            <Stack direction={'column'} gap={1} position={'absolute'} zIndex={1} > 
                 <IconButton onClick={zoomIn} color="default" size="large" sx={{ backgroundColor: '#F5F5F5', color: '#6366f1'}}>
                     <AddIcon/>
                 </IconButton>
@@ -333,7 +324,7 @@ const ProjectNetwork = (props) => {
             </Draggable>
 
             <Box sx={{ width: '100%', height: '70vh'}}>
-                { graph && <Graph key={graph.id} style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
+                { graph && <Graph key={graph.id} style={{width: '99%', height: '90vh'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
             </Box>
         </Box>
     )

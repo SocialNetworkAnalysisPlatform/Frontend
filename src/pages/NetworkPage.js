@@ -30,11 +30,10 @@ const useStyles = makeStyles({
 const NetworkPage = (props) => {
     const classes = useStyles();
     const [value, setValue] = React.useState('1');
+    
     const handleChange = (event, newValue) => {
         setValue(newValue);
-      };
-
-    console.log("network", props.location.state)
+    };
 
     return (
         <Layout>
@@ -47,7 +46,7 @@ const NetworkPage = (props) => {
                         <Tab label="Report" value="3" className={classes.tab} />
                     </TabList>
                     </Box>
-                    <TabPanel sx={{ pt: 3, pb: 0, pr: 0, pl: 0 }} value="1"><ProjectNetwork/></TabPanel>
+                    <TabPanel sx={{ pt: 3, pb: 0, pr: 0, pl: 0 }} value="1"><ProjectNetwork network={props.location.state}/></TabPanel>
                     <TabPanel sx={{ pt: 3, pb: 0, pr: 0, pl: 0 }} value="2"><Table/></TabPanel>
                     <TabPanel sx={{ pt: 3, pb: 0, pr: 0, pl: 0 }} value="3">Item Three</TabPanel>
                 </TabContext>

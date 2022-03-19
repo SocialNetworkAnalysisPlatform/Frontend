@@ -57,21 +57,11 @@ const ProjectPage = (props) => {
   const [conversations, setConversations] = useState([]);
 
   // Create dynamic key & value: network id : false
-  let networks = {};
+  const networks = {};
   conversations.map((network) => {
     networks[`${network.id}`] = false;
   });
-  console.log("networks", networks);
   
-  // Create dynamic key & value: collaborator id : false
-  const collaborators = {};
-  project?.collaborators.map((collaborator) => {
-    collaborators[`${collaborator.id}`] = true;
-  });
-  console.log("collaborators", collaborators);
-
-
-
   const [filteredNetworks, setFilteredNetworks] = useState([]);
 
   const [searchInput, setSearchInput] = useState("");
@@ -79,7 +69,7 @@ const ProjectPage = (props) => {
   const popupState = usePopupState({ variant: "popover", popupId: "demoMenu" });
 
   // checked list - created by collaborator filter
-  const [clCreatedBy, setClCreatedBy] = useState(collaborators);
+  const [clCreatedBy, setClCreatedBy] = useState({});
 
   // checked list - created by collaborator filter
   const [clConversations, setClConversations] = useState(networks);
@@ -96,6 +86,7 @@ const ProjectPage = (props) => {
   };
 
   const handleSearchAndFilter = (text) => {
+    
     const isFilteredByCreatedBy = () => {
       for (let [key, value] of Object.entries(clCreatedBy)) {
         if (value == false) {
@@ -121,20 +112,21 @@ const ProjectPage = (props) => {
       result = [];
       for (let [key, value] of Object.entries(clCreatedBy)) {
         const filterRes = conversations.filter((row) => {
-          return value == true && Number(key) == Number(row.createdBy.id);
+          return value == true && key == row.creator.id;
         });
         result.push(...filterRes);
       }
+
     } else if (text && isFilteredCreatedBy) {
       // Filtered by Both
       result = [];
       for (let [key, value] of Object.entries(clCreatedBy)) {
-        const filterRes = filteredNetworks.filter((row) => {
-          return value == true && Number(key) == Number(row.createdBy.id);
+        const filterRes = filteredNetworks?.filter((row) => {
+          return value == true && key == row.creator.id;
         });
         result.push(...filterRes);
       }
-      result = result.filter((row) => {
+      result = result?.filter((row) => {
         return row.title.toLowerCase().includes(text.toLowerCase());
       });
     }
@@ -174,7 +166,7 @@ const ProjectPage = (props) => {
         ) {
             const ownerData = await service.readUserData(owner);
             const collaboratorsData = await Promise.all(
-                collaborators.map(async(collaborator) => {
+                collaborators?.map(async(collaborator) => {
                     const data = await service.readUserData(collaborator);
                     return {
                         id: collaborator,
@@ -191,6 +183,14 @@ const ProjectPage = (props) => {
               createdAt: createdAt.toDate(),
             }
             setProject(project);
+
+            // Create dynamic key & value: collaborator id : false
+            const clCollaborators = {};
+            collaboratorsData.map((collaborator) => {
+              clCollaborators[`${collaborator.id}`] = true;
+            });
+            setClCreatedBy(clCollaborators);
+
 
             const conversationsData = [];
             // for loop conversations and get doc data
@@ -333,7 +333,7 @@ const ProjectPage = (props) => {
                     <Checkbox
                       color="default"
                       sx={{ color: "#6366f1" }}
-                      checked={clCreatedBy[`${collaborator.id}`]}
+                      checked={!!clCreatedBy[`${collaborator.id}`]}
                       onChange={() => {
                         setClCreatedBy({
                           ...clCreatedBy,

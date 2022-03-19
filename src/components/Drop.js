@@ -143,7 +143,7 @@ export default function Dropzone(props) {
         }
 
 
-        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/import`, {
+        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/importConversation`, {
            method: "POST",
            body: JSON.stringify({ 
              conversation

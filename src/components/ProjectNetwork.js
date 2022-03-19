@@ -159,8 +159,10 @@ const ProjectNetwork = (props) => {
     }
 
     const options = {
+
         layout: {
             hierarchical: false,       
+            randomSeed: 100
         },
         nodes: {
             shape: 'dot',
@@ -190,7 +192,7 @@ const ProjectNetwork = (props) => {
                 iterations: 1,
             },
 
-          },
+        },
     };
 
     const events = {

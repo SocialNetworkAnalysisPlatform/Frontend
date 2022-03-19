@@ -195,11 +195,14 @@ const ProjectPage = (props) => {
                     const docData = docSnap.data();
                     const { creator, createdAt, ...data } = docData;
                     const creatorData = await service.readUserData(creator);
-
+                  
+                    const shortestPath = await service.getNetworkShortestPath(docSnap.ref.path);
+                    
                     conversationsData.push({ 
                       id: docSnap.id,
                       creator: { id: creator, displayName: creatorData.displayName, photoUrl: creatorData.photoUrl },
                       createdAt: createdAt.toDate(),
+                      shortestPath,
                       ...data,
                     });
                   } 

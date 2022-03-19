@@ -34,6 +34,8 @@ const NetworkPage = (props) => {
         setValue(newValue);
       };
 
+    console.log("network", props.location.state)
+
     return (
         <Layout>
              <Box sx={{ width: '100%', typography: 'body1' }}>

@@ -36,7 +36,14 @@ const Network = (props) => {
                 <Checkbox color='default' sx={{ color: '#6366f1' }} checked={checked} onChange={() => handleChecked(event.target.checked)}  />
             </TableCell>
             <TableCell align={'left'}>
-                <Link to={`/networks/${props.network.id}`} style={{ textDecoration: "none", color: "#000000DE" ,"&:hover": { color: "#6366f1" }}}>{props.network.title}</Link>
+                <Link
+                    to={{
+                        pathname: `/networks/${props.network.id}`, 
+                        state: props.network
+                    }} 
+                    style={{ textDecoration: "none", color: "#000000DE" ,"&:hover": { color: "#6366f1" }}}>
+                    {props.network.title}
+                </Link>
             </TableCell>
             <TableCell align={'left'}>{props.network.description}</TableCell>
             <TableCell align={'left'}>{props.network.source}</TableCell>

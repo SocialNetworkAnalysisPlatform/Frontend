@@ -82,7 +82,7 @@ const ProjectNetwork = (props) => {
             }
             case "degree_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: node.label, title: node.centrality.degree, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     graphNode.value = node.centrality.degree;
                     newGraph.nodes.push(graphNode);
                 }
@@ -91,7 +91,7 @@ const ProjectNetwork = (props) => {
             }
             case "closeness_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: node.label, title: node.centrality.closeness, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     graphNode.value = node.centrality.closeness;
                     newGraph.nodes.push(graphNode);
                 }
@@ -100,7 +100,7 @@ const ProjectNetwork = (props) => {
             }
             case "betweenness_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: node.label, title: node.centrality.betweenness, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     graphNode.value = node.centrality.betweenness;
                     newGraph.nodes.push(graphNode);
                 }
@@ -109,9 +109,10 @@ const ProjectNetwork = (props) => {
             }
             case "radius": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-                    if(node.id == currNetwork.GlobalMeasure.radius.key) {
-                        graphNode.color = 'green'
+                    let graphNode = { id: node.label, label: node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    if(node.label == currNetwork.globalMeasures.radius.key) {
+                        graphNode.color = 'orange';
+                        graphNode.title = currNetwork.globalMeasures.radius.value;
                     }
                     newGraph.nodes.push(graphNode);
                 }
@@ -120,9 +121,10 @@ const ProjectNetwork = (props) => {
             }
             case "diameter": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-                    if(node.id == currNetwork.GlobalMeasure.diameter.key) {
-                        graphNode.color = 'red'
+                    let graphNode = { id: node.label, label: node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    if(node.label == currNetwork.globalMeasures.diameter.key) {
+                        graphNode.color = 'orange'
+                        graphNode.title = currNetwork.globalMeasures.diameter.value;
                     }
                     newGraph.nodes.push(graphNode);
                 }
@@ -140,11 +142,9 @@ const ProjectNetwork = (props) => {
                         newGraph.nodes.push(graphNode);
                     }
                     // Colorize edges
-                    console.log("path", path)
-                    console.log("newGraph.edges", newGraph.edges)
                     for (let i = 0; i < path.length - 1; i++) {
                         for (let j = 0; j < (newGraph.edges).length; j++) {   
-                            console.log(`path[i]: ${path[i]} == from: ${newGraph.edges[j].from} && path[i+1]: ${path[i+1]} == to: ${newGraph.edges[j].to}`)
+                            // console.log(`path[i]: ${path[i]} == from: ${newGraph.edges[j].from} && path[i+1]: ${path[i+1]} == to: ${newGraph.edges[j].to}`)
                             if( (path[i] == newGraph.edges[j].from) && (path[i+1] == newGraph.edges[j].to) ) {
                                 newGraph.edges[j].color = 'red'
                                 break;
@@ -162,7 +162,6 @@ const ProjectNetwork = (props) => {
 
         layout: {
             hierarchical: false,       
-            randomSeed: 100
         },
         nodes: {
             shape: 'dot',
@@ -255,16 +254,16 @@ const ProjectNetwork = (props) => {
     return (
         <Box sx={{position: 'relative'}}>
             <Stack direction={'column'} gap={1} position={'absolute'} zIndex={1} > 
-                <IconButton onClick={zoomIn} color="default" size="large" sx={{ backgroundColor: '#F5F5F5', color: '#6366f1'}}>
+                <IconButton onClick={zoomIn} color="default" size="large" sx={{ backgroundColor: 'white', color: '#6366f1'}}>
                     <AddIcon/>
                 </IconButton>
-                <IconButton onClick={zoomOut} color="default" size="large" sx={{ backgroundColor: '#F5F5F5', color: '#6366f1'}}>
+                <IconButton onClick={zoomOut} color="default" size="large" sx={{ backgroundColor: 'white', color: '#6366f1'}}>
                     <RemoveIcon/>
                 </IconButton>
             </Stack>
             
             <Draggable nodeRef={nodeRef} bounds="parent">
-                <Box ref={nodeRef} sx={{ align: 'right', width: 320, backgroundColor: '#F5F5F5', p: 1, position: 'absolute', zIndex: 1, right: 0}}> 
+                <Box ref={nodeRef} sx={{ align: 'right', width: 320, backgroundColor: 'white', p: 1, position: 'absolute', zIndex: 1, right: 0}}> 
                     <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                         <Typography sx={{ color: '#6366f1' }}>SNAP Analysis</Typography>
                         <IconButton onClick={() => setExpanded(!expanded)}>
@@ -275,21 +274,28 @@ const ProjectNetwork = (props) => {
                     <Collapse in={expanded} timeout="auto" unmountOnExit>
                         <Stack direction={'column'} >
                             <ToggleButtonGroup sx={{ mb: 2 }} color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
-                                <ToggleButton className={classes.toggleBtn} value="global measures">Global Measures</ToggleButton>
-                                <ToggleButton className={classes.toggleBtn} value="local measures">Local Measures</ToggleButton>
-                                <ToggleButton  className={classes.toggleBtn} value="individual measures">Individual Measures</ToggleButton>
+                                <ToggleButton className={classes.toggleBtn} value="global measures"><Typography variant={"body2"}>Global Measures</Typography></ToggleButton>
+                                <ToggleButton className={classes.toggleBtn} value="local measures"><Typography variant={"body2"}>Local Measures</Typography></ToggleButton>
+                                <ToggleButton className={classes.toggleBtn} value="individual measures"><Typography variant={"body2"}>Individual Measures</Typography></ToggleButton>
                             </ToggleButtonGroup>
                             { selectedMeasure === "global measures" &&
                                 <ToggleButtonGroup color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
-                                    <ToggleButton className={classes.toggleBtn} value="shortest path">Shortest Path</ToggleButton>
-                                    <ToggleButton  className={classes.toggleBtn} value="radius">
-                                    <Tooltip title="The radius is the minimum eccentricity." arrow>
-                                        <Typography>Radius</Typography>
-                                    </Tooltip>
+                                   
+                                    <ToggleButton className={classes.toggleBtn} value="shortest path">
+                                        <Tooltip title="Compute shortest paths in the graph." arrow>
+                                            <Typography variant={"body2"}>Shortest Path</Typography>
+                                        </Tooltip>
                                     </ToggleButton>
+
+                                    <ToggleButton  className={classes.toggleBtn} value="radius">
+                                        <Tooltip title="The radius is the minimum eccentricity." arrow>
+                                            <Typography variant={"body2"}>Radius</Typography>
+                                        </Tooltip>
+                                    </ToggleButton>
+
                                     <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="diameter">
                                         <Tooltip title="The diameter is the maximum eccentricity." arrow>
-                                        <Typography>Diameter</Typography>
+                                            <Typography variant={"body2"}>Diameter</Typography>
                                         </Tooltip>
                                     </ToggleButton>
                                 </ToggleButtonGroup>
@@ -309,17 +315,32 @@ const ProjectNetwork = (props) => {
 
                             { selectedMeasure === "local measures" &&
                                 <ToggleButtonGroup color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                                    <ToggleButton className={classes.toggleBtn} value="clustering">Clustering</ToggleButton>
-                                    <ToggleButton className={classes.toggleBtn} value="transitivity">Transitivity</ToggleButton>
-                                    <ToggleButton className={classes.toggleBtn} value="reciprocity">Reciprocity</ToggleButton>
+                                    <ToggleButton className={classes.toggleBtn} value="clustering"><Typography variant={"body2"}>Clustering</Typography></ToggleButton>
+                                    <ToggleButton className={classes.toggleBtn} value="transitivity"><Typography variant={"body2"}>Transitivity</Typography></ToggleButton>
+                                    <ToggleButton className={classes.toggleBtn} value="reciprocity"><Typography variant={"body2"}>Reciprocity</Typography></ToggleButton>
                                 </ToggleButtonGroup>
                             }
 
                             { selectedMeasure === "individual measures" &&
                                 <ToggleButtonGroup color="primary" value={selectedIndividual} exclusive onChange={(e, value) => setSelectedIndividual(value)} >
-                                    <ToggleButton className={classes.toggleBtn} value="degree_centrality">Degree Centrality</ToggleButton>
-                                    <ToggleButton className={classes.toggleBtn} value="closeness_centrality">Closeness Centrality</ToggleButton>
-                                    <ToggleButton className={classes.toggleBtn} value="betweenness_centrality">Betweenness Centrality</ToggleButton>
+                                        <ToggleButton className={classes.toggleBtn} value="degree_centrality">
+                                            <Tooltip title="The degree centrality for a node is the fraction of nodes it is connected to." arrow>
+                                                <Typography variant={"body2"}>Degree Centrality</Typography>
+                                            </Tooltip>
+                                        </ToggleButton>
+
+                                        <ToggleButton className={classes.toggleBtn} value="closeness_centrality">
+                                            <Tooltip title="Closeness centrality of a node is the reciprocal of the average shortest path distance to him over all n-1 reachable nodes." arrow>
+                                               <Typography variant={"body2"}>Closeness Centrality</Typography>
+                                            </Tooltip>
+                                        </ToggleButton>
+
+                                        <ToggleButton className={classes.toggleBtn} value="betweenness_centrality">
+                                            <Tooltip title="Betweenness centrality of a node is the sum of the fraction of all-pairs shortest paths that pass through him." arrow>
+                                                <Typography variant={"body2"}>Betweenness Centrality</Typography>
+                                            </Tooltip>
+                                        </ToggleButton>
+
                                 </ToggleButtonGroup>
                             }
                         </Stack>

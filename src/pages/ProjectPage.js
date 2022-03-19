@@ -193,14 +193,13 @@ const ProjectPage = (props) => {
                   const docSnap = await getDoc(conversationRef);
                   if (docSnap.exists()) {
                     const docData = docSnap.data();
-                    const { creator, createdAt, source, ...data } = docData;
+                    const { creator, createdAt, ...data } = docData;
                     const creatorData = await service.readUserData(creator);
 
                     conversationsData.push({ 
                       id: docSnap.id,
                       creator: { id: creator, displayName: creatorData.displayName, photoUrl: creatorData.photoUrl },
                       createdAt: createdAt.toDate(),
-                      source: source.owner,
                       ...data,
                     });
                   } 

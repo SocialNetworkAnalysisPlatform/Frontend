@@ -48,7 +48,7 @@ export default function Loginpage() {
 
   return (
     <>
-      <Typography sx={{ fontSize: "30px", fontWeight: 400, color: "#2e2e2e" }}>
+      <Typography sx={{ fontSize: "26px", fontWeight: 400, color: "#2e2e2e" }}>
         Log in to your account
       </Typography>
 

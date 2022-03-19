@@ -68,7 +68,7 @@ const ProjectNetwork = (props) => {
 
         // Reset edges color
         for (let j = 0; j < (newGraph.edges).length; j++) {   
-            newGraph.edges[j].color = { inherit: "from" }
+            newGraph.edges[j].color = '#3335c0'
         }
         
         switch(mode) {
@@ -134,15 +134,17 @@ const ProjectNetwork = (props) => {
                     // Colorize nodes
                     for (const node of currNetwork.nodes) {
                         let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-                        if(path.includes(node.id)) {
+                        if(path.includes(node.label)) {
                             graphNode.color = 'red'
                         }
                         newGraph.nodes.push(graphNode);
                     }
                     // Colorize edges
+                    console.log("path", path)
+                    console.log("newGraph.edges", newGraph.edges)
                     for (let i = 0; i < path.length - 1; i++) {
                         for (let j = 0; j < (newGraph.edges).length; j++) {   
-                            // console.log(`path[i]: ${path[i]} == from: ${newGraph.edges[j].from} && path[i+1]: ${path[i+1]} == to: ${newGraph.edges[j].to}`)
+                            console.log(`path[i]: ${path[i]} == from: ${newGraph.edges[j].from} && path[i+1]: ${path[i+1]} == to: ${newGraph.edges[j].to}`)
                             if( (path[i] == newGraph.edges[j].from) && (path[i+1] == newGraph.edges[j].to) ) {
                                 newGraph.edges[j].color = 'red'
                                 break;
@@ -218,10 +220,10 @@ const ProjectNetwork = (props) => {
 
     const searchShortestPath = (e) => {
         e.preventDefault()
+        let path = {};
         if (sourceNode && targetNode) {
-            // Compute shortest paths in the graph.
+            path = networkData.shortestPath[`${sourceNode.label}`][`${targetNode.label}`]
         }
-        let path = [1, 4, 5]
         graphBuilder(networkData, 'search_shortest_path', path)
     }
     

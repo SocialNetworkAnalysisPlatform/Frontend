@@ -56,12 +56,6 @@ const ProjectPage = (props) => {
   const [project, setProject] = useState();
   const [conversations, setConversations] = useState([]);
 
-  // Create dynamic key & value: network id : false
-  const networks = {};
-  conversations.map((network) => {
-    networks[`${network.id}`] = false;
-  });
-  
   const [filteredNetworks, setFilteredNetworks] = useState([]);
 
   const [searchInput, setSearchInput] = useState("");
@@ -72,7 +66,7 @@ const ProjectPage = (props) => {
   const [clCreatedBy, setClCreatedBy] = useState({});
 
   // checked list - created by collaborator filter
-  const [clConversations, setClConversations] = useState(networks);
+  const [clConversations, setClConversations] = useState({});
 
   const [compareList, setCompareList] = useState([]);
 
@@ -191,7 +185,6 @@ const ProjectPage = (props) => {
             });
             setClCreatedBy(clCollaborators);
 
-
             const conversationsData = [];
             // for loop conversations and get doc data
             const conversationsRef = await Promise.all(
@@ -215,6 +208,14 @@ const ProjectPage = (props) => {
             ));
             setConversations(conversationsData);
             setFilteredNetworks(conversationsData);
+
+            // Create dynamic key & value: network id : false
+            const clNetworks = {};
+            conversationsData.map((network) => {
+              clNetworks[`${network.id}`] = false;
+            });
+            setClConversations(clNetworks);
+
           }
       }
     });

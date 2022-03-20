@@ -322,7 +322,7 @@ const ProjectPage = (props) => {
           >
             <OutlinedInput
               sx={{ width: 500, height: 32 }}
-              placeholder="Find a network..."
+              placeholder="Find a conversation..."
               value={searchInput}
               onChange={(e) => {
                 setSearchInput(e.target.value);

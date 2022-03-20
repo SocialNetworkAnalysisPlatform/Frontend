@@ -125,11 +125,11 @@ const NewProject = () => {
             <Stack spacing={4}>
               <FormControl>
                 <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Project name</FormLabel>
-                <OutlinedInput size="small" sx={{ width: 300,  }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
+                <OutlinedInput size="small" sx={{ width: 300, backgroundColor: 'white' }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
               </FormControl>
               <FormControl>
                 <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description (optional)</FormLabel>
-                <OutlinedInput size="small" sx={{ width: '50vw' }} required value={newProject.description} onChange={(e) => setNewProject({...newProject, description: e.target.value}) }/>
+                <OutlinedInput size="small" sx={{ width: '50vw', backgroundColor: 'white' }} required value={newProject.description} onChange={(e) => setNewProject({...newProject, description: e.target.value}) }/>
               </FormControl>
             </Stack>
 
@@ -145,7 +145,7 @@ const NewProject = () => {
               }
             </Stack>   
 
-            <Box sx={{ mt: 2, minHeight: 170, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.2)',  borderRadius: 2, }}>
+            <Box sx={{ mt: 2, minHeight: 170, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.2)',  borderRadius: 2, backgroundColor: 'white' }}>
             { // Show items depending on collaborators array length (ternary expression - true and false case)
               collaborators.length > 0
               ?

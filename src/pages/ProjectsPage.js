@@ -119,7 +119,7 @@ const ProjectsPage = () => {
       <Box sx={{ width: "69vw" }}>
         <Stack direction={"row"} justifyContent={"space-between"}>
           <OutlinedInput
-            sx={{ width: 500, height: 32 }}
+            sx={{ width: 500, height: 32, backgroundColor: 'white' }}
             placeholder="Find a project..."
             value={searchInput}
             onChange={(e) => {

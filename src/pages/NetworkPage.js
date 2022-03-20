@@ -47,9 +47,9 @@ const NetworkPage = (props) => {
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <TabList onChange={handleChange} className={classes.tabs}>
-                        <Tab label="Network" value="1" className={classes.tab}  />
-                        <Tab label="Table" value="2" className={classes.tab}  />
-                        <Tab label="Report" value="3" className={classes.tab} />
+                        <Tab label="Network View" value="1" className={classes.tab}  />
+                        <Tab label="Table View" value="2" className={classes.tab}  />
+                        <Tab label="Descriptive Statistics" value="3" className={classes.tab} />
                     </TabList>
                     </Box>
                     <TabPanel sx={{ pt: 3, pb: 0, pr: 0, pl: 0 }} value="1"><ProjectNetwork network={props.location.state}/></TabPanel>

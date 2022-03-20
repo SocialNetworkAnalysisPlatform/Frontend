@@ -113,7 +113,7 @@ export default function Dropzone(props) {
     const projectId =  window.location.pathname.split("/")[2]; // TODO: Verify if there is project id
     const conversationId = props.newConversation.id; 
     const fileName = file.name;
-    const filePath = `Projects/${projectId}/${conversationId}/`;
+    const filePath = `Conversations/${conversationId}/`;
 
     
     const storageRef = ref(storage, `${filePath}${fileName}`);

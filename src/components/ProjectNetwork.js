@@ -19,6 +19,9 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 const useStyles = makeStyles({
     toggleBtn: {
@@ -42,11 +45,14 @@ const useStyles = makeStyles({
 const ProjectNetwork = (props) => {
     const classes = useStyles();
     const [expanded, setExpanded] = useState(false);
+    const [hideLabels, setHideLabels] = useState(false);
 
     const [network, setNetwork] = useState();
 
     const [networkData, setNetworkData] = useState();
     const [graph, setGraph] = useState(null);
+    const [currMode, setCurrMode] = useState('');
+    const [currShortestPath, setCurrShortestPath] = useState([]);
 
     const [selectedMeasure, setSelectedMeasure] = useState();
     const [selectedGlobal, setSelectedGlobal] = useState();
@@ -63,26 +69,27 @@ const ProjectNetwork = (props) => {
         graphBuilder(props.network, "init");
       }, []);
 
-      const graphBuilder = (currNetwork, mode, path=null) => {
+      const graphBuilder = (currNetwork, mode, path=null, hideLabels=null) => {
         let newGraph =  { id: uuidv4(), networkId: currNetwork.id, title: currNetwork.title, nodes: [], edges: [...currNetwork.edges]};
-
         // Reset edges color
         for (let j = 0; j < (newGraph.edges).length; j++) {   
             newGraph.edges[j].color = '#3335c0'
         }
-        
+
+        setCurrMode(mode)
+
         switch(mode) {
             case "init": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     newGraph.nodes.push(graphNode);
-                } 
+                }
                 setGraph(newGraph)
                 break;
             }
             case "degree_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.centrality.degree, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.centrality.degree, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     graphNode.value = node.centrality.degree;
                     newGraph.nodes.push(graphNode);
                 }
@@ -91,7 +98,7 @@ const ProjectNetwork = (props) => {
             }
             case "closeness_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.centrality.closeness, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.centrality.closeness, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     graphNode.value = node.centrality.closeness;
                     newGraph.nodes.push(graphNode);
                 }
@@ -100,7 +107,7 @@ const ProjectNetwork = (props) => {
             }
             case "betweenness_centrality": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, title: node.centrality.betweenness, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.centrality.betweenness, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     graphNode.value = node.centrality.betweenness;
                     newGraph.nodes.push(graphNode);
                 }
@@ -109,7 +116,7 @@ const ProjectNetwork = (props) => {
             }
             case "radius": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: hideLabels ? '' : node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     if(node.label == currNetwork.globalMeasures.radius.key) {
                         graphNode.color = 'orange';
                         graphNode.title = currNetwork.globalMeasures.radius.value;
@@ -121,7 +128,7 @@ const ProjectNetwork = (props) => {
             }
             case "diameter": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, label: node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    let graphNode = { id: node.label, label: hideLabels ? '' : node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     if(node.label == currNetwork.globalMeasures.diameter.key) {
                         graphNode.color = 'orange'
                         graphNode.title = currNetwork.globalMeasures.diameter.value;
@@ -135,7 +142,7 @@ const ProjectNetwork = (props) => {
                 if(path) {
                     // Colorize nodes
                     for (const node of currNetwork.nodes) {
-                        let graphNode = { id: node.label, label: node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                        let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
                         if(path.includes(node.label)) {
                             graphNode.color = 'red'
                         }
@@ -157,7 +164,6 @@ const ProjectNetwork = (props) => {
             }   
         }      
     }
-
     const options = {
 
         layout: {
@@ -190,7 +196,6 @@ const ProjectNetwork = (props) => {
             stabilization: {
                 iterations: 1,
             },
-
         },
     };
 
@@ -200,21 +205,28 @@ const ProjectNetwork = (props) => {
         },
     };
 
+
     useEffect(() => {
         if(networkData) {
-            graphBuilder(networkData, selectedGlobal)
+            graphBuilder(networkData, currMode, currShortestPath, hideLabels)
         }
-      }, [selectedGlobal]);
+    }, [hideLabels]);
+
+    useEffect(() => {
+        if(networkData && selectedGlobal) {
+            graphBuilder(networkData, selectedGlobal, null, hideLabels);
+        }
+    }, [selectedGlobal]);
     
     useEffect(() => {
-        if(networkData) {
-            graphBuilder(networkData, selectedLocal)
+        if(networkData && selectedLocal) {
+            graphBuilder(networkData, selectedLocal, null, hideLabels);
         }
     }, [selectedLocal]);
     
     useEffect(() => {
-        if(networkData) {
-            graphBuilder(networkData, selectedIndividual)
+        if(networkData && selectedIndividual) {
+            graphBuilder(networkData, selectedIndividual, null, hideLabels);
         }
     }, [selectedIndividual]);
 
@@ -223,11 +235,22 @@ const ProjectNetwork = (props) => {
         e.preventDefault()
         let path = {};
         if (sourceNode && targetNode) {
-            path = networkData.shortestPath[`${sourceNode.label}`][`${targetNode.label}`]
+            path = networkData.shortestPath[`${sourceNode.label}`][`${targetNode.label}`]; 
+            setCurrShortestPath(path);      
+            graphBuilder(networkData, 'search_shortest_path', path, hideLabels)
         }
-        graphBuilder(networkData, 'search_shortest_path', path)
     }
     
+    const handleResetGraph = (e) => {
+        e.preventDefault()
+        if(networkData) {
+            graphBuilder(networkData, 'init', null, hideLabels);
+            setSelectedMeasure(); 
+            setSelectedGlobal();
+            setSelectedLocal();
+            setSelectedIndividual(); 
+        }
+    }
 
     const zoomIn = () => {
         const zoomInScale = network.getScale() + 0.5
@@ -241,15 +264,14 @@ const ProjectNetwork = (props) => {
     const zoomOut = () => {
         const zoomInScale = network.getScale() - 0.5
         if(zoomInScale > 0) {
-        network.moveTo({
-            scale: zoomInScale,
-            offset: {x: 0, y: 0},
-            animation: {duration: 1000, easingFunction: "easeInOutQuad"}
-        })
+            network.moveTo({
+                scale: zoomInScale,
+                offset: {x: 0, y: 0},
+                animation: {duration: 1000, easingFunction: "easeInOutQuad"}
+            })
         }
     }
   
-
 
     return (
         <Box sx={{position: 'relative'}}>
@@ -272,7 +294,15 @@ const ProjectNetwork = (props) => {
                     </Stack>
                     
                     <Collapse in={expanded} timeout="auto" unmountOnExit>
-                        <Stack direction={'column'} >
+                        <Stack direction={'column'} mt={2}>
+                            <Stack direction={'row'} justifyContent={'space-between'}>
+                                <FormControlLabel sx={{ color: '#0000008A'}}
+                                    label="Hide labels"
+                                    control={<Checkbox color='default' sx={{ color: '#6366f1' }} checked={hideLabels} onChange={() => setHideLabels(event.target.checked)} />}
+                                />
+                                <IconButton onClick={handleResetGraph} title="Reset graph" sx={{ mr: 1, backgroundColor: "#6366f1", color: 'white', borderRadius: 1, height: 30, width: 30,  "&:hover": { backgroundColor: "#4e50c6" }}}><RestartAltIcon/></IconButton>
+                            </Stack>
+                            
                             <ToggleButtonGroup sx={{ mb: 2 }} color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
                                 <ToggleButton className={classes.toggleBtn} value="global measures"><Typography variant={"body2"}>Global Measures</Typography></ToggleButton>
                                 <ToggleButton className={classes.toggleBtn} value="local measures"><Typography variant={"body2"}>Local Measures</Typography></ToggleButton>
@@ -348,8 +378,8 @@ const ProjectNetwork = (props) => {
                 </Box>
             </Draggable>
 
-            <Box sx={{ width: '100%', height: '70vh'}}>
-                { graph && <Graph key={graph.id} style={{width: '99%', height: '90vh'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
+            <Box sx={{ width: '100%', height: '90vh'}}>
+                { graph && <Graph key={graph.id} style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
             </Box>
         </Box>
     )

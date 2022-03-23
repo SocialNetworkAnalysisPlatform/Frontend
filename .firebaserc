@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "snaplatform"
+  },
+  "targets": {
+    "snaplatform": {
+      "hosting": {
+        "prod": [
+          "sna-platform-demo"
+        ]
+      }
+    }
+  }
+}

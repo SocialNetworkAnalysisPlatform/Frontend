@@ -139,7 +139,7 @@ const ProjectNetwork = (props) => {
                 break;
             }
             case "search_shortest_path": { 
-                if(path) {
+                // if(path) {
                     // Colorize nodes
                     for (const node of currNetwork.nodes) {
                         let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
@@ -158,7 +158,7 @@ const ProjectNetwork = (props) => {
                             }
                         }
                     }
-                }
+                // }
                 setGraph(newGraph)     
                 break;
             }   

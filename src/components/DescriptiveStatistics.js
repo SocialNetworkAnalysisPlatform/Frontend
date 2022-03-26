@@ -311,10 +311,11 @@ const DescriptiveStatistics = (props) => {
                     <Box sx={{  display:'flex', justifyContent:'center', }}>
                         {
                             props.network.statistics.topActivity &&
-                            <BarChart width={600} height={400} data={props.network.statistics.topActivity} barCategoryGap="1%">
+                            <BarChart width={600} height={400} layout="vertical"
+                            data={props.network.statistics.topActivity} barCategoryGap="1%">
                             <CartesianGrid strokeDasharray="3" />
-                            <XAxis dataKey="node" angle={-90} height={150} interval={0} textAnchor= "end" />
-                            <YAxis />
+                            <XAxis type="number" />
+                            <YAxis type="category" dataKey="node" width={150} interval={0} textAnchor= "end" />
                             <Tooltip />
                             <Bar dataKey="messages" fill='#6366f1'/>
                           </BarChart>

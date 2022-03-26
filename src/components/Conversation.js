@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react'
-import { Layout } from '../components/Layout'
+import { Layout } from './Layout'
 import { useAuth } from '../contexts/AuthContext'
 import { Link } from 'react-router-dom'
 import dateFormat, { masks } from "dateformat";
@@ -17,8 +17,8 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import Tooltip from '@mui/material/Tooltip';
 
-const Network = (props) => {
-
+const Conversation = (props) => {
+    console.log(props.project)
     const [checked, setChecked] = useState(false);
 
     const handleChecked = (checkValue) => {
@@ -38,8 +38,8 @@ const Network = (props) => {
             <TableCell align={'left'}>
                 <Link
                     to={{
-                        pathname: `/networks/${props.network.id}`, 
-                        state: props.network
+                        pathname: `/conversations/${props.network.id}`, 
+                        state: { network: props.network, project: props.project }
                     }} 
                     style={{ textDecoration: "none", color: "#000000DE" ,"&:hover": { color: "#6366f1" }}}>
                     {props.network.title}
@@ -74,4 +74,4 @@ const Network = (props) => {
     </TableRow>
     )
 }
-export default Network;
+export default Conversation;

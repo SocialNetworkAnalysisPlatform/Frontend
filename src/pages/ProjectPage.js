@@ -32,7 +32,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import IconButton from "@mui/material/IconButton";
-import Network from "../components/Network";
+import Conversation from "../components/Conversation";
 import { AlertDialog } from "@chakra-ui/react";
 import Compare from "../components/Compare";
 import { useParams } from "react-router-dom";
@@ -259,9 +259,9 @@ const ProjectPage = (props) => {
   }
 
   const eachNetwork = (item, index) => {
-    return  (<Network key={item.id} index={index} network={item}
+    return  (<Conversation key={item.id} index={index} project={project} network={item}
             checkedStatus={handleCheckedNetwork} visibility={handleVisibility}>
-            </Network>)
+            </Conversation>)
   };
 
   return (

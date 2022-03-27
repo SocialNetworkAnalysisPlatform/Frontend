@@ -164,10 +164,12 @@ const ProjectNetwork = (props) => {
             }   
         }      
     }
+    
     const options = {
 
         layout: {
-            hierarchical: false,       
+            hierarchical: false,    
+            improvedLayout: false,   
         },
         nodes: {
             shape: 'dot',
@@ -189,14 +191,22 @@ const ProjectNetwork = (props) => {
         interaction: {
             zoomView: false
         },
-        physics: {
-            maxVelocity: 10,
-            solver: "forceAtlas2Based",
-            timestep: 0.005,
-            stabilization: {
-                iterations: 1,
-            },
+     physics: {
+        enabled: true,
+        hierarchicalRepulsion: {
+            avoidOverlap: 0.8,
+            springConstant: 0.001,
+            nodeDistance: 100,
+            damping: 1.5
         },
+        stabilization: {
+            iterations: 1000,
+            updateInterval: 100,
+            onlyDynamicEdges: false,
+            fit: true
+        },
+        solver: 'hierarchicalRepulsion'
+    },
     };
 
     const events = {

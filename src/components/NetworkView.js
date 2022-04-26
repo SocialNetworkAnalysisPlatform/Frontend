@@ -50,6 +50,7 @@ const ProjectNetwork = (props) => {
     const [network, setNetwork] = useState();
 
     const [networkData, setNetworkData] = useState();
+    const [networkGroups, setNetworkGroups] = useState({});
     const [graph, setGraph] = useState(null);
     const [currMode, setCurrMode] = useState('');
     const [currShortestPath, setCurrShortestPath] = useState([]);
@@ -64,8 +65,23 @@ const ProjectNetwork = (props) => {
 
     const nodeRef = React.useRef(null);
 
+    const getNetworkGroups = () => {
+        let groups = {};
+        for (const node of props.network.nodes) {
+            if(!groups.hasOwnProperty(`${node.group}`)) {
+                let randomColor = Math.floor(Math.random()*16777215).toString(16);
+                // Create dynamic key & value: group : { attributes }
+                groups[`${node.group}`] = {
+                    color: randomColor
+                };
+            }
+        }
+        setNetworkGroups(groups)
+    }
+
     useEffect(() => {
         setNetworkData(props.network);
+        getNetworkGroups()
         graphBuilder(props.network, "init");
       }, []);
 
@@ -84,7 +100,7 @@ const ProjectNetwork = (props) => {
                     let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
                     newGraph.nodes.push(graphNode);
                 }
-                setGraph(newGraph)
+                setGraph(newGraph);
                 break;
             }
             case "degree_centrality": {
@@ -93,7 +109,7 @@ const ProjectNetwork = (props) => {
                     graphNode.value = node.centrality.degree;
                     newGraph.nodes.push(graphNode);
                 }
-                setGraph(newGraph)
+                setGraph(newGraph);
                 break;
             }
             case "closeness_centrality": {
@@ -102,7 +118,7 @@ const ProjectNetwork = (props) => {
                     graphNode.value = node.centrality.closeness;
                     newGraph.nodes.push(graphNode);
                 }
-                setGraph(newGraph)
+                setGraph(newGraph);
                 break;
             }
             case "betweenness_centrality": {
@@ -111,7 +127,7 @@ const ProjectNetwork = (props) => {
                     graphNode.value = node.centrality.betweenness;
                     newGraph.nodes.push(graphNode);
                 }
-                setGraph(newGraph)
+                setGraph(newGraph);
                 break;
             }
             case "radius": {
@@ -123,7 +139,7 @@ const ProjectNetwork = (props) => {
                     }
                     newGraph.nodes.push(graphNode);
                 }
-                setGraph(newGraph)
+                setGraph(newGraph);
                 break;
             }
             case "diameter": {
@@ -135,7 +151,7 @@ const ProjectNetwork = (props) => {
                     }
                     newGraph.nodes.push(graphNode);
                 }
-                setGraph(newGraph)
+                setGraph(newGraph);
                 break;
             }
             case "search_shortest_path": { 
@@ -159,14 +175,21 @@ const ProjectNetwork = (props) => {
                         }
                     }
                 // }
-                setGraph(newGraph)     
+                setGraph(newGraph);  
                 break;
-            }   
+            }
+            // case "clustering": {
+            //     for (const node of currNetwork.nodes) {
+            //         let graphNode = { id: node.label, group: node.group, label: hideLabels ? '' : node.label, shape: 'dot', value: 10} // default node
+            //         newGraph.nodes.push(graphNode);
+            //     }
+            //     setGraph(newGraph);
+            //     break;
+            // }   
         }      
     }
     
     const options = {
-
         layout: {
             hierarchical: false,    
             improvedLayout: false,   
@@ -186,6 +209,9 @@ const ProjectNetwork = (props) => {
                 forceDirection: "none",
                 roundness: 0.5
             },
+        },
+        groups: {
+            networkGroups
         },
         autoResize: true,
         interaction: {
@@ -250,7 +276,7 @@ const ProjectNetwork = (props) => {
             graphBuilder(networkData, 'search_shortest_path', path, hideLabels)
         }
     }
-    
+
     const handleResetGraph = (e) => {
         e.preventDefault()
         if(networkData) {

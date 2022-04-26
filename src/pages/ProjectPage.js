@@ -34,7 +34,6 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import IconButton from "@mui/material/IconButton";
 import Conversation from "../components/Conversation";
 import { AlertDialog } from "@chakra-ui/react";
-import Compare from "../components/Compare";
 import { useParams } from "react-router-dom";
 
 import { db } from "../utils/firebase";
@@ -48,7 +47,6 @@ const ProjectPage = (props) => {
   const params = useParams();
   const [disabledDelete, setDisabledDelete] = useState(true);
   const [disabledCompare, setDisabledCompare] = useState(true);
-  const [isCompare, setIsCompare] = useState(false);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -127,20 +125,20 @@ const ProjectPage = (props) => {
     setFilteredNetworks(result);
   };
 
-  const handleCheckedNetwork = (id, checkValue) => {
+  const handleCheckedNetwork = (network, checkValue) => {
     for (let [key, value] of Object.entries(clConversations)) {
-      if (key == id) {
-        setClConversations({ ...clConversations, [`${id}`]: checkValue });
+      if (key == network.id) {
+        setClConversations({ ...clConversations, [`${network.id}`]: checkValue });
       }
     }
 
     // Handle creation of networks compare list
     let networksList = compareList;
     if (checkValue == true) {
-      networksList.push(id);
+      networksList.push(network);
       setCompareList(networksList);
     } else {
-      const res = networksList.filter((networkId) => networkId !== id);
+      const res = networksList.filter((networkId) => networkId !== network.id);
       setCompareList(res);
     }
   };
@@ -260,7 +258,7 @@ const ProjectPage = (props) => {
 
   const eachNetwork = (item, index) => {
     return  (<Conversation key={item.id} index={index} project={project} network={item}
-            checkedStatus={handleCheckedNetwork} visibility={handleVisibility}>
+            checkedNetwork={handleCheckedNetwork} visibility={handleVisibility}>
             </Conversation>)
   };
 
@@ -270,70 +268,29 @@ const ProjectPage = (props) => {
         {project?.name}
       </Typography>
       <Stack direction={"row"} spacing={3} sx={{ mt: 2 }}>
-        <Button
-          component={Link}
-          to={`/projects/${project?.id}/new-conversation`}
-          startIcon={<AddIcon />}
-          variant="contained"
-          sx={{
-            backgroundColor: "#6366f1",
-            "&:hover": { backgroundColor: "#4e50c6" },
-            height: 32,
-            textTransform: "none",
-          }}
-        >
+        <Button component={Link} to={`/projects/${project?.id}/new-conversation`} startIcon={<AddIcon />} variant="contained"
+          sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }}>
           Add conversation
         </Button>
-        <Button
-          disabled={disabledDelete}
-          startIcon={<DeleteOutlineIcon />}
-          variant="contained"
-          sx={{
-            backgroundColor: "#6366f1",
-            "&:hover": { backgroundColor: "#4e50c6" },
-            height: 32,
-            textTransform: "none",
-          }}
-        >
+        <Button disabled={disabledDelete} startIcon={<DeleteOutlineIcon />} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
           Delete
         </Button>
-        <Button
-          onClick={() => setIsCompare(true)}
-          disabled={disabledCompare}
-          startIcon={<CompareArrowsIcon />}
-          variant="contained"
-          sx={{
-            backgroundColor: "#6366f1",
-            "&:hover": { backgroundColor: "#4e50c6" },
-            height: 32,
-            textTransform: "none",
-          }}
-        >
+        <Button disabled={disabledCompare} startIcon={<CompareArrowsIcon />} variant="contained"
+          sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none" }}
+          component={Link} to={{ pathname: `/compare`, state: { compareList: compareList } }} >
           Compare
         </Button>
       </Stack>
-      {isCompare && <Compare compareList={compareList}></Compare>}
       <Paper sx={{ width: "100%", overflow: "hidden", mt: 4 }}>
         <TableContainer sx={{ maxHeight: 440 }}>
-          <Stack
-            sx={{ mt: 1, pr: 2, pl: 2 }}
-            direction={"row"}
-            justifyContent={"space-between"}
-          >
-            <OutlinedInput
-              sx={{ width: 500, height: 32 }}
-              placeholder="Find a conversation..."
-              value={searchInput}
+          <Stack sx={{ mt: 1, pr: 2, pl: 2 }} direction={"row"} justifyContent={"space-between"}>
+            <OutlinedInput sx={{ width: 500, height: 32 }} placeholder="Find a conversation..." value={searchInput}
               onChange={(e) => {
                 setSearchInput(e.target.value);
                 handleSearchAndFilter(e.target.value);
               }}
             />
-            <IconButton
-              {...bindTrigger(popupState)}
-              color="default"
-              sx={{ mr: 1 }}
-            >
+            <IconButton {...bindTrigger(popupState)} color="default" sx={{ mr: 1 }}>
               <FilterAltOutlinedIcon />
             </IconButton>
             <Menu sx={{ ml: -3 }} {...bindMenu(popupState)}>

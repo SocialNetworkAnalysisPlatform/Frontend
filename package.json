@@ -18,6 +18,8 @@
     "dateformat": "^5.0.2",
     "firebase": "^9.6.3",
     "framer-motion": "^4.1.17",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "material-ui-popup-state": "^2.0.0",
     "react": "^17.0.2",
     "react-animations": "^1.0.0",

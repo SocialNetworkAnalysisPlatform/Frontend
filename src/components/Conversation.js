@@ -18,12 +18,11 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import Tooltip from '@mui/material/Tooltip';
 
 const Conversation = (props) => {
-    console.log(props.project)
     const [checked, setChecked] = useState(false);
 
     const handleChecked = (checkValue) => {
         setChecked(checkValue);
-        props.checkedStatus(props.network.id, checkValue)
+        props.checkedNetwork(props.network, checkValue)
     }
 
     const handleVisibility = () => {

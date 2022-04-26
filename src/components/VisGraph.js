@@ -11,19 +11,51 @@ const VisGraph = (props) => {
     
     const options = {
         layout: {
-            hierarchical: false
-            },
-            edges: {
-                color: "#000000",
-                smooth:{
-                    enabled: true
-                }
+            hierarchical: false,    
+            improvedLayout: false,   
         },
+        nodes: {
+            shape: 'dot',
+            color: '#6366f1',
+            font: {
+                size: 12,
+                face: "Calibri"
+            }
+        },
+        edges: {
+            smooth: {
+                enabled: true,
+                type: "continuous",
+                forceDirection: "none",
+                roundness: 0.5
+            },
+        },
+        // groups: {
+        //     networkGroups
+        // },
         autoResize: true,
-        
-
-        
+        interaction: {
+            zoomView: true
+        },
+        physics: {
+        enabled: true,
+        hierarchicalRepulsion: {
+            avoidOverlap: 0.8,
+            springConstant: 0.001,
+            nodeDistance: 100,
+            damping: 1.5
+        },
+        stabilization: {
+            iterations: 1000,
+            updateInterval: 100,
+            onlyDynamicEdges: false,
+            fit: true
+        },
+        solver: 'hierarchicalRepulsion'
+    },
     };
+
+  
 
     const events = {
         select: function(event) {
@@ -41,7 +73,7 @@ const VisGraph = (props) => {
  
 
     return (
-        <Graph style={{width: '100%', height: '90%'}} key={props.graph.id} graph={props.graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/>
+        <Graph style={{width: '100%', height: '100%'}} key={props.graph.id} graph={props.graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/>
     )
 }
 export default VisGraph;

@@ -60,7 +60,7 @@ const ConversationPage = (props) => {
                     </TabList>
                     </Box>
                     <TabPanel sx={{ pt: 3, pb: 3, pr: 0, pl: 0 }} value="1"><NetworkView network={props.location.state.network}/></TabPanel>
-                    <TabPanel sx={{ pt: 3, pb: 3, pr: 0, pl: 0 }} value="2"><DescriptiveStatistics network={props.location.state.network}/></TabPanel>
+                    <TabPanel sx={{ pt: 3, pb: 3, pr: 0, pl: 0 }} value="2"><DescriptiveStatistics network={props.location.state.network} conversationTitle={[props.location?.state.project.name, props.location?.state.network.title]}/></TabPanel>
                     <TabPanel sx={{ pt: 3, pb: 3, pr: 0, pl: 0 }} value="3"><Table/></TabPanel>
                 </TabContext>
             </Box>

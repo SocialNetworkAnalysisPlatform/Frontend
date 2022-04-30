@@ -278,7 +278,7 @@ const ComparePage = (props) => {
             <Box sx={{  display: 'flex', flexDirection: 'row',  flexWrap: 'wrap', mt: 4, }}>
                   { graphs && graphs.map(eachNetwork) }
             </Box>
-            { openTable && <CompareTable/>}
+            { openTable && <CompareTable compareList={props.location?.state.compareList}/>}
         </Layout>
   )
 }

@@ -23,8 +23,8 @@ const CompareTable = (props) => {
     const fixNum = (num) => {
         return `${parseFloat((num)?.toFixed(3))}`;
     }
-    console.log("networks", networks)
-   useEffect(() => {
+
+    useEffect(() => {
         const avgNodes = (networks.map(({ nodes }) => nodes.length).reduce((sum, i) => sum + i, 0)) / networks.length;
         const avgEdges = (networks.map(({ edges }) => edges.length).reduce((sum, i) => sum + i, 0)) / networks.length;
         const avgDiameter = (networks.map(({ globalMeasures }) => globalMeasures.diameter.value).reduce((sum, i) => sum + i, 0)) / networks.length;

@@ -22,6 +22,10 @@ import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import Grid from '@mui/material/Grid';
+import Slider from '@mui/material/Slider';
+import Input from '@mui/material/Input';
+import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
 
 const useStyles = makeStyles({
     toggleBtn: {
@@ -39,6 +43,11 @@ const useStyles = makeStyles({
               borderColor: '#6366f1 !important'
             }
         },
+    },
+    sliderInput: {
+        "&.MuiInput-underline:after": {
+            borderBottomColor: '#6366f1'
+        }
     }
   });
 
@@ -65,6 +74,9 @@ const ProjectNetwork = (props) => {
 
     const nodeRef = React.useRef(null);
 
+    const [sliderValue, setSliderValue] = useState(0);
+    const [maxEdges, setMaxEdges] = useState();
+
     const getNetworkGroups = () => {
         let groups = {};
         for (const node of props.network.nodes) {
@@ -79,8 +91,14 @@ const ProjectNetwork = (props) => {
         setNetworkGroups(groups)
     }
 
+    const getMaxEdges = () => {
+        const maxEdges = props.network.edges.map(({ weight }) => weight).reduce((a, b) => Math.max(a, b))
+        setMaxEdges(maxEdges);
+    }
+    
     useEffect(() => {
         setNetworkData(props.network);
+        getMaxEdges()
         getNetworkGroups()
         graphBuilder(props.network, "init");
       }, []);
@@ -88,9 +106,12 @@ const ProjectNetwork = (props) => {
       const graphBuilder = (currNetwork, mode, path=null, hideLabels=null) => {
         let newGraph =  { id: uuidv4(), networkId: currNetwork.id, title: currNetwork.title, nodes: [], edges: [...currNetwork.edges]};
         // Reset edges color
-        for (let j = 0; j < (newGraph.edges).length; j++) {   
-            newGraph.edges[j].color = '#3335c0'
+        for (let j = 0; j < (newGraph.edges).length; j++) { 
+            newGraph.edges[j].color = '#3335c0'     
         }
+        // Filtered edges by weight
+        const filteredEdges = newGraph.edges.filter((edge) => edge.weight >= sliderValue );
+        newGraph.edges = filteredEdges;
 
         setCurrMode(mode)
 
@@ -307,8 +328,22 @@ const ProjectNetwork = (props) => {
             })
         }
     }
-  
 
+    const handleBlur = () => {
+        if (sliderValue < 0) {
+          setSliderValue(0);
+        } else if (sliderValue > maxEdges) {
+            setSliderValue(maxEdges);
+        }
+    };
+
+    useEffect(() => {
+        if(networkData) {
+            graphBuilder(networkData, currMode, currShortestPath, hideLabels)
+        }
+    }, [sliderValue]);
+
+  
     return (
         <Box sx={{position: 'relative'}}>
             <Stack direction={'column'} gap={1} position={'absolute'} zIndex={1} > 
@@ -417,6 +452,34 @@ const ProjectNetwork = (props) => {
             <Box sx={{ width: '100%', height: '90vh'}}>
                 { graph && <Graph key={graph.id} style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
             </Box>
+
+            <Stack spacing={2} sx={{ width: '40vw', pt: 2, margin: '0 auto' }}>
+                <Stack direction={"row"} spacing={2} justifyContent={"center"}>
+                    <MessageOutlinedIcon sx={{ color: '#6366f1' }} />
+                    <Typography id="input-slider">
+                        Minimum Messages per Member
+                    </Typography>
+                    <Input className={classes.sliderInput}
+                        value={sliderValue}
+                        size="small"
+                        onChange={(event) => setSliderValue(event.target.value === '' ? '' : Number(event.target.value))}
+                        onBlur={handleBlur}
+                        inputProps={{
+                        step: 1,
+                        min: 0,
+                        max: maxEdges,
+                        type: 'number',
+                        'aria-labelledby': 'input-slider',
+                        }}
+                    />
+                </Stack>
+                <Slider sx={{ color: '#6366f1'}}
+                    value={typeof sliderValue === 'number' ? sliderValue : 0}
+                    onChange={(event, newValue) => setSliderValue(newValue)}
+                    min={0} max={maxEdges}
+                    aria-labelledby="input-slider"
+                />
+            </Stack>
         </Box>
     )
 

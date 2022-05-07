@@ -68,6 +68,8 @@ const ProjectPage = (props) => {
 
   const [compareList, setCompareList] = useState([]);
 
+  const MAX_NETWORKS_FOR_COMPARE = 4;
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -134,7 +136,7 @@ const ProjectPage = (props) => {
 
     // Handle creation of networks compare list
     let networksList = compareList;
-    if (checkValue == true) {
+    if (checkValue == true && networksList.length < MAX_NETWORKS_FOR_COMPARE) {
       networksList.push(network);
       setCompareList(networksList);
     } else {
@@ -243,7 +245,7 @@ const ProjectPage = (props) => {
     for (let [key, value] of Object.entries(clConversations)) {
       value ? ++networksCnt : "";
       networksCnt > 0 ? setDisabledDelete(false) : setDisabledDelete(true);
-      networksCnt > 1 && networksCnt < 5
+      networksCnt > 1 && networksCnt <= MAX_NETWORKS_FOR_COMPARE
         ? setDisabledCompare(false)
         : setDisabledCompare(true);
     }

@@ -34,11 +34,25 @@ const CompareTable = (props) => {
         const avgOfAvgClustering = (networks.map(({ localMeasures }) => localMeasures.average_clustering).reduce((sum, i) => sum + i, 0)) / networks.length;
         const avgTransitivity = (networks.map(({ localMeasures }) => localMeasures.transitivity).reduce((sum, i) => sum + i, 0)) / networks.length;
         const avgReciprocity = (networks.map(({ localMeasures }) => localMeasures.reciprocity).reduce((sum, i) => sum + i, 0)) / networks.length;
+        const avgOfAvgDegree = (networks.map((row) => calcAvgCentrality(row, "degree")).reduce((sum, i) => sum + i, 0)) / networks.length;
+        const avgOfAvgCloseness = (networks.map((row) => calcAvgCentrality(row, "closeness")).reduce((sum, i) => sum + i, 0)) / networks.length;
+        const avgOfAvgBetweenness = (networks.map((row) => calcAvgCentrality(row, "betweenness")).reduce((sum, i) => sum + i, 0)) / networks.length;
         setAvgData({ avgNodes: avgNodes, avgEdges: avgEdges, avgDiameter: avgDiameter,
             avgRadius: avgRadius, avgDensity: avgDensity, avgSelfLoops: avgSelfLoops,
-            avgOfAvgClustering: avgOfAvgClustering, avgTransitivity: avgTransitivity, avgReciprocity: avgReciprocity
+            avgOfAvgClustering: avgOfAvgClustering, avgTransitivity: avgTransitivity, avgReciprocity: avgReciprocity,
+            avgOfAvgDegree: avgOfAvgDegree, avgOfAvgCloseness: avgOfAvgCloseness, avgOfAvgBetweenness: avgOfAvgBetweenness
         }); 
 }, []);
+
+    const calcAvgCentrality = (row, mode) => {
+        const nodes = row.nodes;
+        let sum = 0;
+        nodes.forEach((node) =>{
+            sum += node.centrality[`${mode}`]; 
+        });
+        let avg = sum / nodes.length;        
+        return parseFloat(avg.toFixed(3))
+    }
 
 
     const checkCellColor = (num, avg) => {
@@ -73,9 +87,9 @@ const CompareTable = (props) => {
                             <TableCell align="left">Avg. Clustering</TableCell>
                             <TableCell align="left">Transitivity</TableCell>
                             <TableCell align="left">Reciprocity</TableCell>
-                            <TableCell align="left">Degree Centrality</TableCell>
-                            <TableCell align="left">Closeness Centrality</TableCell>
-                            <TableCell align="left">Betweenness Centrality</TableCell>
+                            <TableCell align="left">Avg. Degree Centrality</TableCell>
+                            <TableCell align="left">Avg. Closeness Centrality</TableCell>
+                            <TableCell align="left">Avg. Betweenness Centrality</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -94,9 +108,9 @@ const CompareTable = (props) => {
                                 <TableCell align="left" sx={{ color: checkCellColor(fixNum(row.localMeasures.average_clustering), avgData?.avgOfAvgClustering) }} >{fixNum(row.localMeasures.average_clustering)}</TableCell>
                                 <TableCell align="left" sx={{ color: checkCellColor(fixNum(row.localMeasures.transitivity), avgData?.avgTransitivity) }} >{fixNum(row.localMeasures.transitivity)}</TableCell>
                                 <TableCell align="left" sx={{ color: checkCellColor(fixNum(row.localMeasures.reciprocity), avgData?.avgReciprocity) }} >{fixNum(row.localMeasures.reciprocity)}</TableCell>
-                                <TableCell align="left">{ }</TableCell>
-                                <TableCell align="left">{ }</TableCell>
-                                <TableCell align="left">{ }</TableCell>
+                                <TableCell align="left" sx={{ color: checkCellColor(calcAvgCentrality(row, "degree"), avgData?.avgOfAvgDegree) }} >{calcAvgCentrality(row, "degree")}</TableCell>
+                                <TableCell align="left" sx={{ color: checkCellColor(calcAvgCentrality(row, "closeness"), avgData?.avgOfAvgCloseness) }} >{calcAvgCentrality(row, "closeness")}</TableCell>
+                                <TableCell align="left" sx={{ color: checkCellColor(calcAvgCentrality(row, "betweenness"), avgData?.avgOfAvgBetweenness) }} >{calcAvgCentrality(row, "betweenness")}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -112,9 +126,9 @@ const CompareTable = (props) => {
                             <TableCell align="left">{fixNum(avgData?.avgOfAvgClustering)}</TableCell>
                             <TableCell align="left">{fixNum(avgData?.avgTransitivity)}</TableCell>
                             <TableCell align="left">{fixNum(avgData?.avgReciprocity)}</TableCell>
-                            <TableCell align="left">{ }</TableCell>
-                            <TableCell align="left">{ }</TableCell>
-                            <TableCell align="left">{ }</TableCell>
+                            <TableCell align="left">{fixNum(avgData?.avgOfAvgDegree)}</TableCell>
+                            <TableCell align="left">{fixNum(avgData?.avgOfAvgCloseness)}</TableCell>
+                            <TableCell align="left">{fixNum(avgData?.avgOfAvgBetweenness)}</TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>

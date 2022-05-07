@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import ChatIcon from '@mui/icons-material/Chat';
+import IconButton from '@mui/material/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const Project = (props) => {
@@ -36,13 +37,15 @@ const Project = (props) => {
         uniqueId: 1,
       }
       //
-    
+    console.log("props.project", props.project)
     return (
         <Box sx={{ mt: 3 }}>
             <Divider light sx={{ mb: 3 }}/>
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Typography component={Link} to={`/projects/${props.project.id}`} sx={{ textDecoration: "none", color: "#000000DE" , fontSize: 20, fontWeight: 500, "&:hover": { color: "#6366f1" }}}>{props.project.name}</Typography>
-                <SettingsIcon sx={{ color: 'rgba(0, 0, 0, 0.6)', "&:hover": { color: "#6366f1" }}}/>
+                <IconButton component={Link} to={{ pathname: `/project-settings`, state: { id: props.project.id, name: props.project.name, description: props.project.description, collaborators: props.project.collaborators  } }} color="primary" >
+                    <SettingsIcon sx={{ color: 'rgba(0, 0, 0, 0.6)', "&:hover": { color: "#6366f1" }}} />
+                </IconButton>
             </Stack>
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Box>

@@ -25,22 +25,29 @@ import { collection, addDoc } from "firebase/firestore";
 import { ref, onValue} from "firebase/database";
 
 import { Link, useHistory, useLocation } from "react-router-dom";
+import { propsToClassKey } from '@mui/styles';
 
-const NewProject = () => {
+const ProjectSettingsPage = (props) => {
   const history = useHistory();
   const { currentUser } = useAuth();
   
-  const [newProject, setNewProject] = useState({id: '', shared: false, name: '', description: ''});
+  const [currProject, setNewProject] = useState({
+    id: props.location?.state.id,
+    shared: false,
+    name: props.location?.state.name,
+    description: props.location?.state.description
+  });
 
   const [users, setUsers] = useState([]);
   const [collaborator, setCollaborator] = useState();
-  const [collaborators, setCollaborators] = useState([]);
+  const [collaborators, setCollaborators] = useState(props.location?.state.collaborators);
 
   const [openModal, setOpenModal] = useState(false);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [inputSearchValue, setInputSearchValue] = useState("");
   const [disabledSelect, setDisabledSelect] = useState(true);
-
+  console.log("collaborators", collaborators)
+  
   const modalStyle = {
     position: 'absolute',
     top: '50%',
@@ -55,11 +62,11 @@ const NewProject = () => {
   const createNewProject = async (e) => {
     e.preventDefault();
 
-    if(newProject.name !== '') {
+    if(currProject.name !== '') {
       try {
           const docRef = await addDoc(collection(db, "Projects"), {
-            name: newProject.name,
-            description: newProject.description,
+            name: currProject.name,
+            description: currProject.description,
             collaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
             owner: currentUser.uid,
             createdAt: new Date(),
@@ -119,17 +126,17 @@ const NewProject = () => {
     <>
       <Layout>
           <Box sx={{ width: '50vw' }}>
-            <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Create a New Project</Typography>
+            <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Project Settings</Typography>
             <Typography color="textSecondary" sx={{ fontSize: 14 }}>A project contains all conversations files.</Typography>
             <Divider light sx={{ mt: 3, mb: 3 }}/>
             <Stack spacing={4}>
               <FormControl>
                 <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Project name</FormLabel>
-                <OutlinedInput size="small" sx={{ width: 300, backgroundColor: 'white' }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
+                <OutlinedInput size="small" sx={{ width: 300, backgroundColor: 'white' }} required value={currProject.name} onChange={(e) => setNewProject({...currProject, name: e.target.value}) }/>
               </FormControl>
               <FormControl>
                 <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description (optional)</FormLabel>
-                <OutlinedInput size="small" sx={{ width: '50vw', backgroundColor: 'white' }} required value={newProject.description} onChange={(e) => setNewProject({...newProject, description: e.target.value}) }/>
+                <OutlinedInput size="small" sx={{ width: '50vw', backgroundColor: 'white' }} required value={currProject.description} onChange={(e) => setNewProject({...currProject, description: e.target.value}) }/>
               </FormControl>
             </Stack>
 
@@ -166,7 +173,7 @@ const NewProject = () => {
             <Divider light sx={{ mt: 3, mb: 3 }}/>
 
             <Button onClick={(e) => createNewProject(e)} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
-              Create project 
+              Save
             </Button>
           </Box>
       </Layout>
@@ -217,5 +224,5 @@ const NewProject = () => {
     </>
   )
 }
-export default NewProject;
+export default ProjectSettingsPage;
 

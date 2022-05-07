@@ -145,7 +145,7 @@ const NewConversationPage = (props) => {
     return (
         <Layout>
             <Stack spacing={2}>
-            <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Create a new conversation</Typography>
+            <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Create a New Conversation</Typography>
 
             <Paper elevation={2}>
               <Stack spacing={4} p={2}>

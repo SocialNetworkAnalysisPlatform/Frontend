@@ -81,7 +81,7 @@ const ProjectNetwork = (props) => {
         const maxEdges = props.network.edges.map(({ weight }) => weight).reduce((a, b) => Math.max(a, b))
         setMaxEdges(maxEdges);
     }
-    
+    console.log("nodes", props.network.nodes)
     useEffect(() => {
         setNetworkData(props.network);
         getMaxEdges()
@@ -399,8 +399,6 @@ const ProjectNetwork = (props) => {
                             { selectedMeasure === "local measures" &&
                                 <ToggleButtonGroup color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
                                     <ToggleButton className={classes.toggleBtn} value="clustering"><Typography variant={"body2"}>Clustering</Typography></ToggleButton>
-                                    <ToggleButton className={classes.toggleBtn} value="transitivity"><Typography variant={"body2"}>Transitivity</Typography></ToggleButton>
-                                    <ToggleButton className={classes.toggleBtn} value="reciprocity"><Typography variant={"body2"}>Reciprocity</Typography></ToggleButton>
                                 </ToggleButtonGroup>
                             }
 

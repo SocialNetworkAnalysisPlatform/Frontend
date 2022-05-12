@@ -154,17 +154,22 @@ const ComparePage = (props) => {
           }
           break;
       }
+      case "clustering": {
+        for (const node of currNetwork.nodes) {
+            let graphNode = { id: node.label, group: node.group, label: hideLabels ? '' : node.label, shape: 'dot', value: 10} // default node
+            newGraph.nodes.push(graphNode);
+        }
+        if(graphs.length > 0) {
+          setGraphs(prevState => prevState.map(
+            data => data.networkId !== currNetwork.id ? data : newGraph))
+        }
+        else {
+          setGraphs(prevState => [...prevState, newGraph])
+        }
+        break;
+      }   
     }      
         
-      
-    // if(graphs.length > 0) {
-    //   setGraphs(prevState => prevState.map(
-    //     data => data.networkId !== currNetwork.id ? data : newGraph))
-    // }
-    // else {
-    //   setGraphs(prevState => [...prevState, newGraph])
-    // }
-     
   }
 
   const handleResetGraph = (e) => {

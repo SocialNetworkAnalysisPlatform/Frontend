@@ -161,26 +161,24 @@ const ProjectNetwork = (props) => {
                 break;
             }
             case "search_shortest_path": { 
-                // if(path) {
-                    // Colorize nodes
-                    for (const node of currNetwork.nodes) {
-                        let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
-                        if(path.includes(node.label)) {
-                            graphNode.color = 'red'
-                        }
-                        newGraph.nodes.push(graphNode);
+                // Colorize nodes
+                for (const node of currNetwork.nodes) {
+                    let graphNode = { id: node.label, label: hideLabels ? '' : node.label, title: node.title, shape: 'dot', value: 10, color: '#6366f1'} // default node
+                    if(path.includes(node.label)) {
+                        graphNode.color = 'red'
                     }
-                    // Colorize edges
-                    for (let i = 0; i < path.length - 1; i++) {
-                        for (let j = 0; j < (newGraph.edges).length; j++) {   
-                            // console.log(`path[i]: ${path[i]} == from: ${newGraph.edges[j].from} && path[i+1]: ${path[i+1]} == to: ${newGraph.edges[j].to}`)
-                            if( (path[i] == newGraph.edges[j].from) && (path[i+1] == newGraph.edges[j].to) ) {
-                                newGraph.edges[j].color = 'red'
-                                break;
-                            }
+                    newGraph.nodes.push(graphNode);
+                }
+                // Colorize edges
+                for (let i = 0; i < path.length - 1; i++) {
+                    for (let j = 0; j < (newGraph.edges).length; j++) {   
+                        // console.log(`path[i]: ${path[i]} == from: ${newGraph.edges[j].from} && path[i+1]: ${path[i+1]} == to: ${newGraph.edges[j].to}`)
+                        if( (path[i] == newGraph.edges[j].from) && (path[i+1] == newGraph.edges[j].to) ) {
+                            newGraph.edges[j].color = 'red'
+                            break;
                         }
                     }
-                // }
+                }
                 setGraph(newGraph);  
                 break;
             }

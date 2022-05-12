@@ -6,8 +6,6 @@ import Graph from "react-graph-vis";
 const VisGraph = (props) => {
     
     const [network, setNetwork] = useState();
-
-    console.log(props.graph)
     
     const options = {
         layout: {
@@ -30,9 +28,6 @@ const VisGraph = (props) => {
                 roundness: 0.5
             },
         },
-        // groups: {
-        //     networkGroups
-        // },
         autoResize: true,
         interaction: {
             zoomView: true
@@ -63,10 +58,10 @@ const VisGraph = (props) => {
 
         },
         stabilized: () => {
-        if (network) { // Network will be set using getNetwork event from the Graph component
-            network.setOptions({ physics: false }); // Disable physics after stabilization
-            network.fit();
-        }
+            if (network) { // Network will be set using getNetwork event from the Graph component
+                network.setOptions({ physics: false }); // Disable physics after stabilization
+                network.fit();
+            }
         }
     };
   

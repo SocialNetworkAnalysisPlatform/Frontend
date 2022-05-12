@@ -11,6 +11,13 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { LteMobiledata } from '@mui/icons-material';
+import * as math from 'mathjs';
+
+import ReactHighCharts from "react-highcharts";
+
+import bellcurve from "highcharts/modules/histogram-bellcurve";
+bellcurve(ReactHighCharts.Highcharts);
+
 
 const useStyles = makeStyles({
     card: {
@@ -27,9 +34,183 @@ const useStyles = makeStyles({
     },
   });
 
+
+
 const DescriptiveStatistics = (props) => {
     const classes = useStyles();
 
+    const getCentralityValues = (centralityType) => {
+        const nodes = props.network.nodes;
+        let values = [];
+        nodes.forEach((node) =>{
+            values.push(node.centrality[`${centralityType}`]); 
+        });
+        return values;
+    }
+
+    const BellCurveConfigDegree = {
+        title: {
+            text: "Bell Curve"
+        },
+        xAxis: [
+            {
+                title: {
+                    text: "Data"
+                },
+                alignTicks: false
+            },
+            {
+                title: {
+                    text: "Bell Curve"
+                },
+                alignTicks: false,
+                opposite: true
+            }
+        ],
+        yAxis: [
+            {
+                title: { text: "Data" }
+            },
+            {
+                title: { text: "Bell Curve" },
+                opposite: true
+            }
+        ],
+        series: [
+            {
+              name: "Bell curve",
+              type: "bellcurve",
+              xAxis: 1,
+              yAxis: 1,
+              baseSeries: 1,
+              zIndex: -1
+            },
+            {
+              name: "Data",
+              type: "scatter",
+              data: getCentralityValues("degree"),
+              accessibility: {
+                exposeAsGroupOnly: true
+              },
+              marker: {
+                radius: 1.5
+              }
+            }
+        ]
+    };
+
+    const BellCurveConfigCloseness = {
+        title: {
+            text: "Bell Curve"
+        },
+        xAxis: [
+            {
+                title: {
+                    text: "Data"
+                },
+                alignTicks: false
+            },
+            {
+                title: {
+                    text: "Bell Curve"
+                },
+                alignTicks: false,
+                opposite: true
+            }
+        ],
+        yAxis: [
+            {
+                title: { text: "Data" }
+            },
+            {
+                title: { text: "Bell Curve" },
+                opposite: true
+            }
+        ],
+        series: [
+            {
+              name: "Bell curve",
+              type: "bellcurve",
+              xAxis: 1,
+              yAxis: 1,
+              baseSeries: 1,
+              zIndex: -1
+            },
+            {
+              name: "Data",
+              type: "scatter",
+              data: getCentralityValues("closeness"),
+              accessibility: {
+                exposeAsGroupOnly: true
+              },
+              marker: {
+                radius: 1.5
+              }
+            }
+        ]
+    };
+   
+    const BellCurveConfigBetweenness  = {
+        title: {
+            text: "Bell Curve"
+        },
+        xAxis: [
+            {
+                title: {
+                    text: "Data"
+                },
+                alignTicks: false
+            },
+            {
+                title: {
+                    text: "Bell Curve"
+                },
+                alignTicks: false,
+                opposite: true
+            }
+        ],
+        yAxis: [
+            {
+                title: { text: "Data" }
+            },
+            {
+                title: { text: "Bell Curve" },
+                opposite: true
+            }
+        ],
+        series: [
+            {
+              name: "Bell curve",
+              type: "bellcurve",
+              xAxis: 1,
+              yAxis: 1,
+              baseSeries: 1,
+              zIndex: -1
+            },
+            {
+              name: "Data",
+              type: "scatter",
+              data: getCentralityValues("betweenness"),
+              accessibility: {
+                exposeAsGroupOnly: true
+              },
+              marker: {
+                radius: 1.5
+              }
+            }
+        ]
+    };
+
+    
+    const calcStandardDeviation  = (mode) => {
+        const nodes = props.network.nodes;
+        let arr = [];
+        nodes.forEach((node) =>{
+            arr.push(node.centrality[`${mode}`]); 
+        });
+        let standardDeviation = math.std(arr)
+        return parseFloat(standardDeviation.toFixed(3))
+    }
 
     const calcAvgCentrality = (mode) => {
         const nodes = props.network.nodes;
@@ -40,6 +221,7 @@ const DescriptiveStatistics = (props) => {
         let avg = sum / nodes.length;        
         return parseFloat(avg.toFixed(3))
     }
+
 
     const calcMax = (mode) => {
         const nodes = props.network.nodes;   
@@ -225,6 +407,16 @@ const DescriptiveStatistics = (props) => {
                                 <Card className={classes.subCard}>
                                     <CardContent>
                                         <Typography gutterBottom variant="body2" color="text.secondary" component="div">
+                                            Standard Deviation
+                                        </Typography>
+                                        <Typography variant="h4" sx={{ textAlign: 'center'}}>
+                                            {calcStandardDeviation("degree")}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                                <Card className={classes.subCard}>
+                                    <CardContent>
+                                        <Typography gutterBottom variant="body2" color="text.secondary" component="div">
                                             Min.
                                         </Typography>
                                         <Typography variant="h4" sx={{ textAlign: 'center'}}>
@@ -244,6 +436,7 @@ const DescriptiveStatistics = (props) => {
                                 </Card>
                             </Stack>
                         </CardContent>
+                        <ReactHighCharts config={BellCurveConfigDegree} />
                     </Card>
                 </Box>
 
@@ -260,6 +453,16 @@ const DescriptiveStatistics = (props) => {
                                     </Typography>
                                     <Typography variant="h4" sx={{ textAlign: 'center'}}>
                                         {calcAvgCentrality("closeness")}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                            <Card className={classes.subCard}>
+                                <CardContent>
+                                    <Typography gutterBottom variant="body2" color="text.secondary" component="div">
+                                        Standard Deviation
+                                    </Typography>
+                                    <Typography variant="h4" sx={{ textAlign: 'center'}}>
+                                        {calcStandardDeviation("closeness")}
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -283,9 +486,9 @@ const DescriptiveStatistics = (props) => {
                                     </Typography>
                                 </CardContent>
                             </Card>
-                
                         </Stack>
                     </CardContent>
+                    <ReactHighCharts config={BellCurveConfigCloseness}/>
                 </Card>
 
                 <Card className={classes.cardGroup} sx={{ mt: '2.7%'}}>
@@ -301,6 +504,16 @@ const DescriptiveStatistics = (props) => {
                                     </Typography>
                                     <Typography variant="h4" sx={{ textAlign: 'center'}}>
                                         {calcAvgCentrality("betweenness")}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                            <Card className={classes.subCard}>
+                                <CardContent>
+                                    <Typography gutterBottom variant="body2" color="text.secondary" component="div">
+                                        Standard Deviation
+                                    </Typography>
+                                    <Typography variant="h4" sx={{ textAlign: 'center'}}>
+                                        {calcStandardDeviation("betweenness")}
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -324,9 +537,9 @@ const DescriptiveStatistics = (props) => {
                                     </Typography>
                                 </CardContent>
                             </Card>
-                
                         </Stack>
                     </CardContent>
+                    <ReactHighCharts config={BellCurveConfigBetweenness}/>
                 </Card>
             </Box>
             <Box  id="second" sx={{ backgroundColor: '#f0f3f7' }}>

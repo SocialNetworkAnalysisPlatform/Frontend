@@ -77,20 +77,6 @@ const ProjectNetwork = (props) => {
     const [sliderValue, setSliderValue] = useState(0);
     const [maxEdges, setMaxEdges] = useState();
 
-    const getNetworkGroups = () => {
-        let groups = {};
-        for (const node of props.network.nodes) {
-            if(!groups.hasOwnProperty(`${node.group}`)) {
-                let randomColor = Math.floor(Math.random()*16777215).toString(16);
-                // Create dynamic key & value: group : { attributes }
-                groups[`${node.group}`] = {
-                    color: randomColor
-                };
-            }
-        }
-        setNetworkGroups(groups)
-    }
-
     const getMaxEdges = () => {
         const maxEdges = props.network.edges.map(({ weight }) => weight).reduce((a, b) => Math.max(a, b))
         setMaxEdges(maxEdges);
@@ -99,7 +85,6 @@ const ProjectNetwork = (props) => {
     useEffect(() => {
         setNetworkData(props.network);
         getMaxEdges()
-        getNetworkGroups()
         graphBuilder(props.network, "init");
       }, []);
 
@@ -199,14 +184,14 @@ const ProjectNetwork = (props) => {
                 setGraph(newGraph);  
                 break;
             }
-            // case "clustering": {
-            //     for (const node of currNetwork.nodes) {
-            //         let graphNode = { id: node.label, group: node.group, label: hideLabels ? '' : node.label, shape: 'dot', value: 10} // default node
-            //         newGraph.nodes.push(graphNode);
-            //     }
-            //     setGraph(newGraph);
-            //     break;
-            // }   
+            case "clustering": {
+                for (const node of currNetwork.nodes) {
+                    let graphNode = { id: node.label, group: node.group, label: hideLabels ? '' : node.label, shape: 'dot', value: 10} // default node
+                    newGraph.nodes.push(graphNode);
+                }
+                setGraph(newGraph);
+                break;
+            }   
         }      
     }
     
@@ -231,29 +216,26 @@ const ProjectNetwork = (props) => {
                 roundness: 0.5
             },
         },
-        groups: {
-            networkGroups
-        },
         autoResize: true,
         interaction: {
             zoomView: false
         },
-     physics: {
-        enabled: true,
-        hierarchicalRepulsion: {
-            avoidOverlap: 0.8,
-            springConstant: 0.001,
-            nodeDistance: 100,
-            damping: 1.5
+        physics: {
+            enabled: true,
+            hierarchicalRepulsion: {
+                avoidOverlap: 0.8,
+                springConstant: 0.001,
+                nodeDistance: 100,
+                damping: 1.5
+            },
+            stabilization: {
+                iterations: 1000,
+                updateInterval: 100,
+                onlyDynamicEdges: false,
+                fit: true
+            },
+            solver: 'hierarchicalRepulsion'
         },
-        stabilization: {
-            iterations: 1000,
-            updateInterval: 100,
-            onlyDynamicEdges: false,
-            fit: true
-        },
-        solver: 'hierarchicalRepulsion'
-    },
     };
 
     const events = {

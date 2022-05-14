@@ -55,15 +55,20 @@ const NewProject = () => {
   const createNewProject = async (e) => {
     e.preventDefault();
 
+    console.log(collaborators);
+    
     if(newProject.name !== '') {
       try {
           const docRef = await addDoc(collection(db, "Projects"), {
             name: newProject.name,
             description: newProject.description,
-            collaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
+            pendingCollaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
             owner: currentUser.uid,
             createdAt: new Date(),
           });
+
+          https://europe-west1-snaplatform.cloudfunctions.net/inviteCollaborators
+          
           history.replace(location.state?.from ?? "/projects");
         } catch (e) {
           console.error("Error adding document: ", e);

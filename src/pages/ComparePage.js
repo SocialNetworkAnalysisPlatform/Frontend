@@ -154,7 +154,7 @@ const ComparePage = (props) => {
           }
           break;
       }
-      case "clustering": {
+      case "community_detection": {
         for (const node of currNetwork.nodes) {
             let graphNode = { id: node.label, group: node.group, label: hideLabels ? '' : node.label, shape: 'dot', value: 10} // default node
             newGraph.nodes.push(graphNode);
@@ -262,7 +262,7 @@ const ComparePage = (props) => {
                 <>
                     <Typography>Local Measure Type:</Typography>
                     <ToggleButtonGroup color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="clustering">Clustering</ToggleButton>
+                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="community_detection">Community Detection</ToggleButton>
                     </ToggleButtonGroup>
                 </>
                 }

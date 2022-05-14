@@ -182,7 +182,7 @@ const ProjectNetwork = (props) => {
                 setGraph(newGraph);  
                 break;
             }
-            case "clustering": {
+            case "community_detection": {
                 for (const node of currNetwork.nodes) {
                     let graphNode = { id: node.label, group: node.group, label: hideLabels ? '' : node.label, shape: 'dot', value: 10} // default node
                     newGraph.nodes.push(graphNode);
@@ -224,7 +224,7 @@ const ProjectNetwork = (props) => {
                 avoidOverlap: 0.8,
                 springConstant: 0.001,
                 nodeDistance: 100,
-                damping: 1.5
+                damping: 1.5,
             },
             stabilization: {
                 iterations: 1000,
@@ -396,7 +396,7 @@ const ProjectNetwork = (props) => {
 
                             { selectedMeasure === "local measures" &&
                                 <ToggleButtonGroup color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                                    <ToggleButton className={classes.toggleBtn} value="clustering"><Typography variant={"body2"}>Clustering</Typography></ToggleButton>
+                                    <ToggleButton className={classes.toggleBtn} value="community_detection"><Typography variant={"body2"}>Community Detection</Typography></ToggleButton>
                                 </ToggleButtonGroup>
                             }
 

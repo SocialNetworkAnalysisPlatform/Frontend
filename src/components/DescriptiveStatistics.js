@@ -9,9 +9,15 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import Popover from '@mui/material/Popover';
+import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
-import { LteMobiledata } from '@mui/icons-material';
 import * as math from 'mathjs';
+import { CSVLink } from "react-csv";
 
 import ReactHighCharts from "react-highcharts";
 
@@ -38,6 +44,43 @@ const useStyles = makeStyles({
 
 const DescriptiveStatistics = (props) => {
     const classes = useStyles();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+
+    const [csvData, setCsvData] = useState([]);
+    const csvHeaders = [
+        { label: "Conversation Title", key: "conversationTitle" },
+        { label: "Nodes", key: "nodes" },
+        { label: "Edges", key: "edges" },
+        { label: "Diameter", key: "diameter" },
+        { label: "Radius", key: "radius" },
+        { label: "Density", key: "density" },
+        { label: "Self-loops", key: "selfLoops" },
+        { label: "Avg. Clustering", key: "avgClustering" },
+        { label: "Transitivity", key: "transitivity" },
+        { label: "Reciprocity", key: "reciprocity" },
+        { label: "Avg. Degree Centrality", key: "avgDegreeCentrality" },
+        { label: "Avg. Closeness Centrality", key: "avgClosenessCentrality" },
+        { label: "Avg. Betweenness Centrality", key: "avgBetweennessCentrality" },
+    ];
+
+    useEffect(() => {
+        const network = props.network;
+        let data = [{
+                conversationTitle: network.title, nodes: network.nodes.length, edges: network.edges.length, diameter: network.globalMeasures.diameter.value,
+                radius: network.globalMeasures.radius.value, density: fixNum(props.network?.globalMeasures.density), selfLoops: network.globalMeasures.numberOfSelfLoops,
+                avgClustering: fixNum(props.network?.localMeasures.average_clustering), transitivity: fixNum(props.network?.localMeasures.transitivity), 
+                reciprocity: fixNum(props.network?.localMeasures.reciprocity), avgDegreeCentrality: calcAvgCentrality("degree"),
+                avgClosenessCentrality: calcAvgCentrality("closeness"), avgBetweennessCentrality: calcAvgCentrality("betweenness")
+            }
+        ];
+        setCsvData(data);
+    }, []);
+
+    const fixNum = (num) => {
+        return `${parseFloat((num)?.toFixed(3))}`;
+    }
 
     const getCentralityValues = (centralityType) => {
         const nodes = props.network.nodes;
@@ -209,7 +252,7 @@ const DescriptiveStatistics = (props) => {
             arr.push(node.centrality[`${mode}`]); 
         });
         let standardDeviation = math.std(arr)
-        return parseFloat(standardDeviation.toFixed(3))
+        return fixNum(standardDeviation)
     }
 
     const calcAvgCentrality = (mode) => {
@@ -219,7 +262,7 @@ const DescriptiveStatistics = (props) => {
             sum += node.centrality[`${mode}`]; 
         });
         let avg = sum / nodes.length;        
-        return parseFloat(avg.toFixed(3))
+        return fixNum(avg)
     }
 
 
@@ -231,7 +274,7 @@ const DescriptiveStatistics = (props) => {
                 max = nodes[i].centrality[`${mode}`];
             } 
         }
-        return parseFloat(max.toFixed(3))
+        return fixNum(max)
     }
 
     const calcMin = (mode) => {
@@ -242,7 +285,7 @@ const DescriptiveStatistics = (props) => {
                 min = nodes[i].centrality[`${mode}`];
             } 
         }
-        return parseFloat(min.toFixed(3))
+        return fixNum(min)
     }
 
 
@@ -278,7 +321,39 @@ const DescriptiveStatistics = (props) => {
    
     return (
         <>
-        <Button onClick={printDocument}  variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none", }} > Import </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button variant="contained" startIcon={<SummarizeOutlinedIcon/>} onClick={(event) => setAnchorEl(event.currentTarget)}
+            sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 100, textTransform: "none", }}>
+                Report
+            </Button>
+            <Popover sx={{position: 'absolute !important',}}
+                open={open}
+                disableScrollLock={'true'}
+                anchorEl={anchorEl}
+                onClose={() => setAnchorEl(null)}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+                }}
+            >
+                <List>
+                    <ListItem button sx={{ "&:hover": { backgroundColor: '#ededff'} }}>
+                    <CSVLink data={csvData} headers={csvHeaders} filename={`${props.network.title}.csv`} style={{ textDecoration: 'none' }}>
+                        <Typography sx={{fontFamily: 'Roboto', fontSize: 14, textDecorationLine: 'none', color: '#000000DE'}}>Export as CSV</Typography>
+                    </CSVLink>
+            
+                    </ListItem>
+                    <ListItem button onClick={printDocument} sx={{ "&:hover": { backgroundColor: '#ededff'}} }>
+                        <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14}}>Export as PDF</Typography>} />
+                    </ListItem>
+                </List>                 
+            </Popover>
+        </Box>
+        
         <Stack id="pdfdiv" direction={'column'}>
             <Box id="first" sx={{ backgroundColor: '#f0f3f7' }}>
                 <Box>
@@ -333,7 +408,7 @@ const DescriptiveStatistics = (props) => {
                                     Density
                                 </Typography>
                                 <Typography variant="h4" sx={{ textAlign: 'center'}}>
-                                    {parseFloat((props.network?.globalMeasures.density).toFixed(3))}
+                                    {fixNum(props.network?.globalMeasures.density)}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -359,7 +434,7 @@ const DescriptiveStatistics = (props) => {
                                     Avg. Clustering
                                 </Typography>
                                 <Typography variant="h4" sx={{ textAlign: 'center'}}>
-                                    {parseFloat((props.network?.localMeasures.average_clustering).toFixed(3))}
+                                    {fixNum(props.network?.localMeasures.average_clustering)}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -369,7 +444,7 @@ const DescriptiveStatistics = (props) => {
                                     Transitivity
                                 </Typography>
                                 <Typography variant="h4" sx={{ textAlign: 'center'}}>
-                                    {parseFloat((props.network?.localMeasures.transitivity).toFixed(3))}
+                                    {fixNum(props.network?.localMeasures.transitivity)}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -379,7 +454,7 @@ const DescriptiveStatistics = (props) => {
                                     Reciprocity
                                 </Typography>
                                 <Typography variant="h4" sx={{ textAlign: 'center'}}>
-                                    {parseFloat((props.network?.localMeasures.reciprocity).toFixed(3))}
+                                    {fixNum(props.network?.localMeasures.reciprocity)}
                                 </Typography>
                             </CardContent>
                         </Card>

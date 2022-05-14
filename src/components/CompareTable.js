@@ -42,7 +42,7 @@ const CompareTable = (props) => {
             avgOfAvgClustering: avgOfAvgClustering, avgTransitivity: avgTransitivity, avgReciprocity: avgReciprocity,
             avgOfAvgDegree: avgOfAvgDegree, avgOfAvgCloseness: avgOfAvgCloseness, avgOfAvgBetweenness: avgOfAvgBetweenness
         }); 
-}, []);
+    }, []);
 
     const calcAvgCentrality = (row, mode) => {
         const nodes = row.nodes;
@@ -96,7 +96,6 @@ const CompareTable = (props) => {
                         {props.compareList.map((row) => (
                             <TableRow
                             key={row.id}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row" sx={{ width: 150 }}>{row.title}</TableCell>
                                 <TableCell align="left" sx={{ color: checkCellColor(row.nodes.length, avgData?.avgNodes) }} >{row.nodes.length}</TableCell>

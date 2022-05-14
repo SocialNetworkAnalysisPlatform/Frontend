@@ -83,7 +83,6 @@ export const Navbar = () => {
             </ListItemIcon>
             <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Projects</Typography>} />
           </ListItem>
-
         </List>
         <Divider />
 

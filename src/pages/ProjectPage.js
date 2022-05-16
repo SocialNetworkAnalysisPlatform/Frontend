@@ -161,13 +161,16 @@ const ProjectPage = (props) => {
       const docData = doc.data();
       if (docData) {
         const { owner, collaborators, createdAt, conversations, ...data } = docData;
+        
         // Check if user have access to project
         if (
           owner == currentUser.uid ||
           collaborators.includes(currentUser.uid)
         ) {
-            const ownerData = await service.readUserData(owner);
-            const collaboratorsData = await Promise.all(
+          const ownerData = await service.readUserData(owner);
+
+            if(collaborators) {
+              const collaboratorsData = await Promise.all(
                 collaborators?.map(async(collaborator) => {
                     const data = await service.readUserData(collaborator);
                     return {
@@ -192,6 +195,8 @@ const ProjectPage = (props) => {
               clCollaborators[`${collaborator.id}`] = true;
             });
             setClCreatedBy(clCollaborators);
+            }
+         
 
             const conversationsData = [];
             // for loop conversations and get doc data
@@ -229,6 +234,7 @@ const ProjectPage = (props) => {
             setClConversations(clNetworks);
           }
           }
+
       }
     });
 

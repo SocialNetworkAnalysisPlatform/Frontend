@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect  } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Layout } from '../components/Layout'
 import Collaborator from '../components/Collaborator';
 import { useAuth } from '../contexts/AuthContext'
@@ -21,16 +21,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
 import { db, rtdb } from "../utils/firebase";
-import { collection, addDoc } from "firebase/firestore"; 
-import { ref, onValue} from "firebase/database";
+import { collection, addDoc } from "firebase/firestore";
+import { ref, onValue } from "firebase/database";
 
 import { Link, useHistory, useLocation } from "react-router-dom";
 
 const NewProject = () => {
   const history = useHistory();
   const { currentUser } = useAuth();
-  
-  const [newProject, setNewProject] = useState({id: '', shared: false, name: '', description: ''});
+
+  const [newProject, setNewProject] = useState({ id: '', shared: false, name: '', description: '' });
 
   const [users, setUsers] = useState([]);
   const [collaborator, setCollaborator] = useState();
@@ -55,41 +55,64 @@ const NewProject = () => {
   const createNewProject = async (e) => {
     e.preventDefault();
 
-    console.log(collaborators);
-    
-    if(newProject.name !== '') {
+    if (newProject.name !== '') {
       try {
-          const docRef = await addDoc(collection(db, "Projects"), {
-            name: newProject.name,
-            description: newProject.description,
-            pendingCollaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
-            owner: currentUser.uid,
-            createdAt: new Date(),
+        const docRef = await addDoc(collection(db, "Projects"), {
+          name: newProject.name,
+          description: newProject.description,
+          pendingCollaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
+          collaborators: [],
+          owner: currentUser.uid,
+          createdAt: new Date(),
+        });
+
+        const collaboration = {
+          pendingCollaborators: collaborators,
+          projectName: newProject.name,
+          projectId: docRef.id,
+        }
+        history.replace(location.state?.from ?? "/projects");
+        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/inviteCollaborators`, {
+          method: "POST",
+          body: JSON.stringify({
+            collaboration,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        })
+          .then(response =>
+            response.json())
+          .then(response => {
+            if (!response?.status) {
+            } else {
+            }
+          })
+          .catch(error => {
+            console.error("Error:", error)
           });
 
-          https://europe-west1-snaplatform.cloudfunctions.net/inviteCollaborators
-          
-          history.replace(location.state?.from ?? "/projects");
-        } catch (e) {
-          console.error("Error adding document: ", e);
-        }
-      } else {
-        alert("Project name missing, can't create new project");
+      } catch (e) {
+        console.error("Error adding document: ", e);
       }
+    } else {
+      alert("Project name missing, can't create new project");
+    }
   }
-  
+
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0)
-}, [])
+  }, [])
 
 
   useEffect(() => {
     const dbRef = ref(rtdb, 'Users/');
     onValue(dbRef, async (snapshot) => {
       const data = snapshot.val();
-      let users = Object.entries(data).map(([key, value]) => ({ id: key , ...value}));
-      users = users.filter((user) => user.id !== currentUser.uid) 
+      let users = Object.entries(data).map(([key, value]) => ({ id: key, ...value }));
+      users = users.filter((user) => user.id !== currentUser.uid)
       setUsers(users);
     });
   }, []);
@@ -97,95 +120,95 @@ const NewProject = () => {
   const deleteCollaborator = (id) => {
     setCollaborators(prevState => (
       prevState.filter((collaborator) => collaborator.id !== id)
-  ))
+    ))
   };
 
   const eachCollaborator = (item, index) => {
-    return  (<Collaborator key={item.id} index={index} collaborator={item} amount={collaborators.length} delete={deleteCollaborator}></Collaborator>)
+    return (<Collaborator key={item.id} index={index} collaborator={item} amount={collaborators.length} delete={deleteCollaborator}></Collaborator>)
   };
 
   const handleSelect = (event, value) => {
     setOpenModal(false);
-   
-    if(collaborator) {
-      if(collaborators.find(collaboratorOption => collaboratorOption.id === collaborator.id)) {
+
+    if (collaborator) {
+      if (collaborators.find(collaboratorOption => collaboratorOption.id === collaborator.id)) {
         console.log("Collaborator already exists");
       } else {
-      setCollaborators(prevState => ([
-        ...prevState, 
-           collaborator     
+        setCollaborators(prevState => ([
+          ...prevState,
+          collaborator
         ]));
-      setCollaborator(null);
-    } 
+        setCollaborator(null);
+      }
     }
   };
 
   return (
     <>
       <Layout>
-          <Box sx={{ width: '50vw' }}>
-            <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Create a New Project</Typography>
-            <Typography color="textSecondary" sx={{ fontSize: 14 }}>A project contains all conversations files.</Typography>
-            <Divider light sx={{ mt: 3, mb: 3 }}/>
-            <Stack spacing={4}>
-              <FormControl>
-                <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Project name</FormLabel>
-                <OutlinedInput size="small" sx={{ width: 300, backgroundColor: 'white' }} required value={newProject.name} onChange={(e) => setNewProject({...newProject, name: e.target.value}) }/>
-              </FormControl>
-              <FormControl>
-                <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description (optional)</FormLabel>
-                <OutlinedInput size="small" sx={{ width: '50vw', backgroundColor: 'white' }} required value={newProject.description} onChange={(e) => setNewProject({...newProject, description: e.target.value}) }/>
-              </FormControl>
-            </Stack>
+        <Box sx={{ width: '50vw' }}>
+          <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Create a New Project</Typography>
+          <Typography color="textSecondary" sx={{ fontSize: 14 }}>A project contains all conversations files.</Typography>
+          <Divider light sx={{ mt: 3, mb: 3 }} />
+          <Stack spacing={4}>
+            <FormControl>
+              <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Project name</FormLabel>
+              <OutlinedInput size="small" sx={{ width: 300, backgroundColor: 'white' }} required value={newProject.name} onChange={(e) => setNewProject({ ...newProject, name: e.target.value })} />
+            </FormControl>
+            <FormControl>
+              <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Description (optional)</FormLabel>
+              <OutlinedInput size="small" sx={{ width: '50vw', backgroundColor: 'white' }} required value={newProject.description} onChange={(e) => setNewProject({ ...newProject, description: e.target.value })} />
+            </FormControl>
+          </Stack>
 
-            <Divider light sx={{ mt: 3, mb: 3 }}/>
+          <Divider light sx={{ mt: 3, mb: 3 }} />
 
-            <Stack direction={'row'} justifyContent={'space-between'}>
-              <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Collaborators</Typography>
-              { // Show button depending on collaborators array length > 0 (true case)
-                collaborators.length > 0 &&
-                <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
-                  Add 
-                </Button>
-              }
-            </Stack>   
+          <Stack direction={'row'} justifyContent={'space-between'}>
+            <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Collaborators</Typography>
+            { // Show button depending on collaborators array length > 0 (true case)
+              collaborators.length > 0 &&
+              <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
+                Add
+              </Button>
+            }
+          </Stack>
 
-            <Box sx={{ mt: 2, minHeight: 170, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.2)',  borderRadius: 2, backgroundColor: 'white' }}>
+          <Box sx={{ mt: 2, minHeight: 170, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.2)', borderRadius: 2, backgroundColor: 'white' }}>
             { // Show items depending on collaborators array length (ternary expression - true and false case)
               collaborators.length > 0
-              ?
-              <List sx={{ width: '100%', bgcolor: 'background.paper'}}>
-                { collaborators.map(eachCollaborator) }
-              </List>
-              : 
-              <Stack sx={{alignItems: 'center', mt: 4, mb: 4}} spacing={2}>
-                <GroupsIcon sx={{ fontSize: 50, fontWeight: 500, color: "#6366f1" }}/>
-                <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#000000DE" }}>You have not invited any collaborators yet</Typography>
-                <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none' }} >
+                ?
+                <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                  {collaborators.map(eachCollaborator)}
+                </List>
+                :
+                <Stack sx={{ alignItems: 'center', mt: 4, mb: 4 }} spacing={2}>
+                  <GroupsIcon sx={{ fontSize: 50, fontWeight: 500, color: "#6366f1" }} />
+                  <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#000000DE" }}>You have not invited any collaborators yet</Typography>
+                  <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none' }} >
                     Add
-                </Button>
-              </Stack>
+                  </Button>
+                </Stack>
             }
-            </Box>
-            
-            <Divider light sx={{ mt: 3, mb: 3 }}/>
-
-            <Button onClick={(e) => createNewProject(e)} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
-              Create project 
-            </Button>
           </Box>
+
+          <Divider light sx={{ mt: 3, mb: 3 }} />
+
+          <Button onClick={(e) => createNewProject(e)} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
+            Create project
+          </Button>
+        </Box>
       </Layout>
 
-      <Modal open={openModal} onClose={() => setOpenModal(false)} > 
+      <Modal open={openModal} onClose={() => setOpenModal(false)} >
         <Stack sx={modalStyle} >
-          <Box sx={{ textAlign:'right', mt: -2 }}>
+          <Box sx={{ textAlign: 'right', mt: -2 }}>
             <IconButton onClick={() => setOpenModal(false)} color="default" component="span">
               <CloseIcon sx={{ fontSize: 16 }} />
             </IconButton>
           </Box>
           <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#000000DE" }}>Add a collaborator to your project</Typography>
-        
-           <Autocomplete open={openAutocomplete} sx={{ mt: 2 }} 
+
+          <Autocomplete open={openAutocomplete} sx={{ mt: 2 }}
             onOpen={() => {
               if (inputSearchValue) {
                 setOpenAutocomplete(true);
@@ -208,14 +231,14 @@ const NewProject = () => {
             }}
             options={users}
             getOptionLabel={(option) => option.email}
-   
+
             renderInput={(params) => (
-              <TextField {...params} variant="outlined" placeholder='Search by email'/>
+              <TextField {...params} variant="outlined" placeholder='Search by email' />
             )}
-          /> 
-          
-          <Button disabled={disabledSelect} onClick={handleSelect} variant="contained" sx={{ mt: 3,  backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
-            Select 
+          />
+
+          <Button disabled={disabledSelect} onClick={handleSelect} variant="contained" sx={{ mt: 3, backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
+            Select
           </Button>
         </Stack>
       </Modal>

@@ -29,7 +29,7 @@ export const Navbar = () => {
   const history = useHistory();
 
   function handleRedirectToOrBack() {
-    history.replace(location.state?.from ?? "/explore");
+    history.replace(location.state?.from ?? "/projects");
   }
 
   if (currentUser) {
@@ -70,18 +70,18 @@ export const Navbar = () => {
         <Divider />
 
         <List>
+        <ListItem button component={NavLink} to="/projects" sx={{ "&:hover": { backgroundColor: '#ededff'}} }>
+            <ListItemIcon>
+              <FolderOutlinedIcon sx={{ color: '#6366f1' }} />
+            </ListItemIcon>
+            <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Projects</Typography>} />
+          </ListItem>
+
           <ListItem button component={NavLink} to="/explore" sx={{ "&:hover": { backgroundColor: '#ededff'} }}>
             <ListItemIcon>
               <ExploreOutlinedIcon sx={{ color: '#6366f1', }}/>
             </ListItemIcon>
             <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Explore</Typography>} />
-          </ListItem>
-
-          <ListItem button component={NavLink} to="/projects" sx={{ "&:hover": { backgroundColor: '#ededff'}} }>
-            <ListItemIcon>
-              <FolderOutlinedIcon sx={{ color: '#6366f1' }} />
-            </ListItemIcon>
-            <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Projects</Typography>} />
           </ListItem>
         </List>
         <Divider />

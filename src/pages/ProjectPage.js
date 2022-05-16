@@ -224,7 +224,6 @@ const ProjectPage = (props) => {
             ));
             setConversations(conversationsData);
             setFilteredNetworks(conversationsData);
-            setLoading(false);
 
             // Create dynamic key & value: network id : false
             const clNetworks = {};
@@ -233,6 +232,8 @@ const ProjectPage = (props) => {
             });
             setClConversations(clNetworks);
           }
+          setLoading(false);
+
           }
 
       }

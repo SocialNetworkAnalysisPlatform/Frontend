@@ -33,7 +33,7 @@ import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import IconButton from "@mui/material/IconButton";
 import Conversation from "../components/Conversation";
-import { AlertDialog } from "@chakra-ui/react";
+import SkeletonTableRow from "../skeletons/SkeletonTableRow"
 import { useParams } from "react-router-dom";
 
 import { db } from "../utils/firebase";
@@ -67,6 +67,8 @@ const ProjectPage = (props) => {
   const [clConversations, setClConversations] = useState({});
 
   const [compareList, setCompareList] = useState([]);
+
+  const [loading, setLoading] = useState(true);
 
   const MAX_NETWORKS_FOR_COMPARE = 4;
 
@@ -217,6 +219,7 @@ const ProjectPage = (props) => {
             ));
             setConversations(conversationsData);
             setFilteredNetworks(conversationsData);
+            setLoading(false);
 
             // Create dynamic key & value: network id : false
             const clNetworks = {};
@@ -349,9 +352,14 @@ const ProjectPage = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredNetworks
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(eachNetwork)}
+              {
+                loading === false ?
+                filteredNetworks
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(eachNetwork)
+                :
+                [1,2,3].map((row) => <SkeletonTableRow/> )
+              }
             </TableBody>
           </Table>
         </TableContainer>

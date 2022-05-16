@@ -10,6 +10,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { Link } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
 
 import Project from "../components/Project";
 
@@ -28,6 +29,8 @@ const ProjectsPage = () => {
 
   const [filteredProjects, setFilteredProjects] = useState(projects);
   const [searchInput, setSearchInput] = useState("");
+
+  const [loading, setLoading] = useState(true);
 
   // Scroll to top on page load
   useEffect(() => {
@@ -96,6 +99,7 @@ const ProjectsPage = () => {
     allProjects.sort((a, b) => b.createdAt - a.createdAt)
     setProjects(allProjects);
     setFilteredProjects(allProjects);
+    setLoading(false);
   }, [projectsOwnedByMe.length, projectsCollaboratedWithMe.length]);
 
 
@@ -142,8 +146,17 @@ const ProjectsPage = () => {
             New
           </Button>
         </Stack>
-        <Box sx={{ mt: 2 }}>{filteredProjects.map(eachProject)}</Box>
-        <Divider light sx={{ mt: 3 }} />
+        {
+          loading === false ?
+          <>
+          <Box sx={{ mt: 2 }}>{filteredProjects.map(eachProject)}</Box>
+          <Divider light sx={{ mt: 3 }} />
+          </>
+          :
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 15}}>
+            <ClipLoader color={'#6366F1'} loading={loading} size={100} />
+          </Box>
+        }
       </Box>
     </Layout>
   );

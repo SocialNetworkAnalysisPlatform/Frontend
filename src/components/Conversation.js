@@ -47,8 +47,8 @@ const Conversation = (props) => {
             <TableCell align={'left'}>{props.network.description}</TableCell>
             <TableCell align={'left'}>{props.network.source.owner}</TableCell>
             <TableCell align={'left'}>
-                <Stack direction={"row"} alignItems={"center"}>
-                    <Avatar sx={{ width: 25, height: 25, mr: 2 }} src={props.network.creator.photoUrl}/>
+                <Stack direction={"row"} alignItems={"center"} gap={2}>
+                    <Avatar sx={{ width: 25, height: 25 }} src={props.network.creator.photoUrl}/>
                     {props.network.creator.displayName}
                 </Stack>
             </TableCell>
@@ -69,7 +69,6 @@ const Conversation = (props) => {
                 </Tooltip>
             }
             </TableCell>
-
     </TableRow>
     )
 }

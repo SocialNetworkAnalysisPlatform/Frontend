@@ -33,6 +33,7 @@ import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import IconButton from "@mui/material/IconButton";
 import Conversation from "../components/Conversation";
+import Skeleton from '@mui/material/Skeleton';
 import SkeletonTableRow from "../skeletons/SkeletonTableRow"
 import { useParams } from "react-router-dom";
 
@@ -276,9 +277,14 @@ const ProjectPage = (props) => {
 
   return (
     <Layout>
-      <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>
-        {project?.name}
-      </Typography>
+      {
+        loading === false ?
+        <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>
+          {project?.name}
+        </Typography>
+        :
+        <Skeleton variant="text" width={180} height={36}/>
+      }
       <Stack direction={"row"} spacing={3} sx={{ mt: 2 }}>
         <Button component={Link} to={`/projects/${project?.id}/new-conversation`} startIcon={<AddIcon />} variant="contained"
           sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }}>

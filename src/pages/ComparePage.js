@@ -185,7 +185,12 @@ const ComparePage = (props) => {
     }
 }
 
-  
+  useEffect(() => {
+    setSelectedGlobal();
+    setSelectedLocal();
+    setSelectedIndividual(); 
+  }, [selectedMeasure]);
+
   useEffect(() => {
     networksData.forEach( (item, index) => {
       graphBuilder(item, selectedGlobal)

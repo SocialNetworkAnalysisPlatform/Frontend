@@ -31,7 +31,7 @@ const SkeletonTableRow = () => {
             <TableCell align={'center'}> 
                 <Skeleton variant="circular" width={25} height={25} sx={{ ml: 1.5 }}/>
             </TableCell>
-    </TableRow>
+        </TableRow>
     );
 };
 export default SkeletonTableRow;

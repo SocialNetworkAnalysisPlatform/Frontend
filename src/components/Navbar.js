@@ -20,7 +20,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
-import Logo from '../assets/images/snap-logo.png';
+import Logo from '../assets/images/snap-logo-appbar.png';
 
 const drawerWidth = 240;
 

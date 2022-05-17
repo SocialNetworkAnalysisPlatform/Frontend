@@ -14,18 +14,57 @@ import Typography from '@mui/material/Typography';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import SkeletonExploreCard from '../skeletons/SkeletonExploreCard'
 
+import { db } from "../utils/firebase";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+
+import Service from '../utils/service'
+import { set } from 'firebase/database';
+
+const service = Service.getInstance();
+
 const ExplorePage = () => {
 
-  const [cards, setCards] = useState([
-    { id: 1, title: 'Project', description: 'description', img: '', views: 123  },
-    { id: 2, title: 'Project', description: 'description', img: '', views: 123  },
-    { id: 3, title: 'Project', description: 'description', img: '', views: 123  },
-    { id: 4, title: 'Project', description: 'description', img: '', views: 123  },
-    { id: 5, title: 'Project', description: 'description', img: '', views: 123  },
-    { id: 6, title: 'Project', description: 'description', img: '', views: 123  },
-  ]);
-
+  const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+
+    const q = query(collection(db, "Conversations"), where("isPublished", "==", true));
+    const unsub = onSnapshot(q, async (querySnapshot) => {
+    
+      const conversationsData = [];
+
+      if(querySnapshot?.size > 0) {
+        await Promise.all(
+          querySnapshot.docs.map(async(docSnap) => {
+
+            const docData = docSnap.data();
+      
+            const { creator, createdAt, ...data } = docData;
+            const creatorData = await service.readUserData(creator);
+          
+            const shortestPath = await service.getNetworkShortestPath(docSnap.ref.path);
+            
+            conversationsData.push({ 
+              id: docSnap.id,
+              creator: { id: creator, displayName: creatorData.displayName, photoUrl: creatorData.photoUrl },
+              createdAt: createdAt.toDate(),
+              shortestPath,
+              views: 0,
+              ...data,
+            });
+          }));
+        setCards(conversationsData);
+      }
+      setLoading(false);
+
+    });
+
+    return () => {
+      unsub();
+    };
+  }, []);
+
 
     // Scroll to top on page load
     useEffect(() => {

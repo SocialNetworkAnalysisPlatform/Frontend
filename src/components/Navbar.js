@@ -1,7 +1,5 @@
-import React from 'react'
-import { FaMoon, FaSun } from 'react-icons/fa'
+import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import Navlink from './Navlink'
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -19,7 +17,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
+import ExploreTwoToneIcon from '@mui/icons-material/ExploreTwoTone';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
+import FolderTwoToneIcon from '@mui/icons-material/FolderTwoTone';
 import Logo from '../assets/images/snap-logo-appbar.png';
 
 const drawerWidth = 240;
@@ -28,7 +28,7 @@ export const Navbar = () => {
   const { logout, currentUser } = useAuth()
   const history = useHistory();
 
-  function handleRedirectToOrBack() {
+  const handleRedirectToOrBack = () => {
     history.replace(location.state?.from ?? "/projects");
   }
 
@@ -70,16 +70,26 @@ export const Navbar = () => {
         <Divider />
 
         <List>
-        <ListItem button component={NavLink} to="/projects" sx={{ "&:hover": { backgroundColor: '#ededff'}} }>
+        <ListItem button component={NavLink} exact to="/projects" sx={{ "&:hover": { backgroundColor: '#ededff'}} }>
             <ListItemIcon>
-              <FolderOutlinedIcon sx={{ color: '#6366f1' }} />
+              {
+                location.pathname.startsWith('/projects') ?
+                <FolderTwoToneIcon sx={{ color: '#6366f1' }}/>
+                :
+                <FolderOutlinedIcon sx={{ color: '#6366f1' }} />
+              }
             </ListItemIcon>
             <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Projects</Typography>} />
           </ListItem>
 
-          <ListItem button component={NavLink} to="/explore" sx={{ "&:hover": { backgroundColor: '#ededff'} }}>
+          <ListItem button component={NavLink} exact to="/explore" sx={{ "&:hover": { backgroundColor: '#ededff'},  }}>
             <ListItemIcon>
-              <ExploreOutlinedIcon sx={{ color: '#6366f1', }}/>
+            {
+                 location.pathname.startsWith('/explore') ?
+                <ExploreTwoToneIcon sx={{ color: '#6366f1' }}/>
+                :
+                <ExploreOutlinedIcon sx={{ color: '#6366f1' }} />
+              }
             </ListItemIcon>
             <ListItemText primary={<Typography sx={{fontFamily: 'Roboto', fontSize: 14, fontWeight: 700}}>Explore</Typography>} />
           </ListItem>

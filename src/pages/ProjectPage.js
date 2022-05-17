@@ -25,7 +25,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import Checkbox from "@mui/material/Checkbox";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -367,9 +367,27 @@ const ProjectPage = (props) => {
             <TableBody>
               {
                 loading === false ?
-                filteredNetworks
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map(eachNetwork)
+                (
+                  filteredNetworks.length > 0 ?
+                  filteredNetworks
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map(eachNetwork)
+                  :
+                  <TableRow sx={{ textAlign: 'center', marginLeft: 10, marginRight: 10 }}>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell>
+                      <Stack sx={{ display:'block', textAlign: 'center'}}>
+                      <Inventory2OutlinedIcon sx={{ color: '#d0d0d0', fontSize: 35 }} />
+                      <Typography sx={{ color: '#d0d0d0' }}>No Data</Typography>
+                      </Stack>
+                    </TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                )
                 :
                 [1,2,3].map((row) => <SkeletonTableRow/> )
               }

@@ -21,11 +21,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
 import { db, rtdb } from "../utils/firebase";
-import { collection, addDoc } from "firebase/firestore"; 
+import { doc, setDoc } from "firebase/firestore"; 
 import { ref, onValue} from "firebase/database";
 
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { propsToClassKey } from '@mui/styles';
+import Service from '../utils/service'
+
+const service = Service.getInstance();
 
 const ProjectSettingsPage = (props) => {
   const history = useHistory();
@@ -40,13 +43,13 @@ const ProjectSettingsPage = (props) => {
 
   const [users, setUsers] = useState([]);
   const [collaborator, setCollaborator] = useState();
-  const [collaborators, setCollaborators] = useState(props.location?.state.collaborators);
-
+  const [collaborators, setCollaborators] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [inputSearchValue, setInputSearchValue] = useState("");
   const [disabledSelect, setDisabledSelect] = useState(true);
-  console.log("collaborators", collaborators)
+
+
   
   const modalStyle = {
     position: 'absolute',
@@ -59,42 +62,94 @@ const ProjectSettingsPage = (props) => {
     borderRadius: 2,
     p: 4,
   };
-  const createNewProject = async (e) => {
+  const setProject = async (e) => {
     e.preventDefault();
 
     if(currProject.name !== '') {
       try {
-          const docRef = await addDoc(collection(db, "Projects"), {
+          const oldCollaborators = props.location?.state.collaborators;
+          const pendingCollaborators = collaborators?.filter((collaborator) => !oldCollaborators?.includes(collaborator.id));
+          const pendingCollaboratorsIds = pendingCollaborators?.map((collaborator) => collaborator.id);
+          const currentCollaborators = collaborators?.filter((collaborator) => !pendingCollaboratorsIds?.includes(collaborator.id));
+
+          const docRef = await setDoc(doc(db, "Projects", currProject.id), {
             name: currProject.name,
             description: currProject.description,
-            collaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
-            owner: currentUser.uid,
-            createdAt: new Date(),
+            collaborators: currentCollaborators?.map((collaborator) => collaborator.id)
+          }, {
+            merge: true
           });
-          history.replace(location.state?.from ?? "/projects");
+
+        const collaboration = {
+          pendingCollaborators: pendingCollaborators,
+          projectName: currProject.name,
+          projectId: currProject.id,
+        }
+        history.replace(location.state?.from ?? "/projects");
+        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/inviteCollaborators`, {
+          method: "POST",
+          body: JSON.stringify({
+            collaboration,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        })
+          .then(response =>
+            response.json())
+          .then(response => {
+            if (!response?.status) {
+            } else {
+            }
+          })
+          .catch(error => {
+            console.error("Error:", error)
+          });
+
         } catch (e) {
           console.error("Error adding document: ", e);
         }
       } else {
-        alert("Project name missing, can't create new project");
+        alert("Project name missing, can't save project");
       }
   }
   
-  // Scroll to top on page load
+ 
+  useEffect(async () => {
+    const collaborators = props.location?.state.collaborators;
+    if(collaborators && collaborators.length > 0) {
+
+      const collaboratorsData = await Promise.all(collaborators?.map(async(collaborator) => {
+            const data = await service.readUserData(collaborator);
+            return {
+                id: collaborator,
+                ...data
+            };
+        })
+    );
+    setCollaborators(collaboratorsData);
+    }
+
+}, [])
+
+useEffect(() => {
+  const dbRef = ref(rtdb, 'Users/');
+  onValue(dbRef, async (snapshot) => {
+    const data = snapshot.val();
+    let users = Object.entries(data).map(([key, value]) => ({ id: key , ...value}));
+    users = users.filter((user) => user.id !== currentUser.uid && user.id !== props.location?.state.owner.id
+    && !props.location?.state.collaborators.includes(user.id) && !props.location?.state.pendingCollaborators.includes(user.id))
+    setUsers(users);
+  });
+}, []);
+
+ // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0)
 }, [])
 
 
-  useEffect(() => {
-    const dbRef = ref(rtdb, 'Users/');
-    onValue(dbRef, async (snapshot) => {
-      const data = snapshot.val();
-      let users = Object.entries(data).map(([key, value]) => ({ id: key , ...value}));
-      users = users.filter((user) => user.id !== currentUser.uid) 
-      setUsers(users);
-    });
-  }, []);
 
   const deleteCollaborator = (id) => {
     setCollaborators(prevState => (
@@ -172,7 +227,7 @@ const ProjectSettingsPage = (props) => {
             
             <Divider light sx={{ mt: 3, mb: 3 }}/>
 
-            <Button onClick={(e) => createNewProject(e)} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+            <Button onClick={(e) => setProject(e)} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
               Save
             </Button>
           </Box>

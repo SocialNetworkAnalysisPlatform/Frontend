@@ -60,7 +60,7 @@ const NewProject = () => {
         const docRef = await addDoc(collection(db, "Projects"), {
           name: newProject.name,
           description: newProject.description,
-          pendingCollaborators: collaborators.map(collaborator => collaborator.id), // uid of each collaborator
+          pendingCollaborators: collaborators?.map(collaborator => collaborator.id), // uid of each collaborator
           collaborators: [],
           owner: currentUser.uid,
           createdAt: new Date(),

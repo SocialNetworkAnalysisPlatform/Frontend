@@ -242,6 +242,11 @@ const ProjectNetwork = (props) => {
         },
     };
 
+    useEffect(() => {
+        setSelectedGlobal();
+        setSelectedLocal();
+        setSelectedIndividual(); 
+    }, [selectedMeasure]);
 
     useEffect(() => {
         if(networkData) {

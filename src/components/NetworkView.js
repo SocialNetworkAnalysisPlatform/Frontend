@@ -81,7 +81,6 @@ const ProjectNetwork = (props) => {
         const maxEdges = props.network.edges.map(({ weight }) => weight).reduce((a, b) => Math.max(a, b))
         setMaxEdges(maxEdges);
     }
-    console.log("nodes", props.network.nodes)
     useEffect(() => {
         setNetworkData(props.network);
         getMaxEdges()

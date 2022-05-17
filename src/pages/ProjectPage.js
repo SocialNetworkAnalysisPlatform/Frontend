@@ -270,7 +270,8 @@ const ProjectPage = (props) => {
   }
 
   const eachNetwork = (item, index) => {
-    return  (<Conversation key={item.id} index={index} project={project} network={item}
+    const { sources, ...data } = project;
+    return  (<Conversation key={item.id} index={index} project={data} network={item}
             checkedNetwork={handleCheckedNetwork} visibility={handleVisibility}>
             </Conversation>)
   };

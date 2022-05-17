@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { Layout } from '../components/Layout'
 import { useAuth } from '../contexts/AuthContext'
-
+import { Link } from 'react-router-dom'
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
@@ -26,6 +26,7 @@ const ExplorePage = () => {
 
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  console.log(cards)
 
   useEffect(() => {
 
@@ -81,7 +82,8 @@ const ExplorePage = () => {
           loading === false ?
           cards.map((card, index) => {
             return (
-              <Card key={card.id} index={index} sx={{ width: '28%', mr: 5, mb: 5 }}>
+              <Card key={card.id} index={index} sx={{ width: '28%', mr: 5, mb: 5, textDecoration: 'none', "&:hover": { boxShadow: '0 0px 2px 0 #d4d4ff, 0 0px 12px 0 #d4d4ff' }, }}
+                component={Link} to={{ pathname: `/explore/${card.id}`, state: { network: card } }}>
                 <CardContent sx={{ height: 150}}>
                   <Typography gutterBottom variant="h5" component="div">
                     {card.title}

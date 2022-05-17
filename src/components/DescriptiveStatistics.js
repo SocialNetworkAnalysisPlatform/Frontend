@@ -302,7 +302,12 @@ const DescriptiveStatistics = (props) => {
             const imgData = canvas.toDataURL("image/png");
     
             if(isFirstPage) {
-                doc.text(`${props.conversationTitle[0]} / ${props.conversationTitle[1]}`, 5, 10);
+                if(props.type === "conversation") {
+                    doc.text(`${props.conversationTitle[0]} / ${props.conversationTitle[1]}`, 5, 10);
+                }
+                else if (props.type === "explore conversation") {
+                    doc.text(props.conversationTitle, 5, 10);
+                }
             }
     
             doc.addImage(imgData, "JPEG", 5, 15, imgWidth, imgHeight);
@@ -316,7 +321,12 @@ const DescriptiveStatistics = (props) => {
         await printSection("first", doc, true);
         await printSection("second", doc);
     
-        doc.save(`${props.conversationTitle[0]} - ${props.conversationTitle[1]}.pdf`);
+        if(props.type === "conversation") {
+            doc.save(`${props.conversationTitle[0]} - ${props.conversationTitle[1]}.pdf`);
+        }
+        else if (props.type === "explore conversation") {
+            doc.save(props.conversationTitle);
+        }
       };
    
     return (

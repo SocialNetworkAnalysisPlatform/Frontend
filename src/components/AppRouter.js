@@ -21,6 +21,7 @@ import ResetPasswordPage from '../pages/ResetPasswordPage'
 import TestPage from '../pages/TestPage'
 import ComparePage from '../pages/ComparePage'
 import ProjectSettingsPage from '../pages/ProjectSettingsPage'
+import ExploreConversationPage from '../pages/ExploreConversationPage'
 
 const AppRouter = (props) => {
   return (
@@ -30,6 +31,7 @@ const AppRouter = (props) => {
           <Route exact path='/' component={Homepage} />
           <ProtectedRoute exact path='/register' component={Registerpage} />
           <ProtectedRoute exact path='/explore' component={ExplorePage} />
+          <ProtectedRoute exact path='/explore/:id' component={ExploreConversationPage} />
           <ProtectedRoute exact path='/projects' component={ProjectsPage} />
           <ProtectedRoute exact path='/projects/:id' component={ProjectPage} />
           <ProtectedRoute exact path='/conversations/:id' component={ConversationPage} />

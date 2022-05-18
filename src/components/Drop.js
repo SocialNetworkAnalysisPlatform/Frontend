@@ -88,7 +88,6 @@ export default function Dropzone(props) {
   const [checked, setChecked] = useState(false);
   const [fileOwner, setFileOwner] = useState('');
 
-
   const handleUpload = (e) => {
     e.preventDefault();
 
@@ -145,7 +144,7 @@ export default function Dropzone(props) {
         }
 
 
-        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/importConversation`, {
+        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/getMinMaxDates`, {
            method: "POST",
            body: JSON.stringify({ 
              conversation
@@ -162,7 +161,9 @@ export default function Dropzone(props) {
              if(!response?.status) {
               alert("File upload failed due it's content, please select another file");
              } else {
-              history.replace(location.state?.from ?? `/projects/${projectId}`);
+              props.minMaxDates(response.dates);
+              props.uploadedConversation(conversation);
+              props.openModal(true);
               console.log("File uploaded");
              }
           })
@@ -242,7 +243,7 @@ export default function Dropzone(props) {
       />
       <Stack direction="row" gap={2}>
         <Button onClick={handleUpload} disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none", }} > Import </Button>
-        {progress > 0 && <CircularProgressWithLabel value={progress} />}
+        {/* {progress > 0 && <CircularProgressWithLabel value={progress} />} */}
       </Stack>
     </Stack>
   );

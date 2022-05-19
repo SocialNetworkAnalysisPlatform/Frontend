@@ -37,7 +37,7 @@ const Conversation = (props) => {
             <TableCell align={'left'}>
                 <Link
                     to={{
-                        pathname: `/conversations/${props.network.id}`, 
+                        pathname: `/projects/${props.projectId}/conversations/${props.network.id}`, 
                         state: { network: props.network, project: props.project }
                     }} 
                     style={{ textDecoration: "none", color: "#000000DE" ,"&:hover": { color: "#6366f1" }}}>

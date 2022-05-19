@@ -19,11 +19,16 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } fro
 import * as math from 'mathjs';
 import { CSVLink } from "react-csv";
 
-import ReactHighCharts from "react-highcharts";
+// import ReactHighCharts from "react-highcharts";
+// import histogram from "highcharts/modules/histogram-bellcurve";
+// histogram(ReactHighCharts.Highcharts);
 
-import bellcurve from "highcharts/modules/histogram-bellcurve";
-bellcurve(ReactHighCharts.Highcharts);
-
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official';
+import highchartsBellCurve from 'highcharts/modules/histogram-bellcurve';
+if (typeof Highcharts === 'object') {
+    highchartsBellCurve(Highcharts); // Execute the bell curve module
+  }
 
 const useStyles = makeStyles({
     card: {
@@ -91,158 +96,140 @@ const DescriptiveStatistics = (props) => {
         return values;
     }
 
-    const BellCurveConfigDegree = {
+    const degreeHistogramOptions = {
         title: {
-            text: "Bell Curve"
+            text: 'Histogram'
         },
-        xAxis: [
-            {
-                title: {
-                    text: "Data"
-                },
-                alignTicks: false
-            },
-            {
-                title: {
-                    text: "Bell Curve"
-                },
-                alignTicks: false,
-                opposite: true
+        xAxis: [{
+            title: { text: 'Data' },
+            alignTicks: false
+        }, {
+            title: { text: 'Histogram' },
+            alignTicks: false,
+            opposite: true
+        }],
+        yAxis: [{
+            title: { text: 'Data' }
+        }, {
+            title: { text: 'Histogram' },
+            opposite: true
+        }],
+        plotOptions: {
+            histogram: {
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
+                    }
+                }
             }
-        ],
-        yAxis: [
-            {
-                title: { text: "Data" }
-            },
-            {
-                title: { text: "Bell Curve" },
-                opposite: true
-            }
-        ],
-        series: [
-            {
-              name: "Bell curve",
-              type: "bellcurve",
-              xAxis: 1,
-              yAxis: 1,
-              baseSeries: 1,
-              zIndex: -1
-            },
-            {
-              name: "Data",
-              type: "scatter",
-              data: getCentralityValues("degree"),
-              accessibility: {
-                exposeAsGroupOnly: true
-              },
-              marker: {
+        },
+        series: [{
+            name: 'Histogram',
+            type: 'histogram',
+            xAxis: 1,
+            yAxis: 1,
+            baseSeries: 's1',
+            zIndex: -1
+        }, {
+            name: 'Data',
+            type: 'scatter',
+            data: getCentralityValues("degree"),
+            id: 's1',
+            marker: {
                 radius: 1.5
-              }
             }
-        ]
-    };
+        }]
+    }
 
-    const BellCurveConfigCloseness = {
+    const closenessHistogramOptions = {
         title: {
-            text: "Bell Curve"
+            text: 'Histogram'
         },
-        xAxis: [
-            {
-                title: {
-                    text: "Data"
-                },
-                alignTicks: false
-            },
-            {
-                title: {
-                    text: "Bell Curve"
-                },
-                alignTicks: false,
-                opposite: true
+        xAxis: [{
+            title: { text: 'Data' },
+            alignTicks: false
+        }, {
+            title: { text: 'Histogram' },
+            alignTicks: false,
+            opposite: true
+        }],
+        yAxis: [{
+            title: { text: 'Data' }
+        }, {
+            title: { text: 'Histogram' },
+            opposite: true
+        }],
+        plotOptions: {
+            histogram: {
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
+                    }
+                }
             }
-        ],
-        yAxis: [
-            {
-                title: { text: "Data" }
-            },
-            {
-                title: { text: "Bell Curve" },
-                opposite: true
-            }
-        ],
-        series: [
-            {
-              name: "Bell curve",
-              type: "bellcurve",
-              xAxis: 1,
-              yAxis: 1,
-              baseSeries: 1,
-              zIndex: -1
-            },
-            {
-              name: "Data",
-              type: "scatter",
-              data: getCentralityValues("closeness"),
-              accessibility: {
-                exposeAsGroupOnly: true
-              },
-              marker: {
+        },
+        series: [{
+            name: 'Histogram',
+            type: 'histogram',
+            xAxis: 1,
+            yAxis: 1,
+            baseSeries: 's1',
+            zIndex: -1
+        }, {
+            name: 'Data',
+            type: 'scatter',
+            data: getCentralityValues("closeness"),
+            id: 's1',
+            marker: {
                 radius: 1.5
-              }
             }
-        ]
-    };
-   
-    const BellCurveConfigBetweenness  = {
+        }]
+    }
+
+    const betweennessHistogramOptions = {
         title: {
-            text: "Bell Curve"
+            text: 'Histogram'
         },
-        xAxis: [
-            {
-                title: {
-                    text: "Data"
-                },
-                alignTicks: false
-            },
-            {
-                title: {
-                    text: "Bell Curve"
-                },
-                alignTicks: false,
-                opposite: true
+        xAxis: [{
+            title: { text: 'Data' },
+            alignTicks: false
+        }, {
+            title: { text: 'Histogram' },
+            alignTicks: false,
+            opposite: true
+        }],
+        yAxis: [{
+            title: { text: 'Data' }
+        }, {
+            title: { text: 'Histogram' },
+            opposite: true
+        }],
+        plotOptions: {
+            histogram: {
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
+                    }
+                }
             }
-        ],
-        yAxis: [
-            {
-                title: { text: "Data" }
-            },
-            {
-                title: { text: "Bell Curve" },
-                opposite: true
-            }
-        ],
-        series: [
-            {
-              name: "Bell curve",
-              type: "bellcurve",
-              xAxis: 1,
-              yAxis: 1,
-              baseSeries: 1,
-              zIndex: -1
-            },
-            {
-              name: "Data",
-              type: "scatter",
-              data: getCentralityValues("betweenness"),
-              accessibility: {
-                exposeAsGroupOnly: true
-              },
-              marker: {
+        },
+        series: [{
+            name: 'Histogram',
+            type: 'histogram',
+            xAxis: 1,
+            yAxis: 1,
+            baseSeries: 's1',
+            zIndex: -1
+        }, {
+            name: 'Data',
+            type: 'scatter',
+            data: getCentralityValues("betweenness"),
+            id: 's1',
+            marker: {
                 radius: 1.5
-              }
             }
-        ]
-    };
+        }]
+    }
 
     
     const calcStandardDeviation  = (mode) => {
@@ -521,7 +508,7 @@ const DescriptiveStatistics = (props) => {
                                 </Card>
                             </Stack>
                         </CardContent>
-                        <ReactHighCharts config={BellCurveConfigDegree} />
+                        <HighchartsReact highcharts={Highcharts} options={degreeHistogramOptions} />
                     </Card>
                 </Box>
 
@@ -573,7 +560,7 @@ const DescriptiveStatistics = (props) => {
                             </Card>
                         </Stack>
                     </CardContent>
-                    <ReactHighCharts config={BellCurveConfigCloseness}/>
+                    <HighchartsReact highcharts={Highcharts} options={closenessHistogramOptions}/>
                 </Card>
 
                 <Card className={classes.cardGroup} sx={{ mt: '2.7%'}}>
@@ -624,7 +611,7 @@ const DescriptiveStatistics = (props) => {
                             </Card>
                         </Stack>
                     </CardContent>
-                    <ReactHighCharts config={BellCurveConfigBetweenness}/>
+                    <HighchartsReact highcharts={Highcharts} options={betweennessHistogramOptions}/>
                 </Card>
             </Box>
             <Box  id="second" sx={{ backgroundColor: '#f0f3f7' }}>

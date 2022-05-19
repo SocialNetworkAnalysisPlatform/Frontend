@@ -69,9 +69,9 @@ const DescriptiveStatistics = (props) => {
         const network = props.network;
         let data = [{
                 conversationTitle: network.title, nodes: network.nodes.length, edges: network.edges.length, diameter: network.globalMeasures.diameter.value,
-                radius: network.globalMeasures.radius.value, density: fixNum(props.network?.globalMeasures.density), selfLoops: network.globalMeasures.numberOfSelfLoops,
-                avgClustering: fixNum(props.network?.localMeasures.average_clustering), transitivity: fixNum(props.network?.localMeasures.transitivity), 
-                reciprocity: fixNum(props.network?.localMeasures.reciprocity), avgDegreeCentrality: calcAvgCentrality("degree"),
+                radius: network.globalMeasures.radius.value, density: fixNum(network.globalMeasures.density), selfLoops: network.globalMeasures.numberOfSelfLoops,
+                avgClustering: fixNum(network.localMeasures.average_clustering), transitivity: fixNum(network.localMeasures.transitivity), 
+                reciprocity: fixNum(network.localMeasures.reciprocity), avgDegreeCentrality: calcAvgCentrality("degree"),
                 avgClosenessCentrality: calcAvgCentrality("closeness"), avgBetweennessCentrality: calcAvgCentrality("betweenness")
             }
         ];

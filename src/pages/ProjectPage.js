@@ -31,6 +31,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import OutputRoundedIcon from '@mui/icons-material/OutputRounded';
 import IconButton from "@mui/material/IconButton";
 import Conversation from "../components/Conversation";
 import Skeleton from '@mui/material/Skeleton';
@@ -40,6 +41,7 @@ import { useParams } from "react-router-dom";
 import { db } from "../utils/firebase";
 import { doc, onSnapshot, getDoc } from "firebase/firestore";
 import Service from '../utils/service'
+import { CSVLink } from "react-csv";
 
 const service = Service.getInstance();
 
@@ -48,6 +50,7 @@ const ProjectPage = (props) => {
   const params = useParams();
   const [disabledDelete, setDisabledDelete] = useState(true);
   const [disabledCompare, setDisabledCompare] = useState(true);
+  const [disabledExport, setDisabledExport] = useState(true);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -67,11 +70,28 @@ const ProjectPage = (props) => {
   // checked list - created by collaborator filter
   const [clConversations, setClConversations] = useState({});
 
-  const [compareList, setCompareList] = useState([]);
+  const [selectedNetworks, setSelectedNetworks] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
   const MAX_NETWORKS_FOR_COMPARE = 4;
+
+  const [csvData, setCsvData] = useState([]);
+  const csvHeaders = [
+    { label: "Conversation Title", key: "conversationTitle" },
+    { label: "Nodes", key: "nodes" },
+    { label: "Edges", key: "edges" },
+    { label: "Diameter", key: "diameter" },
+    { label: "Radius", key: "radius" },
+    { label: "Density", key: "density" },
+    { label: "Self-loops", key: "selfLoops" },
+    { label: "Avg. Clustering", key: "avgClustering" },
+    { label: "Transitivity", key: "transitivity" },
+    { label: "Reciprocity", key: "reciprocity" },
+    { label: "Avg. Degree Centrality", key: "avgDegreeCentrality" },
+    { label: "Avg. Closeness Centrality", key: "avgClosenessCentrality" },
+    { label: "Avg. Betweenness Centrality", key: "avgBetweennessCentrality" },
+  ];
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -81,6 +101,8 @@ const ProjectPage = (props) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+
 
   const handleSearchAndFilter = (text) => {
     
@@ -138,13 +160,13 @@ const ProjectPage = (props) => {
     }
 
     // Handle creation of networks compare list
-    let networksList = compareList;
+    let networksList = selectedNetworks;
     if (checkValue == true && networksList.length < MAX_NETWORKS_FOR_COMPARE) {
       networksList.push(network);
-      setCompareList(networksList);
+      setSelectedNetworks(networksList);
     } else {
       const res = networksList.filter((networkId) => networkId !== network.id);
-      setCompareList(res);
+      setSelectedNetworks(res);
     }
   };
 
@@ -255,7 +277,7 @@ const ProjectPage = (props) => {
     let networksCnt = 0;
     for (let [key, value] of Object.entries(clConversations)) {
       value ? ++networksCnt : "";
-      networksCnt > 0 ? setDisabledDelete(false) : setDisabledDelete(true);
+      networksCnt > 0 ? ( setDisabledDelete(false), setDisabledExport(false) ) : ( setDisabledDelete(true), setDisabledExport(true) );
       networksCnt > 1 && networksCnt <= MAX_NETWORKS_FOR_COMPARE
         ? setDisabledCompare(false)
         : setDisabledCompare(true);
@@ -267,6 +289,31 @@ const ProjectPage = (props) => {
         data => data.id !== networkId ? data :
         {...data, isPublished: isPublished}
     ))
+  }
+
+  const calcAvgCentrality = (network, mode) => {
+    const nodes = network.nodes;
+    let sum = 0;
+    nodes.forEach((node) =>{
+        sum += node.centrality[`${mode}`]; 
+    });
+    let avg = sum / nodes.length;        
+    return avg
+}
+
+  const exportNetworksToCSV = () => {
+    let networksData = [];
+    selectedNetworks.forEach((network) => {
+      const row = {
+                conversationTitle: network.title, nodes: network.nodes.length, edges: network.edges.length, diameter: network.globalMeasures.diameter.value,
+                radius: network.globalMeasures.radius.value, density: network.globalMeasures.density, selfLoops: network.globalMeasures.numberOfSelfLoops,
+                avgClustering: network.localMeasures.average_clustering, transitivity: network.localMeasures.transitivity, 
+                reciprocity: network.localMeasures.reciprocity, avgDegreeCentrality: calcAvgCentrality(network, "degree"),
+                avgClosenessCentrality: calcAvgCentrality(network, "closeness"), avgBetweennessCentrality: calcAvgCentrality(network, "betweenness")
+      };
+      networksData.push(row)
+    })
+    setCsvData(networksData);
   }
 
   const eachNetwork = (item, index) => {
@@ -294,9 +341,14 @@ const ProjectPage = (props) => {
         <Button disabled={disabledDelete} startIcon={<DeleteOutlineIcon />} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
           Delete
         </Button>
+        <CSVLink data={csvData} headers={csvHeaders} filename={`${project?.name} networks.csv`} style={{ textDecoration: 'none' }}>
+          <Button onClick={exportNetworksToCSV} disabled={disabledExport} startIcon={<OutputRoundedIcon />} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
+            Export as CSV
+          </Button>
+        </CSVLink>
         <Button disabled={disabledCompare} startIcon={<CompareArrowsIcon />} variant="contained"
           sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none" }}
-          component={Link} to={{ pathname: `/compare`, state: { compareList: compareList } }} >
+          component={Link} to={{ pathname: `/compare`, state: { compareList: selectedNetworks } }} >
           Compare
         </Button>
       </Stack>

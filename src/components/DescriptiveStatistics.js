@@ -121,8 +121,9 @@ const DescriptiveStatistics = (props) => {
                         valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
                     }
                 }
-            }
+            }, 
         },
+        colors: ['#d1d1fb', '#434348'],
         series: [{
             name: 'Histogram',
             type: 'histogram',
@@ -168,6 +169,7 @@ const DescriptiveStatistics = (props) => {
                 }
             }
         },
+        colors: ['#d1d1fb', '#434348'],
         series: [{
             name: 'Histogram',
             type: 'histogram',
@@ -213,6 +215,7 @@ const DescriptiveStatistics = (props) => {
                 }
             }
         },
+        colors: ['#d1d1fb', '#434348'],
         series: [{
             name: 'Histogram',
             type: 'histogram',
@@ -629,7 +632,7 @@ const DescriptiveStatistics = (props) => {
                                 <XAxis type="number" />
                                 <YAxis type="category" dataKey="node" width={150} interval={0} textAnchor= "end" />
                                 <Tooltip />
-                                <Bar dataKey="messages" fill='#6366f1'/>
+                                <Bar dataKey="messages" fill='#d1d1fb'/>
                             </BarChart>
                             }
                         </Box>

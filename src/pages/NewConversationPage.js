@@ -209,7 +209,11 @@ const NewConversationPage = (props) => {
         window.scrollTo(0, 0)
     }, [])
 
-    
+    const cleanModal = () => {
+      setStartDate();
+      setEndDate();
+    } 
+
     return (
       <>
         <Layout>
@@ -247,7 +251,7 @@ const NewConversationPage = (props) => {
 
             {
               minMaxDates &&
-              <Modal open={openModal} onClose={() => setOpenModal(false)} >
+              <Modal open={openModal} onClose={() => { setOpenModal(false); cleanModal(); } } >
               <Stack sx={modalStyle} spacing={2}>
                 <Box sx={{ textAlign: 'right', mt: -2 }}>
                   <IconButton onClick={() => setOpenModal(false)} color="default" component="span">

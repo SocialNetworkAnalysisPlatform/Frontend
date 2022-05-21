@@ -53,7 +53,7 @@ const Conversation = (props) => {
                 </Stack>
             </TableCell>
             <TableCell align={'left'}>{dateFormat(new Date(props.network.createdAt), "dd/mm/yyyy")}</TableCell>
-            <TableCell align={'center'}> 
+            <TableCell align={'left'}> 
             {
                 props.network.isPublished ?
                 <Tooltip title="Click to unshare with the community" arrow placement="right">

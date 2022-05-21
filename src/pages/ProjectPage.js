@@ -412,8 +412,8 @@ const ProjectPage = (props) => {
                   Created
                 </TableCell>
                 <TableCell
-                  align={"center"}
-                  style={{ minWidth: 70 }}
+                  align={"left"}
+                  sx={{ width: 50 }}
                 ></TableCell>
               </TableRow>
             </TableHead>

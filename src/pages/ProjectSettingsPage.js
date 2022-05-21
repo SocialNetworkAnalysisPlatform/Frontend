@@ -135,13 +135,17 @@ const ProjectSettingsPage = (props) => {
 
 useEffect(() => {
   const dbRef = ref(rtdb, 'Users/');
-  onValue(dbRef, async (snapshot) => {
+  const unsub = onValue(dbRef, async (snapshot) => {
     const data = snapshot.val();
     let users = Object.entries(data).map(([key, value]) => ({ id: key , ...value}));
     users = users.filter((user) => user.id !== currentUser.uid && user.id !== props.location?.state.owner.id
     && !props.location?.state.collaborators.includes(user.id) && !props.location?.state.pendingCollaborators.includes(user.id))
     setUsers(users);
   });
+
+  return () => {
+    unsub();
+  };
 }, []);
 
  // Scroll to top on page load
@@ -158,7 +162,7 @@ useEffect(() => {
   };
 
   const eachCollaborator = (item, index) => {
-    return  (<Collaborator key={item.id} index={index} collaborator={item} amount={collaborators.length} delete={deleteCollaborator}></Collaborator>)
+    return  (<Collaborator key={item.id} index={index} ownerId={props.location?.state.owner.id} collaborator={item} amount={collaborators.length} delete={deleteCollaborator}></Collaborator>)
   };
 
   const handleSelect = (event, value) => {
@@ -200,7 +204,7 @@ useEffect(() => {
             <Stack direction={'row'} justifyContent={'space-between'}>
               <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Collaborators</Typography>
               { // Show button depending on collaborators array length > 0 (true case)
-                collaborators.length > 0 &&
+                collaborators.length > 0 && currentUser.uid === props.location?.state.owner.id &&
                 <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                   Add 
                 </Button>

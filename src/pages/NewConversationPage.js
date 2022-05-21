@@ -136,6 +136,13 @@ const NewConversationPage = (props) => {
 
     ]);
 
+    useEffect(() => {
+      if(minMaxDates) {
+        setStartDate(minMaxDates.min);
+        setEndDate(minMaxDates.max);
+      }
+  }, [minMaxDates]);
+
     const handleConfirm = async(e) => {
       e.preventDefault();
       if(uploadedConversation) {

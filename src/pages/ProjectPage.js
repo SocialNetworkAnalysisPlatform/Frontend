@@ -76,6 +76,8 @@ const ProjectPage = (props) => {
 
   const MAX_NETWORKS_FOR_COMPARE = 4;
 
+  const [checkedAll, setCheckedAll] = useState(false);
+
   const [csvData, setCsvData] = useState([]);
   const csvHeaders = [
     { label: "Conversation Title", key: "conversationTitle" },
@@ -152,23 +154,50 @@ const ProjectPage = (props) => {
     setFilteredNetworks(result);
   };
 
-  const handleCheckedNetwork = (network, checkValue) => {
+  const handleCheckedNetwork = (network, checkValue, mode) => {
     for (let [key, value] of Object.entries(clConversations)) {
       if (key == network.id) {
         setClConversations({ ...clConversations, [`${network.id}`]: checkValue });
       }
     }
-
-    // Handle creation of networks compare list
+    
+    // Handle creation of selected networks list
     let networksList = selectedNetworks;
-    if (checkValue == true && networksList.length < MAX_NETWORKS_FOR_COMPARE) {
+    if (checkValue == true) {
       networksList.push(network);
       setSelectedNetworks(networksList);
     } else {
-      const res = networksList.filter((networkId) => networkId !== network.id);
-      setSelectedNetworks(res);
+        const res = networksList.filter(({id}) => id !== network.id);
+        setSelectedNetworks(res);
     }
   };
+
+    useEffect(() => {
+      let copyClConversations = {...clConversations}
+      for (let [key, value] of Object.entries(clConversations)) {
+        copyClConversations[`${key}`] = checkedAll
+      }
+      setClConversations(copyClConversations)
+   
+      if(checkedAll) {
+        setSelectedNetworks(filteredNetworks);
+      } else {
+        setSelectedNetworks([]);
+      }
+    }, [checkedAll])
+
+    useEffect(() => {
+      // When checkbox of one of clConversations list changed
+      let networksCnt = 0;
+      for (let [key, value] of Object.entries(clConversations)) {
+        value ? ++networksCnt : "";
+      }
+      networksCnt === 0 ? setCheckedAll(false) : ''
+      networksCnt > 0 ? ( setDisabledDelete(false), setDisabledExport(false) ) : ( setDisabledDelete(true), setDisabledExport(true) );
+      networksCnt > 1 && networksCnt <= MAX_NETWORKS_FOR_COMPARE
+        ? setDisabledCompare(false)
+        : setDisabledCompare(true);
+    }, [clConversations]);
 
   // Scroll to top on page load
   useEffect(() => {
@@ -272,17 +301,6 @@ const ProjectPage = (props) => {
     handleSearchAndFilter(searchInput);
   }, [clCreatedBy]);
 
-  useEffect(() => {
-    // When checkbox of one of clConversations list changed
-    let networksCnt = 0;
-    for (let [key, value] of Object.entries(clConversations)) {
-      value ? ++networksCnt : "";
-      networksCnt > 0 ? ( setDisabledDelete(false), setDisabledExport(false) ) : ( setDisabledDelete(true), setDisabledExport(true) );
-      networksCnt > 1 && networksCnt <= MAX_NETWORKS_FOR_COMPARE
-        ? setDisabledCompare(false)
-        : setDisabledCompare(true);
-    }
-  }, [clConversations]);
 
   const handleVisibility = (networkId, isPublished) => {
     setFilteredNetworks(prevState => prevState.map(
@@ -319,7 +337,7 @@ const ProjectPage = (props) => {
   const eachNetwork = (item, index) => {
     const { sources, ...data } = project;
     return  (<Conversation key={item.id} index={index} project={data} network={item}
-            checkedNetwork={handleCheckedNetwork} visibility={handleVisibility} projectId={project.id}>
+            checkedNetwork={handleCheckedNetwork} visibility={handleVisibility} projectId={project.id} isCheckedAll={checkedAll}>
             </Conversation>)
   };
 
@@ -361,7 +379,7 @@ const ProjectPage = (props) => {
                 handleSearchAndFilter(e.target.value);
               }}
             />
-            <IconButton {...bindTrigger(popupState)} color="default" sx={{ mr: 1 }}>
+            <IconButton {...bindTrigger(popupState)} color="default">
               <FilterAltOutlinedIcon />
             </IconButton>
             <Menu sx={{ ml: -3 }} {...bindMenu(popupState)}>
@@ -395,26 +413,25 @@ const ProjectPage = (props) => {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell align={"left"} style={{ minWidth: 70 }}></TableCell>
-                <TableCell align={"left"} style={{ minWidth: 130 }}>
+                <TableCell align={"left"} padding="checkbox" sx={{ minWidth: 70 }}>
+                  <Checkbox color='default' sx={{ color: '#6366f1' }} checked={checkedAll} onChange={() => setCheckedAll(event.target.checked)}  />
+                </TableCell>
+                <TableCell align={"left"} sx={{ minWidth: 130 }}>
                   Title
                 </TableCell>
-                <TableCell align={"left"} style={{ minWidth: 130 }}>
+                <TableCell align={"left"} sx={{ minWidth: 130 }}>
                   Description
                 </TableCell>
-                <TableCell align={"left"} style={{ minWidth: 130 }}>
+                <TableCell align={"left"} sx={{ minWidth: 130 }}>
                   Received by
                 </TableCell>
-                <TableCell align={"left"} style={{ minWidth: 130 }}>
+                <TableCell align={"left"} sx={{ minWidth: 130 }}>
                   Creator
                 </TableCell>
-                <TableCell align={"left"} style={{ minWidth: 130 }}>
+                <TableCell align={"left"} sx={{ minWidth: 130 }}>
                   Created
                 </TableCell>
-                <TableCell
-                  align={"left"}
-                  sx={{ width: 50 }}
-                ></TableCell>
+                <TableCell align={"left"} sx={{ minWidth: 40 }}></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

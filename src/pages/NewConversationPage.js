@@ -27,7 +27,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dateFormat, { masks } from "dateformat";
-
+import ClipLoader from "react-spinners/ClipLoader";
 import { v4 as uuidv4 } from 'uuid';
 
 const IOSSwitch = styled((props) => (
@@ -102,6 +102,7 @@ const IOSSwitch = styled((props) => (
 const NewConversationPage = (props) => {
     const classes = useStyles();
     const history = useHistory();
+    const [loading, setLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState();
     const [checked, setChecked] = useState(true);
     const [newConversation, setNewConversation] = useState({id: uuidv4().slice(0, 20), title: '', description: '', file: selectedFile});
@@ -112,6 +113,7 @@ const NewConversationPage = (props) => {
     const [endDate, setEndDate] = useState("");
     const [minMaxDates, setMinMaxDates] = useState();
     
+
     const modalStyle = {
       position: 'absolute',
       top: '50%',
@@ -145,6 +147,7 @@ const NewConversationPage = (props) => {
 
     const handleConfirm = async(e) => {
       e.preventDefault();
+      setLoading(true);
       if(uploadedConversation) {
         await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/importConversation`, {
           method: "POST",
@@ -167,6 +170,7 @@ const NewConversationPage = (props) => {
             if(!response?.status) {
              alert("File upload failed due it's content, please select another file");
             } else {
+              setLoading(false);
               setOpenModal(false);
               history.replace(location.state?.from ?? `/projects/${uploadedConversation.projectId}`);
               console.log("File uploaded");
@@ -285,7 +289,14 @@ const NewConversationPage = (props) => {
               </Stack>
             </Modal>
             }
-      
+            {
+              loading ? 
+              <Box sx={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 }}>
+                <ClipLoader color={'#6366F1'} loading={loading} size={40} />
+              </Box>
+              :
+              ''
+            }
       </>
     )
 }

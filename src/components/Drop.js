@@ -5,7 +5,6 @@ import { ref, uploadBytesResumable } from "firebase/storage";
 
 import { makeStyles } from '@mui/styles';
 import Button from "@mui/material/Button";
-import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -14,6 +13,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import ClipLoader from "react-spinners/ClipLoader";
 
 import { useAuth } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
@@ -82,15 +82,14 @@ export default function Dropzone(props) {
   const history = useHistory();
   const classes = useStyles();
   const { currentUser } = useAuth();
-
+  const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
-  const [progress, setProgress] = useState(0);
   const [checked, setChecked] = useState(false);
   const [fileOwner, setFileOwner] = useState('');
 
   const handleUpload = (e) => {
     e.preventDefault();
-
+    setLoading(true);
     if (!props.newConversation || !file) {
       alert("Please select a conversation to import and fill all the missing fields");
       return;
@@ -163,6 +162,7 @@ export default function Dropzone(props) {
              } else {
               props.minMaxDates(response.dates);
               props.uploadedConversation(conversation);
+              setLoading(false);
               props.openModal(true);
               console.log("File uploaded");
              }
@@ -194,31 +194,8 @@ export default function Dropzone(props) {
     [isFocused, isDragAccept, isDragReject]
   );
 
-  const CircularProgressWithLabel = (props) => {
-    return (
-      <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-        <CircularProgress variant="determinate" {...props} />
-        <Box
-          sx={{
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            position: 'absolute',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography variant="caption" component="div" color="text.secondary">
-            {`${Math.round(props.value)}%`}
-          </Typography>
-        </Box>
-      </Box>
-    );
-  }
-
   return (
+    <>
     <Stack gap={2}>
         <FormControl>
           <FormLabel className={classes.label}>Received by</FormLabel>
@@ -243,8 +220,17 @@ export default function Dropzone(props) {
       />
       <Stack direction="row" gap={2}>
         <Button onClick={handleUpload} disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none", }} > Import </Button>
-        {/* {progress > 0 && <CircularProgressWithLabel value={progress} />} */}
       </Stack>
     </Stack>
+    {
+      loading ? 
+      <Box sx={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <ClipLoader color={'#6366F1'} loading={loading} size={100} />
+      </Box>
+      :
+      ''
+    }
+ 
+    </>
   );
 }

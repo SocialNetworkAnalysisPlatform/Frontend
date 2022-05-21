@@ -15,10 +15,9 @@ import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import SkeletonExploreCard from '../skeletons/SkeletonExploreCard'
 
 import { db } from "../utils/firebase";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { doc, collection, query, where, onSnapshot, setDoc, increment} from "firebase/firestore";
 
 import Service from '../utils/service'
-import { set } from 'firebase/database';
 
 const service = Service.getInstance();
 
@@ -73,6 +72,14 @@ const ExplorePage = () => {
     }, [])
 
     
+    const handleClick = async(networkId) => {
+      const docRef = await setDoc(doc(db, "Conversations", networkId), {
+          views: increment(1),
+        }, {
+          merge: true
+        });
+  }
+
   return (
     <Layout>
       <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Explore</Typography>
@@ -83,7 +90,7 @@ const ExplorePage = () => {
           cards.map((card, index) => {
             return (
               <Card key={card.id} index={index} sx={{ width: '28%', mr: 5, mb: 5, textDecoration: 'none', "&:hover": { boxShadow: '0 0px 2px 0 #d4d4ff, 0 0px 12px 0 #d4d4ff' }, }}
-                component={Link} to={{ pathname: `/explore/${card.id}`, state: { network: card } }}>
+              onClick={function(){handleClick(card.id)}} component={Link} to={{ pathname: `/explore/${card.id}`, state: { network: card } }}>
                 <CardContent sx={{ height: 150}}>
                   <Typography gutterBottom variant="h5" component="div">
                     {card.title}
@@ -94,7 +101,7 @@ const ExplorePage = () => {
                 </CardContent>
                 <CardActions>
                   <VisibilityTwoToneIcon sx={{ color: '#6366f1'}}  />
-                  <Typography sx={{ ml: 1 }} variant="body2" color="text.secondary">121</Typography>
+                  <Typography sx={{ ml: 1 }} variant="body2" color="text.secondary">{card.views}</Typography>
                 </CardActions>
             </Card>
           )

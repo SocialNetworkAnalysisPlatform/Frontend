@@ -13,6 +13,9 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import Tooltip from '@mui/material/Tooltip';
 
+import { db } from "../utils/firebase";
+import { doc, setDoc } from "firebase/firestore"; 
+
 const Conversation = (props) => {
     const [checked, setChecked] = useState(false);
 
@@ -25,8 +28,14 @@ const Conversation = (props) => {
         props.checkedNetwork(props.network, checkValue, "checked single")
     }
 
-    const handleVisibility = () => {
+    const handleVisibility = async(e) => {
+        e.preventDefault();
         props.visibility(props.network.id, !props.network.isPublished)
+        const docRef = await setDoc(doc(db, "Conversations", props.network.id), {
+            isPublished: !props.network.isPublished,
+          }, {
+            merge: true
+          });
     }
 
     return (

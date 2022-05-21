@@ -1,12 +1,8 @@
 
-import React, { useState } from 'react'
-import { Layout } from './Layout'
-import { useAuth } from '../contexts/AuthContext'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import dateFormat, { masks } from "dateformat";
 
-import { Typography } from '@mui/material';
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -20,9 +16,13 @@ import Tooltip from '@mui/material/Tooltip';
 const Conversation = (props) => {
     const [checked, setChecked] = useState(false);
 
+    useEffect(() => {
+        setChecked(props.isCheckedAll)
+    }, [props.isCheckedAll]);
+
     const handleChecked = (checkValue) => {
         setChecked(checkValue);
-        props.checkedNetwork(props.network, checkValue)
+        props.checkedNetwork(props.network, checkValue, "checked single")
     }
 
     const handleVisibility = () => {

@@ -14,10 +14,14 @@ import Typography from '@mui/material/Typography';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import IconButton from '@mui/material/IconButton';
 
+import { useAuth } from '../contexts/AuthContext'
+
+
 const Collaborator = (props) => {
     const handleDelete = () => {
         props.delete(props.collaborator.id)
     };
+    const { currentUser } = useAuth();
 
     return (
         <>
@@ -26,9 +30,10 @@ const Collaborator = (props) => {
                     <Avatar alt={`${props.collaborator.displayName}`} src={props.collaborator.photoUrl} />
                 </ListItemAvatar>
                 <ListItemText primary={`${props.collaborator.displayName}`} secondary="Collaborator" />
+                {(currentUser.uid === props.collaborator.id ||  currentUser.uid === props.ownerId) &&
                 <IconButton onClick={handleDelete} color="default" component="span">
                     <DeleteOutlineIcon />
-                </IconButton>
+                </IconButton>}
             </ListItem>
             { props.index != props.amount-1 && <Divider variant="inset" />}
         </>

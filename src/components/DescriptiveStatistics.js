@@ -98,41 +98,12 @@ const DescriptiveStatistics = (props) => {
 
     const degreeHistogramOptions = {
         title: {
-            text: 'Histogram'
+            text: 'Degree Centrality Distribution'
         },
-        xAxis: [{
-            title: { text: 'Data' },
-            alignTicks: false
-        }, {
-            title: { text: 'Histogram' },
-            alignTicks: false,
-            opposite: true
-        }],
-        yAxis: [{
-            title: { text: 'Data' }
-        }, {
-            title: { text: 'Histogram' },
-            opposite: true
-        }],
-        plotOptions: {
-            histogram: {
-                accessibility: {
-                    point: {
-                        valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
-                    }
-                }
-            }, 
-        },
-        colors: ['#d1d1fb', '#434348'],
-        series: [{
-            name: 'Histogram',
-            type: 'histogram',
-            xAxis: 1,
-            yAxis: 1,
-            baseSeries: 's1',
-            zIndex: -1
-        }, {
-            name: 'Data',
+        colors: ['#434348'],
+        series: [
+        {
+            name: 'Degree Centrality Data',
             type: 'scatter',
             data: getCentralityValues("degree"),
             id: 's1',
@@ -144,41 +115,12 @@ const DescriptiveStatistics = (props) => {
 
     const closenessHistogramOptions = {
         title: {
-            text: 'Histogram'
+            text: 'Closeness Centrality Distribution'
         },
-        xAxis: [{
-            title: { text: 'Data' },
-            alignTicks: false
-        }, {
-            title: { text: 'Histogram' },
-            alignTicks: false,
-            opposite: true
-        }],
-        yAxis: [{
-            title: { text: 'Data' }
-        }, {
-            title: { text: 'Histogram' },
-            opposite: true
-        }],
-        plotOptions: {
-            histogram: {
-                accessibility: {
-                    point: {
-                        valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
-                    }
-                }
-            }
-        },
-        colors: ['#d1d1fb', '#434348'],
-        series: [{
-            name: 'Histogram',
-            type: 'histogram',
-            xAxis: 1,
-            yAxis: 1,
-            baseSeries: 's1',
-            zIndex: -1
-        }, {
-            name: 'Data',
+        colors: ['#434348'],
+        series: [
+        {
+            name: 'Closeness Centrality Data',
             type: 'scatter',
             data: getCentralityValues("closeness"),
             id: 's1',
@@ -190,41 +132,12 @@ const DescriptiveStatistics = (props) => {
 
     const betweennessHistogramOptions = {
         title: {
-            text: 'Histogram'
+            text: 'Betweenness Centrality Distribution'
         },
-        xAxis: [{
-            title: { text: 'Data' },
-            alignTicks: false
-        }, {
-            title: { text: 'Histogram' },
-            alignTicks: false,
-            opposite: true
-        }],
-        yAxis: [{
-            title: { text: 'Data' }
-        }, {
-            title: { text: 'Histogram' },
-            opposite: true
-        }],
-        plotOptions: {
-            histogram: {
-                accessibility: {
-                    point: {
-                        valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
-                    }
-                }
-            }
-        },
-        colors: ['#d1d1fb', '#434348'],
-        series: [{
-            name: 'Histogram',
-            type: 'histogram',
-            xAxis: 1,
-            yAxis: 1,
-            baseSeries: 's1',
-            zIndex: -1
-        }, {
-            name: 'Data',
+        colors: ['#434348'],
+        series: [
+        {
+            name: 'Betweenness Centrality Data',
             type: 'scatter',
             data: getCentralityValues("betweenness"),
             id: 's1',

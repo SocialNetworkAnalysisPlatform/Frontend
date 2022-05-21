@@ -25,7 +25,6 @@ const ExplorePage = () => {
 
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log(cards)
 
   useEffect(() => {
 

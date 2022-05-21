@@ -38,8 +38,9 @@ import Skeleton from '@mui/material/Skeleton';
 import SkeletonTableRow from "../skeletons/SkeletonTableRow"
 import { useParams } from "react-router-dom";
 
-import { db } from "../utils/firebase";
-import { doc, onSnapshot, getDoc } from "firebase/firestore";
+import { rtdb, db } from "../utils/firebase";
+import { ref, remove } from "firebase/database";
+import { doc, onSnapshot, getDoc, setDoc, deleteDoc, arrayRemove } from "firebase/firestore";
 import Service from '../utils/service'
 import { CSVLink } from "react-csv";
 
@@ -302,6 +303,35 @@ const ProjectPage = (props) => {
   }, [clCreatedBy]);
 
 
+  const deleteNetworks = async() => {
+
+    try {
+      const projectId = params.id;
+      await setDoc(doc(db, "Projects", projectId), {
+        conversations: arrayRemove(selectedNetworks.map((conversation) => conversation.id)),
+      }, {
+        merge: true
+      });
+
+      await Promise.all(
+        selectedNetworks.map(async(conversation) => {
+          await remove(ref(rtdb, 'Conversations/' + conversation.id));
+        }));
+
+      await Promise.all(
+        selectedNetworks.map(async(conversation) => {
+          return deleteDoc(doc(db, "Conversations", conversation.id));
+        })
+      );
+
+      // Remove rows from table
+      
+    } catch(error) {
+      console.log(error);
+    } 
+
+  }
+
   const handleVisibility = (networkId, isPublished) => {
     setFilteredNetworks(prevState => prevState.map(
         data => data.id !== networkId ? data :
@@ -356,7 +386,7 @@ const ProjectPage = (props) => {
           sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }}>
           Add conversation
         </Button>
-        <Button disabled={disabledDelete} startIcon={<DeleteOutlineIcon />} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
+        <Button onClick={deleteNetworks} disabled={disabledDelete} startIcon={<DeleteOutlineIcon />} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
           Delete
         </Button>
         <CSVLink data={csvData} headers={csvHeaders} filename={`${project?.name} networks.csv`} style={{ textDecoration: 'none' }}>

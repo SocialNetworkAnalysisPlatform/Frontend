@@ -4,7 +4,6 @@ import { Layout } from '../components/Layout'
 import { useAuth } from '../contexts/AuthContext'
 import { Link } from 'react-router-dom'
 import dateFormat, { masks } from "dateformat";
-import { ResponsiveContainer, AreaChart, Area, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -15,27 +14,6 @@ import IconButton from '@mui/material/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const Project = (props) => {
-    const { currentUser } = useAuth()
-    // Graph
-    const data = [
-        { month: "Jan", value: 200},
-        { month: "Feb", value: 500},
-        { month: "Mar", value: 212},
-        { month: "Apr", value: 900},
-        { month: "May", value: 300},
-        { month: "Jun", value: 543},
-        { month: "Jul", value: 1000},
-        { month: "Aug", value: 99},
-        { month: "Sept", value: 894},
-        { month: "Oct", value: 0},
-        { month: "Nov", value: 542},
-        { month: "Dec", value: 123},
-      ]
-      const args = {
-        chartData: data,
-        gradientColor: "#6366f1",
-        uniqueId: 1,
-      }
      return (
         <Box sx={{ mt: 3 }}>
             <Divider light sx={{ mb: 3 }}/>
@@ -57,22 +35,6 @@ const Project = (props) => {
                         <Typography color="textSecondary" sx={{ ml: 3 , fontSize: 12, }}>{`Created at ${dateFormat(new Date(props.project.createdAt), "dd/mm/yyyy")}`}</Typography>
                     </Stack>
                 </Box>
-                <ResponsiveContainer width={"20%"} height={50}>
-                    <AreaChart data={args.chartData}
-                        margin={{ top: 20, right: 10, left: -30, bottom: 0 }}>
-                        <defs>
-                        <linearGradient id={"colorUv" + args.uniqueId} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="100%" stopColor={args.gradientColor} />
-                        </linearGradient>
-                        </defs>
-                        {/* <XAxis dataKey="month" />
-                        <YAxis 
-                        width={80}
-                        interval={0}
-                        /> */}
-                        <Area type="monotone" dataKey="value" stroke={args.gradientColor} fillOpacity={0.1} fill={"url(#colorUv" + args.uniqueId + ")"} />
-                    </AreaChart>
-                </ResponsiveContainer>
             </Stack>
         </Box>
     )

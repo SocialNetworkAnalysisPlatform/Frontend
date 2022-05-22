@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect  } from 'react'
+import { makeStyles } from '@mui/styles';
 import { Layout } from '../components/Layout'
 import Collaborator from '../components/Collaborator';
 import { useAuth } from '../contexts/AuthContext'
@@ -14,6 +15,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import Button from "@mui/material/Button";
 import GroupsIcon from '@mui/icons-material/Groups';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Modal from '@mui/material/Modal';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -30,7 +32,12 @@ import Service from '../utils/service'
 
 const service = Service.getInstance();
 
+const useStyles = makeStyles({
+
+});
+
 const ProjectSettingsPage = (props) => {
+  const classes = useStyles();
   const history = useHistory();
   const { currentUser } = useAuth();
   
@@ -44,10 +51,13 @@ const ProjectSettingsPage = (props) => {
   const [users, setUsers] = useState([]);
   const [collaborator, setCollaborator] = useState();
   const [collaborators, setCollaborators] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
+  const [openAddCollaboratorModal, setOpenAddCollaboratorModal] = useState(false);
+  const [openDeleteProjectModal, setOpenDeleteProjectModal] = useState(false);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [inputSearchValue, setInputSearchValue] = useState("");
   const [disabledSelect, setDisabledSelect] = useState(true);
+  const [disabledDelete, setDisabledDelete] = useState(true);
+  const [deleteProjectInput, setDeleteProjectInput] = useState("");
 
 
   
@@ -153,6 +163,13 @@ useEffect(() => {
     window.scrollTo(0, 0)
 }, [])
 
+  useEffect(() => {
+    if(deleteProjectInput === currProject.name) {
+      setDisabledDelete(false)
+    } else {
+      setDisabledDelete(true)
+    }
+  }, [deleteProjectInput])
 
 
   const deleteCollaborator = (id) => {
@@ -166,7 +183,7 @@ useEffect(() => {
   };
 
   const handleSelect = (event, value) => {
-    setOpenModal(false);
+    setOpenAddCollaboratorModal(false);
    
     if(collaborator) {
       if(collaborators.find(collaboratorOption => collaboratorOption.id === collaborator.id)) {
@@ -191,12 +208,16 @@ useEffect(() => {
             <Stack spacing={4}>
               <FormControl>
                 <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500 }}>Project name</FormLabel>
-                <OutlinedInput size="small" sx={{ width: 300, backgroundColor: 'white' }} required value={currProject.name} onChange={(e) => setNewProject({...currProject, name: e.target.value}) }/>
+                <OutlinedInput classes={classes.input} size="small" sx={{ width: 300, backgroundColor: 'white' }} required value={currProject.name} onChange={(e) => setNewProject({...currProject, name: e.target.value}) }/>
               </FormControl>
               <FormControl>
-                <FormLabel sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description (optional)</FormLabel>
+                <FormLabel classes={classes.input} sx={{ color: '#000000DE', fontSize: 14, fontWeight: 500}}>Description (optional)</FormLabel>
                 <OutlinedInput size="small" sx={{ width: '50vw', backgroundColor: 'white' }} required value={currProject.description} onChange={(e) => setNewProject({...currProject, description: e.target.value}) }/>
               </FormControl>
+              
+              <Button onClick={(e) => setProject(e)} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 100, textTransform: "none",}} >
+                Save
+              </Button>
             </Stack>
 
             <Divider light sx={{ mt: 3, mb: 3 }}/>
@@ -205,7 +226,7 @@ useEffect(() => {
               <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Collaborators</Typography>
               { // Show button depending on collaborators array length > 0 (true case)
                 collaborators.length > 0 && currentUser.uid === props.location?.state.owner.id &&
-                <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
+                <Button onClick={() => setOpenAddCollaboratorModal(true)} startIcon={<AddIcon />} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                   Add 
                 </Button>
               }
@@ -222,7 +243,7 @@ useEffect(() => {
               <Stack sx={{alignItems: 'center', mt: 4, mb: 4}} spacing={2}>
                 <GroupsIcon sx={{ fontSize: 50, fontWeight: 500, color: "#6366f1" }}/>
                 <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#000000DE" }}>You have not invited any collaborators yet</Typography>
-                <Button onClick={() => setOpenModal(true)} startIcon={<AddIcon />} variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none' }} >
+                <Button onClick={() => setOpenAddCollaboratorModal(true)} startIcon={<AddIcon />} variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1', "&:hover": { backgroundColor: '#ededff', borderColor: '#6366f1' }, textTransform: 'none', height: 32 }} >
                     Add
                 </Button>
               </Stack>
@@ -231,16 +252,25 @@ useEffect(() => {
             
             <Divider light sx={{ mt: 3, mb: 3 }}/>
 
-            <Button onClick={(e) => setProject(e)} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
-              Save
-            </Button>
+            <Box>
+              <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Danger Zone</Typography>
+              <Stack direction={'row'} justifyContent={'space-between'}>
+                <Box>
+                  <Typography sx={{ fontSize: 14, fontWeight: 500 }}>Delete this project</Typography>
+                  <Typography color="textSecondary" sx={{ fontSize: 14 }}>Once you delete a project, there is no going back. Please be certain.</Typography>
+                </Box>        
+                <Button onClick={() => setOpenDeleteProjectModal(true)} startIcon={<DeleteOutlineIcon />} variant="outlined" sx={{ color: '#cf222e', borderColor: '#cf222e', "&:hover": { backgroundColor: '#cf222e', borderColor: '#cf222e', color: 'white' }, textTransform: 'none', height: 32}} >
+                  Delete this project 
+                </Button>         
+              </Stack>   
+            </Box>
           </Box>
       </Layout>
 
-      <Modal open={openModal} onClose={() => setOpenModal(false)} > 
+      <Modal open={openAddCollaboratorModal} onClose={() => setOpenAddCollaboratorModal(false)} > 
         <Stack sx={modalStyle} >
           <Box sx={{ textAlign:'right', mt: -2 }}>
-            <IconButton onClick={() => setOpenModal(false)} color="default" component="span">
+            <IconButton onClick={() => setOpenAddCollaboratorModal(false)} color="default" component="span">
               <CloseIcon sx={{ fontSize: 16 }} />
             </IconButton>
           </Box>
@@ -277,6 +307,31 @@ useEffect(() => {
           
           <Button disabled={disabledSelect} onClick={handleSelect} variant="contained" sx={{ mt: 3,  backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
             Select 
+          </Button>
+        </Stack>
+      </Modal>
+
+      <Modal open={openDeleteProjectModal} onClose={() => setOpenDeleteProjectModal(false)} > 
+        <Stack spacing={2} sx={modalStyle} >
+          <Box sx={{ textAlign:'right', mt: -2 }}>
+            <IconButton onClick={() => setOpenDeleteProjectModal(false)} color="default" component="span">
+              <CloseIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Box>
+          <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#000000DE" }}>{`Are you sure to delete ${currProject.name} project?`}</Typography>
+          <Box>
+            <Typography display="inline">{`This action cannot be undone. This will permanently delete the `}</Typography>
+            <Typography display="inline" sx={{ fontWeight: 700 }}>{currProject.name}</Typography>
+            <Typography display="inline">{` project.`}</Typography>
+          </Box>
+          <Box>
+            <Typography display="inline">{`Please type `}</Typography>
+            <Typography display="inline" sx={{ fontWeight: 700 }}>{currProject.name}</Typography>
+            <Typography display="inline">{` to confirm.`}</Typography>
+          </Box>
+          <OutlinedInput classes={classes.input} size="small" sx={{ width: '100%', backgroundColor: 'white' }} required value={deleteProjectInput} onChange={(e) => setDeleteProjectInput( e.target.value) }/>
+          <Button disabled={disabledDelete} variant="outlined" sx={{ color: '#cf222e', borderColor: '#cf222e', "&:hover": { backgroundColor: '#cf222e', borderColor: '#cf222e', color: 'white' }, textTransform: 'none', height: 32}} >
+              Delete this project 
           </Button>
         </Stack>
       </Modal>

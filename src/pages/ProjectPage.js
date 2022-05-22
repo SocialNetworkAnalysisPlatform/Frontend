@@ -303,7 +303,7 @@ const ProjectPage = (props) => {
   }, [clCreatedBy]);
 
 
-  const deleteNetworks = async() => {
+  const deleteConversations = async() => {
 
     try {
       const projectId = params.id;
@@ -392,7 +392,7 @@ const ProjectPage = (props) => {
           sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }}>
           Add conversation
         </Button>
-        <Button onClick={deleteNetworks} disabled={disabledDelete} startIcon={<DeleteOutlineIcon />} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
+        <Button onClick={deleteConversations} disabled={disabledDelete} startIcon={<DeleteOutlineIcon />} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >
           Delete
         </Button>
         <CSVLink data={csvData} headers={csvHeaders} filename={`${project?.name} networks.csv`} style={{ textDecoration: 'none' }}>

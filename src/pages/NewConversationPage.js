@@ -169,6 +169,7 @@ const NewConversationPage = (props) => {
             console.log(response);
             if(!response?.status) {
              alert("File upload failed due it's content, please select another file");
+             setLoading(false);
             } else {
               setLoading(false);
               setOpenModal(false);

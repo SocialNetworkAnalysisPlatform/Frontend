@@ -57,9 +57,10 @@ const ProjectPage = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [project, setProject] = useState();
-  const [conversations, setConversations] = useState([]);
 
-  const [filteredNetworks, setFilteredNetworks] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [filteredConversations, setFilteredConversations] = useState([]);
+  const [selectedConversations, setSelectedConversations] = useState([]);
 
   const [searchInput, setSearchInput] = useState("");
 
@@ -70,8 +71,6 @@ const ProjectPage = (props) => {
 
   // checked list - created by collaborator filter
   const [clConversations, setClConversations] = useState({});
-
-  const [selectedNetworks, setSelectedNetworks] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -143,7 +142,7 @@ const ProjectPage = (props) => {
       // Filtered by Both
       result = [];
       for (let [key, value] of Object.entries(clCreatedBy)) {
-        const filterRes = filteredNetworks?.filter((row) => {
+        const filterRes = filteredConversations?.filter((row) => {
           return value == true && key == row.creator.id;
         });
         result.push(...filterRes);
@@ -152,24 +151,24 @@ const ProjectPage = (props) => {
         return row.title.toLowerCase().includes(text.toLowerCase());
       });
     }
-    setFilteredNetworks(result);
+    setFilteredConversations(result);
   };
 
-  const handleCheckedNetwork = (network, checkValue, mode) => {
+  const handleCheckedConversation = (conversation, checkValue) => {
     for (let [key, value] of Object.entries(clConversations)) {
-      if (key == network.id) {
-        setClConversations({ ...clConversations, [`${network.id}`]: checkValue });
+      if (key == conversation.id) {
+        setClConversations({ ...clConversations, [`${conversation.id}`]: checkValue });
       }
     }
     
-    // Handle creation of selected networks list
-    let networksList = selectedNetworks;
+    // Handle creation of selected conversations list
+    let conversationsList = selectedConversations;
     if (checkValue == true) {
-      networksList.push(network);
-      setSelectedNetworks(networksList);
+      conversationsList.push(conversation);
+      setSelectedConversations(conversationsList);
     } else {
-        const res = networksList.filter(({id}) => id !== network.id);
-        setSelectedNetworks(res);
+        const res = conversationsList.filter(({id}) => id !== conversation.id);
+        setSelectedConversations(res);
     }
   };
 
@@ -179,11 +178,11 @@ const ProjectPage = (props) => {
         copyClConversations[`${key}`] = checkedAll
       }
       setClConversations(copyClConversations)
-   
+
       if(checkedAll) {
-        setSelectedNetworks(filteredNetworks);
+        setSelectedConversations(filteredConversations);
       } else {
-        setSelectedNetworks([]);
+        setSelectedConversations([]);
       }
     }, [checkedAll])
 
@@ -275,8 +274,9 @@ const ProjectPage = (props) => {
                   } 
                 }
             ));
+
             setConversations(conversationsData);
-            setFilteredNetworks(conversationsData);
+            setFilteredConversations(conversationsData);
 
             // Create dynamic key & value: network id : false
             const clNetworks = {};
@@ -307,25 +307,31 @@ const ProjectPage = (props) => {
 
     try {
       const projectId = params.id;
+      console.log("selectedConversations", selectedConversations)
       await setDoc(doc(db, "Projects", projectId), {
-        conversations: arrayRemove(selectedNetworks.map((conversation) => conversation.id)),
+        conversations: arrayRemove(selectedConversations.map((conversation) => conversation.id)),
       }, {
         merge: true
       });
 
       await Promise.all(
-        selectedNetworks.map(async(conversation) => {
+        selectedConversations.map(async(conversation) => {
           await remove(ref(rtdb, 'Conversations/' + conversation.id));
         }));
 
       await Promise.all(
-        selectedNetworks.map(async(conversation) => {
+        selectedConversations.map(async(conversation) => {
           return deleteDoc(doc(db, "Conversations", conversation.id));
         })
       );
 
-      // Remove rows from table
-      
+      //Remove rows from table
+      setConversations(prevState => (
+        prevState.filter((conversation, i) => !selectedConversations.includes(conversation))
+      ))
+      setFilteredConversations(prevState => (
+        prevState.filter((conversation, i) => !selectedConversations.includes(conversation))
+      ))
     } catch(error) {
       console.log(error);
     } 
@@ -333,7 +339,7 @@ const ProjectPage = (props) => {
   }
 
   const handleVisibility = (networkId, isPublished) => {
-    setFilteredNetworks(prevState => prevState.map(
+    setFilteredConversations(prevState => prevState.map(
         data => data.id !== networkId ? data :
         {...data, isPublished: isPublished}
     ))
@@ -351,7 +357,7 @@ const ProjectPage = (props) => {
 
   const exportNetworksToCSV = () => {
     let networksData = [];
-    selectedNetworks.forEach((network) => {
+    selectedConversations.forEach((network) => {
       const row = {
                 conversationTitle: network.title, nodes: network.nodes.length, edges: network.edges.length, diameter: network.globalMeasures.diameter.value,
                 radius: network.globalMeasures.radius.value, density: network.globalMeasures.density, selfLoops: network.globalMeasures.numberOfSelfLoops,
@@ -367,7 +373,7 @@ const ProjectPage = (props) => {
   const eachNetwork = (item, index) => {
     const { sources, ...data } = project;
     return  (<Conversation key={item.id} index={index} project={data} network={item}
-            checkedNetwork={handleCheckedNetwork} visibility={handleVisibility} projectId={project.id} isCheckedAll={checkedAll}>
+            checkedNetwork={handleCheckedConversation} visibility={handleVisibility} projectId={project.id} isCheckedAll={checkedAll}>
             </Conversation>)
   };
 
@@ -396,7 +402,7 @@ const ProjectPage = (props) => {
         </CSVLink>
         <Button disabled={disabledCompare} startIcon={<CompareArrowsIcon />} variant="contained"
           sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none" }}
-          component={Link} to={{ pathname: `/compare`, state: { compareList: selectedNetworks } }} >
+          component={Link} to={{ pathname: `/compare`, state: { compareList: selectedConversations } }} >
           Compare
         </Button>
       </Stack>
@@ -468,8 +474,8 @@ const ProjectPage = (props) => {
               {
                 loading === false ?
                 (
-                  filteredNetworks.length > 0 ?
-                  filteredNetworks
+                  filteredConversations.length > 0 ?
+                  filteredConversations
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map(eachNetwork)
                   :

@@ -224,32 +224,31 @@ const NewConversationPage = (props) => {
         <Layout>
             <Stack spacing={2}>
             <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Create a New Conversation</Typography>
-
-            <Paper elevation={2}>
-              <Stack spacing={4} p={2}>
-                <FormControl>
-                  <FormLabel className={classes.label} >Title</FormLabel>
-                  <OutlinedInput size="small" className={classes.field} required value={newConversation.title} onChange={(e) => setNewConversation({...newConversation, title: e.target.value}) }/>
-                </FormControl>
-                <FormControl>
-                  <FormLabel className={classes.label}>Description</FormLabel>
-                  <OutlinedInput size="small" className={classes.field} required multiline maxRows={2} value={newConversation.description} onChange={(e) => setNewConversation({...newConversation, description: e.target.value}) }/>
-                </FormControl>
-              </Stack>
-            </Paper>
-            <Paper elevation={2}>
-                <Stack direction="row" spacing={1} p={2} alignItems="center">
-                    <Typography sx={{ mr: 6, fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Please choose import method</Typography>
-                    <Typography>Sources</Typography>
-                    <IOSSwitch checked={checked} onChange={(event) => setChecked(event.target.checked)} sx={{ m: 1 }} />
-                    <Typography>Device</Typography>
+              <Paper elevation={2}>
+                <Stack spacing={4} p={2}>
+                  <FormControl>
+                    <FormLabel className={classes.label} >Title</FormLabel>
+                    <OutlinedInput size="small" className={classes.field} required value={newConversation.title} onChange={(e) => setNewConversation({...newConversation, title: e.target.value}) }/>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel className={classes.label}>Description</FormLabel>
+                    <OutlinedInput size="small" className={classes.field} required multiline maxRows={2} value={newConversation.description} onChange={(e) => setNewConversation({...newConversation, description: e.target.value}) }/>
+                  </FormControl>
                 </Stack>
-            </Paper>
-            <Paper elevation={2}>
-            {
-                checked ? device() : sources()
-            }
-            </Paper>
+              </Paper>
+              <Paper elevation={2}>
+                  <Stack direction="row" spacing={1} p={2} alignItems="center">
+                      <Typography sx={{ mr: 6, fontSize: 18, fontWeight: 500, color: "#6366f1" }}>Please choose import method</Typography>
+                      <Typography>Sources</Typography>
+                      <IOSSwitch checked={checked} onChange={(event) => setChecked(event.target.checked)} sx={{ m: 1 }} />
+                      <Typography>Device</Typography>
+                  </Stack>
+              </Paper>
+              <Paper elevation={2}>
+              {
+                  checked ? device() : sources()
+              }
+              </Paper>
             </Stack>
                    
         </Layout>

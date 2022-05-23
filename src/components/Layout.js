@@ -9,7 +9,7 @@ export const Layout = ({ children }) => {
   return (
     <Box mb={20} sx={{ height: '100vh'}}>
       <Navbar />
-      <Box ml={31} mr={3} mt={10} mb={4} >{children}</Box>
+      <Box pl={31} pr={3} pt={10} pb={4} >{children}</Box>
     </Box>
   )
 }

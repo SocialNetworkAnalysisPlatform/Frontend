@@ -262,18 +262,24 @@ useEffect(() => {
             
             <Divider light sx={{ mt: 3, mb: 3 }}/>
 
-            <Box>
-              <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Danger Zone</Typography>
-              <Stack direction={'row'} justifyContent={'space-between'}>
-                <Box>
-                  <Typography sx={{ fontSize: 14, fontWeight: 500 }}>Delete this project</Typography>
-                  <Typography color="textSecondary" sx={{ fontSize: 14 }}>Once you delete a project, there is no going back. Please be certain.</Typography>
-                </Box>        
-                <Button onClick={() => setOpenDeleteProjectModal(true)} startIcon={<DeleteOutlineIcon />} variant="outlined" sx={{ color: '#cf222e', borderColor: '#cf222e', "&:hover": { backgroundColor: '#cf222e', borderColor: '#cf222e', color: 'white' }, textTransform: 'none', height: 32}} >
-                  Delete this project 
-                </Button>         
-              </Stack>   
-            </Box>
+            {
+              (currentUser.uid === props.location?.state.owner.id) ?
+              <Box>
+                <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Danger Zone</Typography>
+                <Stack direction={'row'} justifyContent={'space-between'}>
+                  <Box>
+                    <Typography sx={{ fontSize: 14, fontWeight: 500 }}>Delete this project</Typography>
+                    <Typography color="textSecondary" sx={{ fontSize: 14 }}>Once you delete a project, there is no going back. Please be certain.</Typography>
+                  </Box>        
+                  <Button onClick={() => setOpenDeleteProjectModal(true)} startIcon={<DeleteOutlineIcon />} variant="outlined" sx={{ color: '#cf222e', borderColor: '#cf222e', "&:hover": { backgroundColor: '#cf222e', borderColor: '#cf222e', color: 'white' }, textTransform: 'none', height: 32}} >
+                    Delete this project 
+                  </Button>         
+                </Stack>   
+              </Box>
+              :
+              ''
+            }
+           
           </Box>
       </Layout>
 

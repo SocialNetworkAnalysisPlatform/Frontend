@@ -64,6 +64,7 @@ const NewProject = () => {
           collaborators: [],
           owner: currentUser.uid,
           createdAt: new Date(),
+          conversations: [],
         });
 
         history.replace(location.state?.from ?? "/projects");

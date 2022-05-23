@@ -19,7 +19,7 @@ const Project = (props) => {
             <Divider light sx={{ mb: 3 }}/>
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Typography component={Link} to={`/projects/${props.project.id}`} sx={{ textDecoration: "none", color: "#000000DE" , fontSize: 20, fontWeight: 500, "&:hover": { color: "#6366f1" }}}>{props.project.name}</Typography>
-                <IconButton component={Link} to={{ pathname: `/project-settings`, state: { id: props.project.id, name: props.project.name, description: props.project.description, collaborators: props.project.collaborators, pendingCollaborators: props.project.pendingCollaborators, owner: props.project.owner } }} color="primary" >
+                <IconButton component={Link} to={{ pathname: `/project-settings`, state: { id: props.project.id, name: props.project.name, description: props.project.description, collaborators: props.project.collaborators, pendingCollaborators: props.project.pendingCollaborators, owner: props.project.owner, conversations: props.project.conversations } }} color="primary" >
                     <SettingsIcon sx={{ color: 'rgba(0, 0, 0, 0.6)', "&:hover": { color: "#6366f1" }}} />
                 </IconButton>
             </Stack>

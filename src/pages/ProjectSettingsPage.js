@@ -51,6 +51,7 @@ const ProjectSettingsPage = (props) => {
   const [users, setUsers] = useState([]);
   const [collaborator, setCollaborator] = useState();
   const [collaborators, setCollaborators] = useState([]);
+  const [pendingCollaborators, setPendingCollaborators] = useState([]);
   const [openAddCollaboratorModal, setOpenAddCollaboratorModal] = useState(false);
   const [openDeleteProjectModal, setOpenDeleteProjectModal] = useState(false);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
@@ -94,7 +95,6 @@ const ProjectSettingsPage = (props) => {
       }
   }
   
- 
   useEffect(async () => {
     const collaborators = props.location?.state.collaborators;
     if(collaborators && collaborators.length > 0) {
@@ -106,8 +106,25 @@ const ProjectSettingsPage = (props) => {
                 ...data
             };
         })
-    );
-    setCollaborators(collaboratorsData);
+      );
+ 
+      setCollaborators(collaboratorsData);
+
+    }
+
+    const pendingCollaborators = props.location?.state.pendingCollaborators;
+    if(pendingCollaborators && pendingCollaborators.length > 0) {
+
+      const pendingCollaboratorsData = await Promise.all(pendingCollaborators?.map(async(collaborator) => {
+        const data = await service.readUserData(collaborator);
+        return {
+            id: collaborator,
+            ...data
+        };
+      }) 
+      )
+      setPendingCollaborators(pendingCollaboratorsData);
+
     }
 
 }, [])
@@ -156,7 +173,8 @@ useEffect(() => {
   };
 
   const eachCollaborator = (item, index) => {
-    return  (<Collaborator key={item.id} index={index} ownerId={props.location?.state.owner.id} collaborator={item} amount={collaborators.length} delete={deleteCollaborator}></Collaborator>)
+    const type = collaborators.includes(item) ? "Collaborator" : (pendingCollaborators.includes(item) ? "Pending Collaborator" : '')
+    return  (<Collaborator key={item.id} index={index} ownerId={props.location?.state.owner.id} collaborator={item} type={type} delete={deleteCollaborator} amount={collaborators.length + pendingCollaborators.length}></Collaborator>)
   };
 
   const handleSelect = async (event, value) => {
@@ -166,7 +184,7 @@ useEffect(() => {
       if(collaborators.find(collaboratorOption => collaboratorOption.id === collaborator.id)) {
         console.log("Collaborator already exists");
       } else {
-      setCollaborators(prevState => ([
+      setPendingCollaborators(prevState => ([
         ...prevState, 
            collaborator     
         ]));
@@ -235,7 +253,7 @@ useEffect(() => {
             <Stack direction={'row'} justifyContent={'space-between'}>
               <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Collaborators</Typography>
               { // Show button depending on collaborators array length > 0 (true case)
-                collaborators.length > 0 && currentUser.uid === props.location?.state.owner.id &&
+                collaborators.length > 0 || pendingCollaborators.length > 0 && currentUser.uid === props.location?.state.owner.id &&
                 <Button onClick={() => setOpenAddCollaboratorModal(true)} startIcon={<AddIcon />} variant="contained" sx={{backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none",}} >
                   Add 
                 </Button>
@@ -244,10 +262,11 @@ useEffect(() => {
 
             <Box sx={{ mt: 2, minHeight: 170, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.2)',  borderRadius: 2, backgroundColor: 'white' }}>
             { // Show items depending on collaborators array length (ternary expression - true and false case)
-              collaborators.length > 0
+              collaborators.length > 0 || pendingCollaborators.length > 0
               ?
               <List sx={{ width: '100%', bgcolor: 'background.paper'}}>
                 { collaborators.map(eachCollaborator) }
+                { pendingCollaborators.map(eachCollaborator) }
               </List>
               : 
               <Stack sx={{alignItems: 'center', mt: 4, mb: 4}} spacing={2}>

@@ -370,7 +370,7 @@ const ProjectPage = (props) => {
     setCsvData(networksData);
   }
 
-  const eachNetwork = (item, index) => {
+  const eachConversation = (item, index) => {
     const { sources, ...data } = project;
     return  (<Conversation key={item.id} index={index} project={data} network={item}
             checkedNetwork={handleCheckedConversation} visibility={handleVisibility} projectId={project.id} isCheckedAll={checkedAll}>
@@ -477,7 +477,7 @@ const ProjectPage = (props) => {
                   filteredConversations.length > 0 ?
                   filteredConversations
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map(eachNetwork)
+                    .map(eachConversation)
                   :
                   <TableRow sx={{ textAlign: 'center', marginLeft: 10, marginRight: 10 }}>
                     <TableCell></TableCell>

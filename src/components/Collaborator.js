@@ -29,11 +29,13 @@ const Collaborator = (props) => {
                 <ListItemAvatar>
                     <Avatar alt={`${props.collaborator.displayName}`} src={props.collaborator.photoUrl} />
                 </ListItemAvatar>
-                <ListItemText primary={`${props.collaborator.displayName}`} secondary="Collaborator" />
-                {(currentUser.uid === props.collaborator.id ||  currentUser.uid === props.ownerId) &&
-                <IconButton onClick={handleDelete} color="default" component="span">
-                    <DeleteOutlineIcon />
-                </IconButton>}
+                <ListItemText primary={`${props.collaborator.displayName}`} secondary={props.type} />
+                {
+                    (currentUser.uid === props.collaborator.id || currentUser.uid === props.ownerId && props.type === "Collaborator") &&
+                    <IconButton onClick={handleDelete} color="default" component="span">
+                        <DeleteOutlineIcon />
+                    </IconButton>
+                }
             </ListItem>
             { props.index != props.amount-1 && <Divider variant="inset" />}
         </>

@@ -304,12 +304,11 @@ const ProjectPage = (props) => {
 
 
   const deleteConversations = async() => {
-
     try {
       const projectId = params.id;
-      console.log("selectedConversations", selectedConversations)
+
       await setDoc(doc(db, "Projects", projectId), {
-        conversations: arrayRemove(selectedConversations.map((conversation) => conversation.id)),
+        conversations: arrayRemove(...selectedConversations.map((conversation) => doc(db, "Conversations", conversation.id))),
       }, {
         merge: true
       });

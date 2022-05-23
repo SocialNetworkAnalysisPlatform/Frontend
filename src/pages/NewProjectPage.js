@@ -64,35 +64,35 @@ const NewProject = (props) => {
           collaborators: [],
           owner: currentUser.uid,
           createdAt: new Date(),
+          conversations: [],
         });
 
-        const collaboration = {
-          pendingCollaborators: collaborators,
-          projectName: newProject.name,
-          projectId: docRef.id,
-        }
         history.replace(location.state?.from ?? "/projects");
-        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/inviteCollaborators`, {
-          method: "POST",
-          body: JSON.stringify({
-            collaboration,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+        
+        Promise.all(collaborators.map((pendingCollaborator) => {
+          const collaboration = {
+            pendingCollaborator,
+            projectName: newProject.name,
+            projectId: docRef.id,
           }
-        })
-          .then(response =>
-            response.json())
-          .then(response => {
-            if (!response?.status) {
-            } else {
+          return fetch(`https://europe-west1-snaplatform.cloudfunctions.net/inviteCollaborators`, {
+            method: "POST",
+            body: JSON.stringify({
+              collaboration,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
             }
-          })
-          .catch(error => {
-            console.error("Error:", error)
+          }).then((response) => {
+              return response.json();
+          }).then((data) => {
+              return data;
           });
+      })).then((values) => {
+      }).catch(console.error.bind(console));
 
+     
       } catch (e) {
         console.error("Error adding document: ", e);
       }
@@ -109,12 +109,16 @@ const NewProject = (props) => {
 
   useEffect(() => {
     const dbRef = ref(rtdb, 'Users/');
-    onValue(dbRef, async (snapshot) => {
+    const unsub = onValue(dbRef, async (snapshot) => {
       const data = snapshot.val();
-      let users = Object.entries(data).map(([key, value]) => ({ id: key, ...value }));
+      let users = Object.entries(data).map(([key, value]) => ({ id: key , ...value}));
       users = users.filter((user) => user.id !== currentUser.uid)
       setUsers(users);
     });
+  
+    return () => {
+      unsub();
+    };
   }, []);
 
   const deleteCollaborator = (id) => {

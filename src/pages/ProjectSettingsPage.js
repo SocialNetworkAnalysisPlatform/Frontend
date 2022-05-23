@@ -23,8 +23,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
 import { db, rtdb } from "../utils/firebase";
-import { doc, setDoc, arrayRemove, arrayUnion } from "firebase/firestore"; 
-import { ref, onValue} from "firebase/database";
+import { doc, setDoc, deleteDoc, arrayRemove, arrayUnion } from "firebase/firestore"; 
+import { ref, onValue, remove } from "firebase/database";
 
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { propsToClassKey } from '@mui/styles';
@@ -45,7 +45,8 @@ const ProjectSettingsPage = (props) => {
     id: props.location?.state.id,
     shared: false,
     name: props.location?.state.name,
-    description: props.location?.state.description
+    description: props.location?.state.description,
+    conversations: props.location?.state.conversations
   });
 
   const [users, setUsers] = useState([]);
@@ -149,6 +150,35 @@ useEffect(() => {
   useEffect(() => {
     window.scrollTo(0, 0)
 }, [])
+
+const handleDeleteProject = async(e) => {
+  e.preventDefault();
+
+  try {
+
+    if(currProject.conversations && currProject.conversations.length > 0) {
+    await Promise.all(
+      currProject.conversations.map(async(conversation) => {
+        const conversationId = conversation.split('/').pop();
+        await remove(ref(rtdb, 'Conversations/' + conversationId));
+      }));
+
+    await Promise.all(
+      currProject.conversations.map(async(conversation) => {
+        const conversationId = conversation.split('/').pop();
+        return deleteDoc(doc(db, "Conversations", conversationId));
+      })
+    );
+    }
+    await deleteDoc(doc(db, "Projects", currProject.id));
+
+    history.replace(location.state?.from ?? "/projects");
+
+  } catch (error) {
+    console.error(error);
+  }
+
+}
 
   useEffect(() => {
     if(deleteProjectInput === currProject.name) {
@@ -364,7 +394,7 @@ useEffect(() => {
             <Typography display="inline">{` to confirm.`}</Typography>
           </Box>
           <OutlinedInput classes={classes.input} size="small" sx={{ width: '100%', backgroundColor: 'white' }} required value={deleteProjectInput} onChange={(e) => setDeleteProjectInput( e.target.value) }/>
-          <Button disabled={disabledDelete} variant="outlined" sx={{ color: '#cf222e', borderColor: '#cf222e', "&:hover": { backgroundColor: '#cf222e', borderColor: '#cf222e', color: 'white' }, textTransform: 'none', height: 32}} >
+          <Button onClick={handleDeleteProject} disabled={disabledDelete} variant="outlined" sx={{ color: '#cf222e', borderColor: '#cf222e', "&:hover": { backgroundColor: '#cf222e', borderColor: '#cf222e', color: 'white' }, textTransform: 'none', height: 32}} >
               Delete this project 
           </Button>
         </Stack>

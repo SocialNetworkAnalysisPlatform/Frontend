@@ -31,7 +31,6 @@ const ProjectsPage = () => {
   const [searchInput, setSearchInput] = useState("");
 
   const [loading, setLoading] = useState(true);
-
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -63,6 +62,7 @@ const ProjectsPage = () => {
             id: doc.id,
             collaborated: false,
             createdAt: createdAt.toDate(),
+            conversations: data.conversations?.map(conversation => conversation.path)
           }
         }));
 
@@ -82,6 +82,7 @@ const ProjectsPage = () => {
           id: doc.id,
           collaborated: true,
           createdAt: createdAt.toDate(),
+          conversations: data.conversations?.map(conversation => conversation.path)
         }
       }));
 
@@ -114,7 +115,8 @@ const ProjectsPage = () => {
     }
   };
 
-  const eachProject = (item, index) => {
+  const eachProject = (item, index) => 
+  {
     return <Project key={item.id} index={index} project={item}></Project>;
   };
 

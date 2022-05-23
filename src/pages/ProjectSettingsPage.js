@@ -23,7 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
 import { db, rtdb } from "../utils/firebase";
-import { doc, setDoc } from "firebase/firestore"; 
+import { doc, setDoc, arrayRemove, arrayUnion } from "firebase/firestore"; 
 import { ref, onValue} from "firebase/database";
 
 import { Link, useHistory, useLocation } from "react-router-dom";
@@ -77,46 +77,15 @@ const ProjectSettingsPage = (props) => {
 
     if(currProject.name !== '') {
       try {
-          const oldCollaborators = props.location?.state.collaborators;
-          const pendingCollaborators = collaborators?.filter((collaborator) => !oldCollaborators?.includes(collaborator.id));
-          const pendingCollaboratorsIds = pendingCollaborators?.map((collaborator) => collaborator.id);
-          const currentCollaborators = collaborators?.filter((collaborator) => !pendingCollaboratorsIds?.includes(collaborator.id));
-
-          const docRef = await setDoc(doc(db, "Projects", currProject.id), {
+          await setDoc(doc(db, "Projects", currProject.id), {
             name: currProject.name,
             description: currProject.description,
-            collaborators: currentCollaborators?.map((collaborator) => collaborator.id)
           }, {
             merge: true
           });
 
-        const collaboration = {
-          pendingCollaborators: pendingCollaborators,
-          projectName: currProject.name,
-          projectId: currProject.id,
-        }
-        history.replace(location.state?.from ?? "/projects");
-        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/inviteCollaborators`, {
-          method: "POST",
-          body: JSON.stringify({
-            collaboration,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        })
-          .then(response =>
-            response.json())
-          .then(response => {
-            if (!response?.status) {
-            } else {
-            }
-          })
-          .catch(error => {
-            console.error("Error:", error)
-          });
-
+         history.replace(location.state?.from ?? "/projects");
+        
         } catch (e) {
           console.error("Error adding document: ", e);
         }
@@ -172,17 +141,25 @@ useEffect(() => {
   }, [deleteProjectInput])
 
 
-  const deleteCollaborator = (id) => {
+  const deleteCollaborator = async (id) => {
     setCollaborators(prevState => (
       prevState.filter((collaborator) => collaborator.id !== id)
   ))
+  await setDoc(doc(db, "Projects", currProject.id), { 
+    collaborators: arrayRemove(id)
+  }, {
+    merge: true
+  });
+  if(props.location?.state.owner.id !== currentUser.uid ) {
+    history.replace(location.state?.from ?? "/projects");
+  }
   };
 
   const eachCollaborator = (item, index) => {
     return  (<Collaborator key={item.id} index={index} ownerId={props.location?.state.owner.id} collaborator={item} amount={collaborators.length} delete={deleteCollaborator}></Collaborator>)
   };
 
-  const handleSelect = (event, value) => {
+  const handleSelect = async (event, value) => {
     setOpenAddCollaboratorModal(false);
    
     if(collaborator) {
@@ -193,6 +170,39 @@ useEffect(() => {
         ...prevState, 
            collaborator     
         ]));
+        await setDoc(doc(db, "Projects", currProject.id), { 
+          pendingCollaborators: arrayUnion(collaborator.id)
+        }, {
+          merge: true
+        });
+
+        const collaboration = {
+          pendingCollaborator: collaborator,
+          projectName: currProject.name,
+          projectId: currProject.id,
+        }
+
+        await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/inviteCollaborators`, {
+          method: "POST",
+          body: JSON.stringify({
+            collaboration,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        })
+          .then(response =>
+            response.json())
+          .then(response => {
+            if (!response?.status) {
+            } else {
+            }
+          })
+          .catch(error => {
+            console.error("Error:", error)
+          });
+        
       setCollaborator(null);
     } 
     }

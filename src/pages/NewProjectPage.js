@@ -26,7 +26,7 @@ import { ref, onValue } from "firebase/database";
 
 import { Link, useHistory, useLocation } from "react-router-dom";
 
-const NewProject = () => {
+const NewProject = (props) => {
   const history = useHistory();
   const { currentUser } = useAuth();
 
@@ -124,7 +124,8 @@ const NewProject = () => {
   };
 
   const eachCollaborator = (item, index) => {
-    return (<Collaborator key={item.id} index={index} collaborator={item} amount={collaborators.length} delete={deleteCollaborator}></Collaborator>)
+    const type = "Pending Collaborator"
+    return (<Collaborator key={item.id} index={index} collaborator={item} type={type} delete={deleteCollaborator} amount={collaborators.length}></Collaborator>)
   };
 
   const handleSelect = (event, value) => {

@@ -73,6 +73,7 @@ const ProjectSettingsPage = (props) => {
     borderRadius: 2,
     p: 4,
   };
+
   const setProject = async (e) => {
     e.preventDefault();
 
@@ -174,7 +175,7 @@ useEffect(() => {
 
   const eachCollaborator = (item, index) => {
     const type = collaborators.includes(item) ? "Collaborator" : (pendingCollaborators.includes(item) ? "Pending Collaborator" : '')
-    return  (<Collaborator key={item.id} index={index} ownerId={props.location?.state.owner.id} collaborator={item} type={type} delete={deleteCollaborator} amount={collaborators.length + pendingCollaborators.length}></Collaborator>)
+    return (<Collaborator key={item.id} index={index} ownerId={props.location?.state.owner.id} collaborator={item} type={type} delete={deleteCollaborator} amount={collaborators.length + pendingCollaborators.length}></Collaborator>)
   };
 
   const handleSelect = async (event, value) => {
@@ -282,7 +283,7 @@ useEffect(() => {
             <Divider light sx={{ mt: 3, mb: 3 }}/>
 
             {
-              (currentUser.uid === props.location?.state.owner.id) ?
+              (currentUser.uid === props.location?.state.owner.id) &&
               <Box>
                 <Typography sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Danger Zone</Typography>
                 <Stack direction={'row'} justifyContent={'space-between'}>
@@ -295,8 +296,6 @@ useEffect(() => {
                   </Button>         
                 </Stack>   
               </Box>
-              :
-              ''
             }
            
           </Box>

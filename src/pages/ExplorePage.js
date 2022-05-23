@@ -106,7 +106,7 @@ const ExplorePage = () => {
           )
           })
           :
-          [1,2,3,4,5,6].map((num) => <SkeletonExploreCard/>)
+          [1,2,3,4,5,6].map((num, i) => <SkeletonExploreCard key={i}/>)
         }
       </Stack>
     </Layout>

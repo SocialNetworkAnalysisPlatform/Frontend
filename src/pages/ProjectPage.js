@@ -4,6 +4,7 @@ import {
   bindTrigger,
   bindMenu,
 } from "material-ui-popup-state/hooks";
+import { v4 as uuidv4 } from "uuid";
 import { Layout } from "../components/Layout";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
@@ -494,7 +495,7 @@ const ProjectPage = (props) => {
                   </TableRow>
                 )
                 :
-                [1,2,3].map((row) => <SkeletonTableRow/> )
+                [1,2,3].map((row, i) => <SkeletonTableRow key={i}/> )
               }
             </TableBody>
           </Table>

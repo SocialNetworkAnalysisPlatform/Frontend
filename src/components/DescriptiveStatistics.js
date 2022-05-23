@@ -191,9 +191,6 @@ const DescriptiveStatistics = (props) => {
         return fixNum(min)
     }
 
-
-    console.log("network", props.network)
-
     const printDocument = async () => {
         const printSection = async (elementId, doc, isFirstPage = false) => {
             const dom = document.getElementById(elementId);
@@ -239,9 +236,9 @@ const DescriptiveStatistics = (props) => {
             sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 100, textTransform: "none", }}>
                 Report
             </Button>
-            <Popover sx={{position: 'absolute !important',}}
+            <Popover sx={{position: 'absolute !important', zIndex: 0}}
                 open={open}
-                disableScrollLock={'true'}
+                disableScrollLock={true}
                 anchorEl={anchorEl}
                 onClose={() => setAnchorEl(null)}
                 anchorOrigin={{

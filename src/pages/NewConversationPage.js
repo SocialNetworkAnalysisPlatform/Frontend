@@ -29,6 +29,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dateFormat, { masks } from "dateformat";
 import ClipLoader from "react-spinners/ClipLoader";
 import { v4 as uuidv4 } from 'uuid';
+import { db } from "../utils/firebase";
+import { doc, getDoc} from "firebase/firestore"; 
 
 const IOSSwitch = styled((props) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -126,18 +128,31 @@ const NewConversationPage = (props) => {
       p: 4,
     };
 
-    const [files, setFiles] = useState([
-        { id: 1, name: "File1"},
-        { id: 2, name: "File2"},
-        { id: 3, name: "File3"},
-        { id: 4, name: "File4"},
-        { id: 5, name: "File5"},
-        { id: 6, name: "File6"},
-        { id: 7, name: "File7"},
-        { id: 8, name: "File8"},
+    const [files, setFiles] = useState([]);
+   // { id: 1, name: "File1"},
+    
 
-    ]);
+   useEffect(() => {
+    let isMounted = true;               // note mutable flag
 
+    let sources = props.location?.state.sources.map(source => 
+      getDoc(doc(db, "Sources", source.split('/').pop()))
+    );
+
+    Promise.all(sources).then(docs => {
+      if (isMounted) {
+        const files = docs.map(doc => doc.data().source);
+        setFiles(files);
+      }
+    })
+    
+    return () => {
+      isMounted = false;
+    };
+
+  }, [props.location?.state.sources]);
+ 
+  
     useEffect(() => {
       if(minMaxDates) {
         setStartDate(minMaxDates.min);

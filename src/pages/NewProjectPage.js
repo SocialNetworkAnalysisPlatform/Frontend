@@ -65,6 +65,7 @@ const NewProject = (props) => {
           owner: currentUser.uid,
           createdAt: new Date(),
           conversations: [],
+          sources: [],
         });
 
         history.replace(location.state?.from ?? "/projects");

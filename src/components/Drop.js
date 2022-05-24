@@ -122,7 +122,6 @@ export default function Dropzone(props) {
         const progress = Math.round(
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         );
-        setProgress(progress);
       },
       (error) => {
         console.log(error);

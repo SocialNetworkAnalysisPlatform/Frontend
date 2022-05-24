@@ -239,6 +239,7 @@ const ProjectPage = (props) => {
               collaborators: collaboratorsData,
               ...data,
               createdAt: createdAt.toDate(),
+              sources: data.sources?.map(conversation => conversation.path)
             }
             setProject(project);
 
@@ -371,8 +372,7 @@ const ProjectPage = (props) => {
   }
 
   const eachConversation = (item, index) => {
-    const { sources, ...data } = project;
-    return  (<Conversation key={item.id} index={index} project={data} network={item}
+    return  (<Conversation key={item.id} index={index} project={project} network={item}
             checkedNetwork={handleCheckedConversation} visibility={handleVisibility} projectId={project.id} isCheckedAll={checkedAll}>
             </Conversation>)
   };
@@ -388,7 +388,7 @@ const ProjectPage = (props) => {
         <Skeleton variant="text" width={180} height={36}/>
       }
       <Stack direction={"row"} spacing={3} sx={{ mt: 2 }}>
-        <Button component={Link} to={`/projects/${project?.id}/new-conversation`} startIcon={<AddIcon />} variant="contained"
+        <Button component={Link} to={{ pathname: `/projects/${project?.id}/new-conversation`, state: { sources: project?.sources} }} startIcon={<AddIcon />} variant="contained"
           sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }}>
           Add conversation
         </Button>

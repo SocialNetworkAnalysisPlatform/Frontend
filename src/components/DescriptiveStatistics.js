@@ -192,7 +192,7 @@ const DescriptiveStatistics = (props) => {
     }
 
     const printDocument = async () => {
-        const printSection = async (elementId, doc, isFirstPage = false) => {
+        const printSection = async (elementId, doc, addPage = false) => {
             const dom = document.getElementById(elementId);
             const canvas = await html2canvas(dom);
     
@@ -201,7 +201,7 @@ const DescriptiveStatistics = (props) => {
     
             const imgData = canvas.toDataURL("image/png");
     
-            if(isFirstPage) {
+            if(elementId === "first-pdf-section") {
                 if(props.type === "conversation") {
                     doc.text(`${props.conversationTitle[0]} / ${props.conversationTitle[1]}`, 5, 10);
                 }
@@ -209,18 +209,19 @@ const DescriptiveStatistics = (props) => {
                     doc.text(props.conversationTitle, 5, 10);
                 }
             }
-    
+            
             doc.addImage(imgData, "JPEG", 5, 15, imgWidth, imgHeight);
     
-            if(isFirstPage) {
+            if(addPage) {
                 doc.addPage();
             }
         };
         
         const doc = new jsPDF("p", "mm", "a4");
-        await printSection("first", doc, true);
-        await printSection("second", doc);
-    
+        await printSection("first-pdf-section", doc, true);
+        await printSection("second-pdf-section", doc, true);
+        await printSection("third-pdf-section", doc);
+
         if(props.type === "conversation") {
             doc.save(`${props.conversationTitle[0]} - ${props.conversationTitle[1]}.pdf`);
         }
@@ -265,7 +266,7 @@ const DescriptiveStatistics = (props) => {
         </Box>
         
         <Stack id="pdfdiv" direction={'column'}>
-            <Box id="first" sx={{ backgroundColor: '#f0f3f7' }}>
+            <Box id="first-pdf-section" sx={{ backgroundColor: '#f0f3f7' }}>
                 <Box>
                     <Typography gutterBottom variant="h6" component="div" sx={{ color: '#4f5676', mb: '2.7%', fontWeight: 700}}>Global Measures</Typography>
                     <Stack direction={'row'} justifyContent={'center'} spacing={'2.7%'}>
@@ -424,7 +425,8 @@ const DescriptiveStatistics = (props) => {
                         <HighchartsReact highcharts={Highcharts} options={degreeHistogramOptions} />
                     </Card>
                 </Box>
-
+            </Box>
+            <Box id="second-pdf-section" sx={{ backgroundColor: '#f0f3f7' }}>
                 <Card className={classes.cardGroup} sx={{ mt: '2.7%'}}>
                     <CardContent>
                         <Typography gutterBottom variant="body2" color="text.secondary" component="div">
@@ -527,7 +529,7 @@ const DescriptiveStatistics = (props) => {
                     <HighchartsReact highcharts={Highcharts} options={betweennessHistogramOptions}/>
                 </Card>
             </Box>
-            <Box  id="second" sx={{ backgroundColor: '#f0f3f7' }}>
+            <Box id="third-pdf-section">
                 <Card className={classes.cardGroup} sx={{ mt: '2.7%' }}>
                     <CardContent>
                         <Typography gutterBottom variant="body2" color="text.secondary" component="div">
@@ -549,7 +551,6 @@ const DescriptiveStatistics = (props) => {
                     </CardContent>
                 </Card>
             </Box>
-        
         </Stack>
         </>
 

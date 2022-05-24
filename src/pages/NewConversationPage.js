@@ -103,6 +103,7 @@ const IOSSwitch = styled((props) => (
   
 const NewConversationPage = (props) => {
     const classes = useStyles();
+    const { currentUser } = useAuth();
     const history = useHistory();
     const [loading, setLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState();
@@ -115,8 +116,6 @@ const NewConversationPage = (props) => {
     const [endDate, setEndDate] = useState("");
     const [minMaxDates, setMinMaxDates] = useState();
     const [files, setFiles] = useState([]);
-
-    console.log("selected file", selectedFile)
 
     const modalStyle = {
       position: 'absolute',
@@ -138,18 +137,21 @@ const NewConversationPage = (props) => {
       getDoc(doc(db, "Sources", source.split('/').pop()))
     );
 
+    if(sources.length > 0) {
     Promise.all(sources).then(docs => {
       if (isMounted) {
         const files = docs.map(doc => { 
           const file = {
-            ...doc.data().source,
+            ...doc.data()?.source,
             isFromSources: true,
           }
           return file; 
         } );
+
         setFiles(files);
       }
     })
+  }
     
     return () => {
       isMounted = false;
@@ -167,8 +169,9 @@ const NewConversationPage = (props) => {
 
     const handleConfirm = async(e) => {
       e.preventDefault();
-      setLoading(true);
       if(uploadedConversation) {
+        setLoading(true);
+        console.log(uploadedConversation);
         await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/importConversation`, {
           method: "POST",
           body: JSON.stringify({ 
@@ -204,6 +207,75 @@ const NewConversationPage = (props) => {
 
     }
 
+    const handleUpload = async (e) => {
+      e.preventDefault();
+      if (!newConversation || !selectedFile) {
+        alert("Please select a conversation to import and fill all the missing fields");
+        return;
+      }
+      
+      if (newConversation) {
+        const isTitleValid = newConversation.title && newConversation.title.length > 0;
+        const isDescriptionValid = newConversation.description && newConversation.description.length > 0;
+        const isFileOwnerValid = selectedFile.owner && selectedFile.owner.length > 0;
+  
+        if (!isTitleValid || !isDescriptionValid || checked && !isFileOwnerValid) {
+          alert("Please fill all the missing fields");
+          return;
+        }
+      }
+
+      setLoading(true);
+
+      const projectId =  window.location.pathname.split("/")[2]; // TODO: Verify if there is project id
+      const conversationId = newConversation.id; 
+      const fileName = selectedFile.storageSourcePath.split('/').pop();
+      
+      const filePath = `Conversations/${selectedFile.id}/`;
+  
+      const conversation = {
+        title: newConversation.title,
+        description: newConversation.description,
+        fileOwner: selectedFile.owner,
+        creator: currentUser.uid,
+        futureUse: checked,
+        projectId,
+        conversationId,
+        conversationFile: { fileName, filePath },
+      }
+      console.log(conversation);
+
+      await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/getMinMaxDates`, {
+         method: "POST",
+         body: JSON.stringify({ 
+           conversation
+        }),
+         headers: {
+           'Content-Type': 'application/json',
+           'Accept': 'application/json'
+         }
+       })
+         .then(response =>
+           response.json())
+         .then(response => {
+           console.log(response);
+           if(!response?.status) {
+            alert("File upload failed due it's content, please select another file");
+           } else {
+            setMinMaxDates(response.dates);
+            conversation.conversationFile = selectedFile;
+            setUploadedConversation(conversation);
+            setLoading(false);
+            setOpenModal(true);
+            console.log("File uploaded");
+           }
+        })
+         .catch(error => {
+           console.error("Error:", error)
+          });
+  
+    };
+
     const eachFile = (item, index) => {
         return ( <File key={item.id} index={index} file={item} groupSelected={selectedFile} selected={(file) => setSelectedFile(file)}></File> )
     };
@@ -224,7 +296,7 @@ const NewConversationPage = (props) => {
                 <Box sx={{  display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start'}}>
                     { files.map(eachFile) }
                 </Box>
-                <Button disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Import </Button>
+                <Button onClick={handleUpload} disabled={false} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Import </Button>
             </Stack>
         )
     }

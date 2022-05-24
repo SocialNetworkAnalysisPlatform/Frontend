@@ -89,7 +89,6 @@ export default function Dropzone(props) {
 
   const handleUpload = (e) => {
     e.preventDefault();
-    setLoading(true);
     if (!props.newConversation || !file) {
       alert("Please select a conversation to import and fill all the missing fields");
       return;
@@ -105,8 +104,7 @@ export default function Dropzone(props) {
         return;
       }
     }
-
-    console.log("Uploading");
+    setLoading(true);
 
     const projectId =  window.location.pathname.split("/")[2]; // TODO: Verify if there is project id
     const conversationId = props.newConversation.id; 
@@ -137,8 +135,9 @@ export default function Dropzone(props) {
           futureUse: checked,
           projectId,
           conversationId,
-          conversationFile: { fileName, filePath },
+          conversationFile: { fileName, filePath, isFromSources: false },
         }
+        console.log(conversation);
 
         await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/getMinMaxDates`, {
            method: "POST",

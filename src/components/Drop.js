@@ -137,10 +137,8 @@ export default function Dropzone(props) {
           futureUse: checked,
           projectId,
           conversationId,
-          fileName,
-          filePath,
+          conversationFile: { fileName, filePath },
         }
-
 
         await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/getMinMaxDates`, {
            method: "POST",

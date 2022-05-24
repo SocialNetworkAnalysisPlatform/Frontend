@@ -114,7 +114,9 @@ const NewConversationPage = (props) => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [minMaxDates, setMinMaxDates] = useState();
-    
+    const [files, setFiles] = useState([]);
+
+    console.log("selected file", selectedFile)
 
     const modalStyle = {
       position: 'absolute',
@@ -128,9 +130,6 @@ const NewConversationPage = (props) => {
       p: 4,
     };
 
-    const [files, setFiles] = useState([]);
-   // { id: 1, name: "File1"},
-    
 
    useEffect(() => {
     let isMounted = true;               // note mutable flag
@@ -141,7 +140,13 @@ const NewConversationPage = (props) => {
 
     Promise.all(sources).then(docs => {
       if (isMounted) {
-        const files = docs.map(doc => doc.data().source);
+        const files = docs.map(doc => { 
+          const file = {
+            ...doc.data().source,
+            isFromSources: true,
+          }
+          return file; 
+        } );
         setFiles(files);
       }
     })
@@ -150,7 +155,7 @@ const NewConversationPage = (props) => {
       isMounted = false;
     };
 
-  }, [props.location?.state.sources]);
+  }, []);
  
   
     useEffect(() => {
@@ -200,7 +205,7 @@ const NewConversationPage = (props) => {
     }
 
     const eachFile = (item, index) => {
-        return ( <File key={item.id} index={index} file={item} groupSelected={selectedFile} selected={(id) => setSelectedFile(id)}></File> )
+        return ( <File key={item.id} index={index} file={item} groupSelected={selectedFile} selected={(file) => setSelectedFile(file)}></File> )
     };
 
     const device = () => {

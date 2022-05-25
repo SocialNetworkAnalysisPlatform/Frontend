@@ -167,7 +167,7 @@ const NewConversationPage = (props) => {
       }
   }, [minMaxDates]);
 
-    const handleConfirm = async(e) => {
+  const handleConfirm = async(e) => {
       e.preventDefault();
       if(uploadedConversation) {
         setLoading(true);
@@ -176,8 +176,9 @@ const NewConversationPage = (props) => {
           method: "POST",
           body: JSON.stringify({ 
             conversation: {
-              minDate: (new Date(startDate)).getTime(),
-              maxDate: (new Date(endDate)).getTime(),
+              // Convert from Date Format to Unix Timestamp
+              minDate: (new Date(startDate).setHours(0,0,0,0)).toString(),
+              maxDate: (new Date(endDate).setHours(23,59,59,999)).toString(),
               ...uploadedConversation
             }
          }),
@@ -262,7 +263,11 @@ const NewConversationPage = (props) => {
            if(!response?.status) {
             alert("File upload failed due it's content, please select another file");
            } else {
-            setMinMaxDates(response.dates);
+            const dates = {
+              min: new Date(Number(response.dates.min)).setHours(0,0,0,0),
+              max: new Date(Number(response.dates.max)).setHours(0,0,0,0)
+            }
+            setMinMaxDates(dates);
             conversation.conversationFile = selectedFile;
             setUploadedConversation(conversation);
             setLoading(false);
@@ -358,8 +363,8 @@ const NewConversationPage = (props) => {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="Start Date"
-                    minDate={new Date(minMaxDates.min)}
-                    maxDate={new Date(minMaxDates.max)}
+                    minDate={minMaxDates.min}
+                    maxDate={minMaxDates.max}
                     value={startDate}
                     onChange={(newDate) => setStartDate(newDate)}
                     renderInput={(params) => <TextField {...params} />}
@@ -368,8 +373,8 @@ const NewConversationPage = (props) => {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="End Date"
-                    minDate={dateFormat(new Date(minMaxDates.min), "mm/dd/yyyy")}
-                    maxDate={dateFormat(new Date(minMaxDates.max), "mm/dd/yyyy")}
+                    minDate={minMaxDates.min}
+                    maxDate={minMaxDates.max}
                     value={endDate}
                     onChange={(newDate) => setEndDate(newDate)}
                     renderInput={(params) => <TextField {...params} />}

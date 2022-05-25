@@ -17,6 +17,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 import { useAuth } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
+import dateFormat, { masks } from "dateformat";
 
 const useStyles = makeStyles({
   label: {
@@ -156,7 +157,12 @@ export default function Dropzone(props) {
              if(!response?.status) {
               alert("File upload failed due it's content, please select another file");
              } else {
-              props.minMaxDates(response.dates);
+               // Convert from Unix Timestamp to Date Format
+              const dates = {
+                min: new Date(Number(response.dates.min)).setHours(0,0,0,0),
+                max: new Date(Number(response.dates.max)).setHours(0,0,0,0)
+              }
+              props.minMaxDates(dates);
               props.uploadedConversation(conversation);
               setLoading(false);
               props.openModal(true);

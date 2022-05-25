@@ -159,7 +159,7 @@ const NewConversationPage = (props) => {
 
   }, []);
  
-  
+ 
     useEffect(() => {
       if(minMaxDates) {
         setStartDate(minMaxDates.min);
@@ -176,8 +176,8 @@ const NewConversationPage = (props) => {
           method: "POST",
           body: JSON.stringify({ 
             conversation: {
-              minDate: dateFormat(new Date(startDate), "mm/dd/yyyy"),
-              maxDate: dateFormat(new Date(endDate), "mm/dd/yyyy"),
+              minDate: (new Date(startDate)).getTime(),
+              maxDate: (new Date(endDate)).getTime(),
               ...uploadedConversation
             }
          }),
@@ -288,7 +288,7 @@ const NewConversationPage = (props) => {
             </Stack>
         )
     }
-
+ 
     const sources = () => {
         return (
             <Stack p={2} spacing={1}>
@@ -368,8 +368,8 @@ const NewConversationPage = (props) => {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="End Date"
-                    minDate={new Date(minMaxDates.min)}
-                    maxDate={new Date(minMaxDates.max)}
+                    minDate={dateFormat(new Date(minMaxDates.min), "mm/dd/yyyy")}
+                    maxDate={dateFormat(new Date(minMaxDates.max), "mm/dd/yyyy")}
                     value={endDate}
                     onChange={(newDate) => setEndDate(newDate)}
                     renderInput={(params) => <TextField {...params} />}

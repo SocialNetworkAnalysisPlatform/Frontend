@@ -311,6 +311,7 @@ const ProjectPage = (props) => {
 
       await setDoc(doc(db, "Projects", projectId), {
         conversations: arrayRemove(...selectedConversations.map((conversation) => doc(db, "Conversations", conversation.id))),
+        sources: arrayRemove(...selectedConversations.map((conversation) => doc(db, "Sources", conversation.id))),
       }, {
         merge: true
       });

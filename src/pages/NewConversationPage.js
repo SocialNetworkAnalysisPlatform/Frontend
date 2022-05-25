@@ -133,11 +133,11 @@ const NewConversationPage = (props) => {
    useEffect(() => {
     let isMounted = true;               // note mutable flag
 
-    let sources = props.location?.state.sources.map(source => 
+    let sources = props.location?.state.sources?.map(source => 
       getDoc(doc(db, "Sources", source.split('/').pop()))
     );
 
-    if(sources.length > 0) {
+    if(sources && sources.length > 0) {
     Promise.all(sources).then(docs => {
       if (isMounted) {
         const files = docs.map(doc => { 

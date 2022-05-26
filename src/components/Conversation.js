@@ -21,6 +21,7 @@ import { doc, setDoc } from "firebase/firestore";
 const useStyles = makeStyles({
     field: {
         height: 30,
+        fontSize: 14,
         "&.MuiOutlinedInput-root": {
             "&.Mui-focused fieldset": {
               borderColor: '#6366f1 !important'

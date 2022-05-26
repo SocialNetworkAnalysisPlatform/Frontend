@@ -372,9 +372,14 @@ const ProjectPage = (props) => {
     setCsvData(networksData);
   }
 
+  const handleUpdateConversation = (updatedConversation) => {
+    setConversations(prevState => prevState.map(
+      data => data.id !== updatedConversation.id ? data : updatedConversation))
+  }
+
   const eachConversation = (item, index) => {
-    return  (<Conversation key={item.id} index={index} project={project} network={item}
-            checkedNetwork={handleCheckedConversation} visibility={handleVisibility} projectId={project.id} isCheckedAll={checkedAll}>
+    return  (<Conversation key={item.id} index={index} project={project} conversation={item}
+            checkedConversation={handleCheckedConversation} updatedConversation={handleUpdateConversation} visibility={handleVisibility} projectId={project.id} isCheckedAll={checkedAll}>
             </Conversation>)
   };
 
@@ -459,7 +464,7 @@ const ProjectPage = (props) => {
                 <TableCell align={"left"} sx={{ minWidth: 130 }}>
                   Description
                 </TableCell>
-                <TableCell align={"left"} sx={{ minWidth: 130 }}>
+                <TableCell align={"left"} sx={{ minWidth: 80 }}>
                   Received by
                 </TableCell>
                 <TableCell align={"left"} sx={{ minWidth: 130 }}>
@@ -468,6 +473,7 @@ const ProjectPage = (props) => {
                 <TableCell align={"left"} sx={{ minWidth: 130 }}>
                   Created
                 </TableCell>
+                <TableCell align={"left"} sx={{ minWidth: 40 }}></TableCell>
                 <TableCell align={"left"} sx={{ minWidth: 40 }}></TableCell>
               </TableRow>
             </TableHead>

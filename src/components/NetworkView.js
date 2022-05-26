@@ -448,7 +448,7 @@ const ProjectNetwork = (props) => {
                                         }}
                                     />
                                 </Stack>
-                                <Slider sx={{ color: '#6366f1' }} onMouseDown={(e) => {e.stopPropagation()}}
+                                <Slider sx={{ color: '#6366f1' }} onMouseDown={(e) => e.stopPropagation() }
                                     value={typeof sliderValue === 'number' ? sliderValue : 0}
                                     onChange={(event, newValue) => setSliderValue(newValue)}
                                     min={0} max={maxEdges}

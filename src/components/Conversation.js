@@ -59,13 +59,23 @@ const Conversation = (props) => {
         setEditMode(false);     
     }
 
-    useEffect(() => {
+    const updateConversation = async (title, description) => {
+        await setDoc(doc(db, "Conversations", props.conversation.id), {
+            title: title,
+            description: description
+          }, {
+            merge: true
+          });
+    }
+
+    useEffect(async () => {
         if(!editMode && title && description) {
             if(title !== props.conversation.title || description !== props.conversation.description ) {
                 const conversation = props.conversation;
                 conversation.title = title;
                 conversation.description = description;
                 props.updatedConversation(conversation)
+                await updateConversation(title, description)
             }
         }
     }, [editMode]);
@@ -78,7 +88,7 @@ const Conversation = (props) => {
     const handleVisibility = async(e) => {
         e.preventDefault();
         props.visibility(props.conversation.id, !props.conversation.isPublished)
-        const docRef = await setDoc(doc(db, "Conversations", props.conversation.id), {
+        await setDoc(doc(db, "Conversations", props.conversation.id), {
             isPublished: !props.conversation.isPublished,
           }, {
             merge: true

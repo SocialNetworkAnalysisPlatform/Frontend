@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import dateFormat, { masks } from "dateformat";
-
+import { makeStyles } from '@mui/styles';
 import Stack from '@mui/material/Stack';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -18,7 +18,19 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import { db } from "../utils/firebase";
 import { doc, setDoc } from "firebase/firestore"; 
 
+const useStyles = makeStyles({
+    field: {
+        height: 30,
+        "&.MuiOutlinedInput-root": {
+            "&.Mui-focused fieldset": {
+              borderColor: '#6366f1 !important'
+            }
+        },
+    }
+  });
+
 const Conversation = (props) => {
+    const classes = useStyles();
     const [checked, setChecked] = useState(false);
     const [displayEdit, setDisplayEdit] = useState(false);
     const [editMode, setEditMode] = useState(false);
@@ -83,13 +95,13 @@ const Conversation = (props) => {
                     <Link
                         to={{
                             pathname: `/projects/${props.projectId}/conversations/${props.conversation.id}`, 
-                            state: { conversation: props.conversation, project: props.project }
+                            state: { network: props.conversation, project: props.project }
                         }} 
                         style={{ textDecoration: "none", color: "#000000DE" ,"&:hover": { color: "#6366f1" }}}>
                         {props.conversation.title}
                     </Link>
                     :
-                    <OutlinedInput onClick={(e) => e.stopPropagation() } size="small" required value={title} onChange={(e) => setTitle(e.target.value) }/>
+                    <OutlinedInput onClick={(e) => e.stopPropagation() } size="small" className={classes.field} required value={title} onChange={(e) => setTitle(e.target.value) }/>
                 }
                 
             </TableCell>
@@ -98,7 +110,7 @@ const Conversation = (props) => {
                     !editMode ?
                     props.conversation.description
                     :
-                    <OutlinedInput onClick={(e) => e.stopPropagation()} size="small" required value={description} onChange={(e) => setDescription(e.target.value) }/>
+                    <OutlinedInput onClick={(e) => e.stopPropagation()} size="small" className={classes.field} required value={description} onChange={(e) => setDescription(e.target.value) }/>
                 }
             </TableCell>
             <TableCell align={'left'}>{props.conversation.source.owner}</TableCell>

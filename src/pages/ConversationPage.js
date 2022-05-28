@@ -41,7 +41,7 @@ const ConversationPage = (props) => {
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [])
-console.log("location", props.location)
+
     return (
         <Layout>
              <Box sx={{ width: '100%', typography: 'body1' }}>

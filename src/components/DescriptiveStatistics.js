@@ -73,8 +73,8 @@ const DescriptiveStatistics = (props) => {
     useEffect(() => {
         const network = props.network;
         let data = [{
-                conversationTitle: network.title, nodes: network.nodes.length, edges: network.edges.length, diameter: network.globalMeasures.diameter.value,
-                radius: network.globalMeasures.radius.value, density: fixNum(network.globalMeasures.density), selfLoops: network.globalMeasures.numberOfSelfLoops,
+                conversationTitle: network.title, nodes: network.nodes.length, edges: network.edges.length, diameter: network.globalMeasures.diameter,
+                radius: network.globalMeasures.radius, density: fixNum(network.globalMeasures.density), selfLoops: network.globalMeasures.numberOfSelfLoops,
                 avgClustering: fixNum(network.localMeasures.average_clustering), transitivity: fixNum(network.localMeasures.transitivity), 
                 reciprocity: fixNum(network.localMeasures.reciprocity), avgDegreeCentrality: calcAvgCentrality("degree"),
                 avgClosenessCentrality: calcAvgCentrality("closeness"), avgBetweennessCentrality: calcAvgCentrality("betweenness")
@@ -299,7 +299,7 @@ const DescriptiveStatistics = (props) => {
                                     Diameter
                                 </Typography>
                                 <Typography variant="h4" sx={{ textAlign: 'center'}}>
-                                    {props.network?.globalMeasures.diameter.value}
+                                    {props.network?.globalMeasures.diameter}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -309,7 +309,7 @@ const DescriptiveStatistics = (props) => {
                                     Radius
                                 </Typography>
                                 <Typography variant="h4" sx={{ textAlign: 'center'}}>
-                                    {props.network?.globalMeasures.radius.value}
+                                    {props.network?.globalMeasures.radius}
                                 </Typography>
                             </CardContent>
                         </Card>

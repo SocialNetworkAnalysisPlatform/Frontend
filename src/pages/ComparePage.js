@@ -118,41 +118,22 @@ const ComparePage = (props) => {
           }
           break;
       }
-      case "radius": {
-          for (const node of currNetwork.nodes) {
-              let graphNode = { id: node.label, label: hideLabels ? '' : node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
-              if(node.label == currNetwork.globalMeasures.radius.key) {
-                  graphNode.color = 'orange';
-                  graphNode.title = currNetwork.globalMeasures.radius.value;
-              }
-              newGraph.nodes.push(graphNode);
+      case "center": {
+        for (const node of currNetwork.nodes) {
+          let graphNode = { id: node.label, label: hideLabels ? '' : node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
+          if(currNetwork.globalMeasures.center.includes(node.label)) {
+              graphNode.color = 'red';
           }
-          if(graphs.length > 0) {
-            setGraphs(prevState => prevState.map(
-              data => data.networkId !== currNetwork.id ? data : newGraph))
-          }
-          else {
-            setGraphs(prevState => [...prevState, newGraph])
-          }
-          break;
-      }
-      case "diameter": {
-          for (const node of currNetwork.nodes) {
-              let graphNode = { id: node.label, label: hideLabels ? '' : node.label, shape: 'dot', value: 10, color: '#6366f1'} // default node
-              if(node.label == currNetwork.globalMeasures.diameter.key) {
-                  graphNode.color = 'orange'
-                  graphNode.title = currNetwork.globalMeasures.diameter.value;
-              }
-              newGraph.nodes.push(graphNode);
-          }
-          if(graphs.length > 0) {
-            setGraphs(prevState => prevState.map(
-              data => data.networkId !== currNetwork.id ? data : newGraph))
-          }
-          else {
-            setGraphs(prevState => [...prevState, newGraph])
-          }
-          break;
+          newGraph.nodes.push(graphNode);
+        }
+        if(graphs.length > 0) {
+          setGraphs(prevState => prevState.map(
+            data => data.networkId !== currNetwork.id ? data : newGraph))
+        }
+        else {
+          setGraphs(prevState => [...prevState, newGraph])
+        }
+        break;
       }
       case "community_detection": {
         for (const node of currNetwork.nodes) {
@@ -234,55 +215,41 @@ const ComparePage = (props) => {
                 <RestartAltIcon />
               </Fab>
               </Stack>
-              <Box sx={{ mt: 2}} >
-                  <Typography>Measure Type:</Typography>
-                  <ToggleButtonGroup color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
-                      <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="global measures">Global Measures</ToggleButton>
-                      <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="local measures">Local Measures</ToggleButton>
-                      <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="individual measures">Individual Measures</ToggleButton>
+              <Stack gap={1} sx={{ height: 130}}>
+                <Box sx={{ mt: 2}} >
+                  <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
+                    <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="individual measures">Individual Measures</ToggleButton>
+                    <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="local measures">Local Measures</ToggleButton>
+                    <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="global measures">Global Measures</ToggleButton>
                   </ToggleButtonGroup>
-              </Box>
+                </Box>
 
-              <Box sx={{ mt: 2}} >
-                { selectedMeasure === "global measures" &&
-                <>
-                    <Typography>Global Measure Type:</Typography>
-                    <ToggleButtonGroup color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
-                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="radius">
-                        <Tooltip title="The radius is the minimum eccentricity." arrow>
-                            <Typography>Radius</Typography>
-                        </Tooltip>
-                        </ToggleButton>
-                          <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="diameter">
-                            <Tooltip title="The diameter is the maximum eccentricity." arrow>
-                              <Typography>Diameter</Typography>
-                            </Tooltip>
-                        </ToggleButton>
-
-                    </ToggleButtonGroup>
-                </>
-                }
-
-                { selectedMeasure === "local measures" &&
-                <>
-                    <Typography>Local Measure Type:</Typography>
-                    <ToggleButtonGroup color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="community_detection">Community Detection</ToggleButton>
-                    </ToggleButtonGroup>
-                </>
-                }
-
-                { selectedMeasure === "individual measures" &&
-                <>
-                    <Typography>Individual Measure Type:</Typography>
-                    <ToggleButtonGroup color="primary" value={selectedIndividual} exclusive onChange={(e, value) => setSelectedIndividual(value)} >
+                  { selectedMeasure === "individual measures" &&
+                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedIndividual} exclusive onChange={(e, value) => setSelectedIndividual(value)} >
                         <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="degree_centrality">Degree Centrality</ToggleButton>
                         <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="closeness_centrality">Closeness Centrality</ToggleButton>
                         <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="betweenness_centrality">Betweenness Centrality</ToggleButton>
                     </ToggleButtonGroup>
-                </>
-                }
-              </Box>
+                  }
+
+                  { selectedMeasure === "local measures" &&
+                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
+                      <Tooltip title="Finds communities in a graph using the Girvan–Newman method." arrow>
+                          <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="community_detection">Community Detection</ToggleButton>
+                      </Tooltip>
+                    </ToggleButtonGroup>
+                  }  
+
+                  { selectedMeasure === "global measures" &&
+                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
+                      <ToggleButton  className={classes.toggleBtn} value="center">
+                        <Tooltip title="The center is the set of nodes with eccentricity equal to radius." arrow>
+                            <Typography variant={"body2"}>Center</Typography>
+                        </Tooltip>
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  }
+              </Stack>
             </Box>
             
             <Box sx={{  display: 'flex', flexDirection: 'row',  flexWrap: 'wrap', mt: 4, }}>

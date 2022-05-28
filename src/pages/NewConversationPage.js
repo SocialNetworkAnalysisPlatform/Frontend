@@ -171,7 +171,6 @@ const NewConversationPage = (props) => {
       e.preventDefault();
       if(uploadedConversation) {
         setLoading(true);
-        console.log(uploadedConversation);
         await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/importConversation`, {
           method: "POST",
           body: JSON.stringify({ 

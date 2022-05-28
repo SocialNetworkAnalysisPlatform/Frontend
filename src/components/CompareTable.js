@@ -27,8 +27,8 @@ const CompareTable = (props) => {
     useEffect(() => {
         const avgNodes = (networks.map(({ nodes }) => nodes.length).reduce((sum, i) => sum + i, 0)) / networks.length;
         const avgEdges = (networks.map(({ edges }) => edges.length).reduce((sum, i) => sum + i, 0)) / networks.length;
-        const avgDiameter = (networks.map(({ globalMeasures }) => globalMeasures.diameter.value).reduce((sum, i) => sum + i, 0)) / networks.length;
-        const avgRadius = (networks.map(({ globalMeasures }) => globalMeasures.radius.value).reduce((sum, i) => sum + i, 0)) / networks.length;
+        const avgDiameter = (networks.map(({ globalMeasures }) => globalMeasures.diameter).reduce((sum, i) => sum + i, 0)) / networks.length;
+        const avgRadius = (networks.map(({ globalMeasures }) => globalMeasures.radius).reduce((sum, i) => sum + i, 0)) / networks.length;
         const avgDensity = (networks.map(({ globalMeasures }) => globalMeasures.density).reduce((sum, i) => sum + i, 0)) / networks.length;
         const avgSelfLoops = (networks.map(({ globalMeasures }) => globalMeasures.numberOfSelfLoops).reduce((sum, i) => sum + i, 0)) / networks.length;
         const avgOfAvgClustering = (networks.map(({ localMeasures }) => localMeasures.average_clustering).reduce((sum, i) => sum + i, 0)) / networks.length;
@@ -100,8 +100,8 @@ const CompareTable = (props) => {
                                 <TableCell component="th" scope="row" sx={{ width: 150 }}>{row.title}</TableCell>
                                 <TableCell align="left" sx={{ color: checkCellColor(row.nodes.length, avgData?.avgNodes) }} >{row.nodes.length}</TableCell>
                                 <TableCell align="left" sx={{ color: checkCellColor(row.edges.length, avgData?.avgEdges) }} >{row.edges.length}</TableCell>
-                                <TableCell align="left" sx={{ color: checkCellColor(row.globalMeasures.diameter.value, avgData?.avgDiameter) }} >{row.globalMeasures.diameter.value}</TableCell>
-                                <TableCell align="left" sx={{ color: checkCellColor(row.globalMeasures.radius.value, avgData?.avgRadius) }} >{row.globalMeasures.radius.value}</TableCell>
+                                <TableCell align="left" sx={{ color: checkCellColor(row.globalMeasures.diameter, avgData?.avgDiameter) }} >{row.globalMeasures.diameter}</TableCell>
+                                <TableCell align="left" sx={{ color: checkCellColor(row.globalMeasures.radius, avgData?.avgRadius) }} >{row.globalMeasures.radius}</TableCell>
                                 <TableCell align="left" sx={{ color: checkCellColor(fixNum(row.globalMeasures.density), avgData?.avgDensity) }} >{fixNum(row.globalMeasures.density)}</TableCell>
                                 <TableCell align="left" sx={{ color: checkCellColor(row.globalMeasures.numberOfSelfLoops, avgData?.avgSelfLoops) }} >{row.globalMeasures.numberOfSelfLoops}</TableCell>
                                 <TableCell align="left" sx={{ color: checkCellColor(fixNum(row.localMeasures.average_clustering), avgData?.avgOfAvgClustering) }} >{fixNum(row.localMeasures.average_clustering)}</TableCell>

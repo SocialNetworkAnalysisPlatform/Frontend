@@ -361,8 +361,8 @@ const ProjectPage = (props) => {
     let networksData = [];
     selectedConversations.forEach((network) => {
       const row = {
-                conversationTitle: network.title, nodes: network.nodes.length, edges: network.edges.length, diameter: network.globalMeasures.diameter.value,
-                radius: network.globalMeasures.radius.value, density: network.globalMeasures.density, selfLoops: network.globalMeasures.numberOfSelfLoops,
+                conversationTitle: network.title, nodes: network.nodes.length, edges: network.edges.length, diameter: network.globalMeasures.diameter,
+                radius: network.globalMeasures.radius, density: network.globalMeasures.density, selfLoops: network.globalMeasures.numberOfSelfLoops,
                 avgClustering: network.localMeasures.average_clustering, transitivity: network.localMeasures.transitivity, 
                 reciprocity: network.localMeasures.reciprocity, avgDegreeCentrality: calcAvgCentrality(network, "degree"),
                 avgClosenessCentrality: calcAvgCentrality(network, "closeness"), avgBetweennessCentrality: calcAvgCentrality(network, "betweenness")

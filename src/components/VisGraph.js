@@ -9,6 +9,7 @@ const VisGraph = (props) => {
     
     const options = {
         layout: {
+            randomSeed: 1,
             hierarchical: false,    
             improvedLayout: false,   
         },

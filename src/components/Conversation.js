@@ -131,7 +131,7 @@ const Conversation = (props) => {
                     {props.conversation.creator.displayName}
                 </Stack>
             </TableCell>
-            <TableCell align={'left'}>{dateFormat(new Date(props.conversation.createdAt), "dd/mm/yyyy")}</TableCell>
+            <TableCell align={'left'}>{dateFormat(new Date(props.conversation.createdAt), "mm/dd/yyyy")}</TableCell>
             <TableCell align={'left'}> 
             {
                 props.conversation.isPublished ?

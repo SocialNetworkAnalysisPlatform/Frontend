@@ -32,7 +32,7 @@ const Project = (props) => {
                     <Stack direction={"row"} sx={{ mt: 1 }}>
                         <ChatIcon sx={{ mt: 0.4, fontSize: 12, }}/>
                         <Typography color="textSecondary" gutterBottom sx={{ ml: 1 , fontSize: 12, }}>{props.project.conversations ? props.project.conversations.length : '0'}</Typography>
-                        <Typography color="textSecondary" sx={{ ml: 3 , fontSize: 12, }}>{`Created at ${dateFormat(new Date(props.project.createdAt), "dd/mm/yyyy")}`}</Typography>
+                        <Typography color="textSecondary" sx={{ ml: 3 , fontSize: 12, }}>{`Created at ${dateFormat(new Date(props.project.createdAt), "mmmm d, yyyy")}`}</Typography>
                     </Stack>
                 </Box>
             </Stack>

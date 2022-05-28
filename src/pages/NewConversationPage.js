@@ -367,7 +367,7 @@ const NewConversationPage = (props) => {
                     maxDate={minMaxDates.max}
                     value={startDate}
                     onChange={(newDate) => setStartDate(newDate)}
-                    renderInput={(params) => <TextField {...params} />}
+                    renderInput={(params) => <TextField {...params} helperText={params?.inputProps?.placeholder} />}
                   />
                 </LocalizationProvider>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -377,7 +377,7 @@ const NewConversationPage = (props) => {
                     maxDate={minMaxDates.max}
                     value={endDate}
                     onChange={(newDate) => setEndDate(newDate)}
-                    renderInput={(params) => <TextField {...params} />}
+                    renderInput={(params) => <TextField {...params} helperText={params?.inputProps?.placeholder} />}
                   />
                 </LocalizationProvider>
                 <Button onClick={handleConfirm} variant="contained" sx={{ mt: 3, backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none", }} >

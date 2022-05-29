@@ -134,12 +134,11 @@ export default function Dropzone(props) {
           title: props.newConversation.title,
           description: props.newConversation.description,
           fileOwner: fileOwner,
-          fileDateFormat: fileDateFormat,
           creator: currentUser.uid,
           futureUse: checked,
           projectId,
           conversationId,
-          conversationFile: { fileName, filePath, isFromSources: false },
+          conversationFile: { fileName, filePath, fileDateFormat: fileDateFormat, isFromSources: false },
         }
         console.log(conversation);
 
@@ -213,8 +212,9 @@ export default function Dropzone(props) {
           onChange={(event) => setFileDateFormat(event.target.value)}
           className={classes.field}
         >
-          <MenuItem value={"DMY"}>dd/mm/yyyy (Day-Month-Year with leading zeros)</MenuItem>
-          <MenuItem value={"MDY"}>mm/dd/yyyy (Month-Day-Year with leading zeros)</MenuItem>
+          <MenuItem value={"DMY"}>dd/mm/yyyy</MenuItem>
+          <MenuItem value={"MDY"}>mm/dd/yyyy</MenuItem>
+          <MenuItem value={"other"}>Other</MenuItem>
         </Select>
         <Box>
           <Typography display="inline" sx={{ color: 'red', fontSize: 11 }}>Warning: </Typography>

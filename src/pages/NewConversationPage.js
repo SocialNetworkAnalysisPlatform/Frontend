@@ -171,6 +171,7 @@ const NewConversationPage = (props) => {
   const handleConfirm = async(e) => {
       e.preventDefault();
       if(uploadedConversation) {
+        console.log(uploadedConversation)
         setLoading(true);
         await fetch(`https://europe-west1-snaplatform.cloudfunctions.net/importConversation`, {
           method: "POST",
@@ -242,7 +243,7 @@ const NewConversationPage = (props) => {
         futureUse: checked,
         projectId,
         conversationId,
-        conversationFile: { fileName, filePath },
+        conversationFile: { fileName, filePath, fileDateFormat: selectedFile.fileDateFormat },
       }
       console.log(conversation);
 

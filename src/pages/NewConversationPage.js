@@ -92,7 +92,8 @@ const IOSSwitch = styled((props) => (
       },
     },
     field: {
-        width: '35vw',
+        width: 450,
+        height: 40,
         "&.MuiOutlinedInput-root": {
             "&.Mui-focused fieldset": {
               borderColor: '#6366f1 !important'
@@ -315,6 +316,10 @@ const NewConversationPage = (props) => {
       setEndDate();
     } 
 
+    const checkInputFormat = () => {
+     return uploadedConversation?.fileDateFormat == "DMY" ? "dd/MM/yyyy" : "MM/dd/yyyy"
+    }
+
     return (
       <>
         <Layout>
@@ -362,6 +367,7 @@ const NewConversationPage = (props) => {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="Start Date"
+                    inputFormat={checkInputFormat()}
                     minDate={minMaxDates.min}
                     maxDate={minMaxDates.max}
                     value={startDate}
@@ -372,6 +378,7 @@ const NewConversationPage = (props) => {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="End Date"
+                    inputFormat={checkInputFormat()}
                     minDate={minMaxDates.min}
                     maxDate={minMaxDates.max}
                     value={endDate}

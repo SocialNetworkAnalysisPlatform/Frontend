@@ -1,23 +1,24 @@
-import { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { storage } from "../utils/firebase";
 import { ref, uploadBytesResumable } from "firebase/storage";
 
 import { makeStyles } from '@mui/styles';
 import Button from "@mui/material/Button";
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import ClipLoader from "react-spinners/ClipLoader";
 
 import { useAuth } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
-import dateFormat, { masks } from "dateformat";
 
 const useStyles = makeStyles({
   label: {
@@ -28,7 +29,8 @@ const useStyles = makeStyles({
     },
   },
   field: {
-      width: '35vw',
+      width: 450,
+      height: 40,
       "&.MuiOutlinedInput-root": {
           "&.Mui-focused fieldset": {
             borderColor: '#6366f1 !important'
@@ -42,7 +44,7 @@ const baseStyle = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  padding: "20px",
+  padding: 30,
   borderWidth: 2,
   borderRadius: 2,
   borderColor: "#eeeeee",
@@ -51,8 +53,7 @@ const baseStyle = {
   color: "#bdbdbd",
   outline: "none",
   transition: "border .24s ease-in-out",
-  width: '35vw',
-  height: 200,
+  width: 385,
 };
 
 const focusedStyle = {
@@ -87,6 +88,7 @@ export default function Dropzone(props) {
   const [file, setFile] = useState(null);
   const [checked, setChecked] = useState(false);
   const [fileOwner, setFileOwner] = useState('');
+  const [fileDateFormat, setFileDateFormat] = useState('');
 
   const handleUpload = (e) => {
     e.preventDefault();
@@ -132,6 +134,7 @@ export default function Dropzone(props) {
           title: props.newConversation.title,
           description: props.newConversation.description,
           fileOwner: fileOwner,
+          fileDateFormat: fileDateFormat,
           creator: currentUser.uid,
           futureUse: checked,
           projectId,
@@ -199,10 +202,25 @@ export default function Dropzone(props) {
   return (
     <>
     <Stack gap={2}>
-        <FormControl>
-          <FormLabel className={classes.label}>Received by</FormLabel>
-          <OutlinedInput size="small" className={classes.field} required value={fileOwner} onChange={(e) => setFileOwner(e.target.value) }/>
-        </FormControl>
+      <FormControl>
+        <FormLabel className={classes.label}>Received by</FormLabel>
+        <OutlinedInput size="small" className={classes.field} required value={fileOwner} onChange={(e) => setFileOwner(e.target.value) }/>
+      </FormControl>
+      <FormControl>
+        <FormLabel className={classes.label}>Select a date format according to the date listed in the conversation</FormLabel>
+        <Select
+          value={fileDateFormat}
+          onChange={(event) => setFileDateFormat(event.target.value)}
+          className={classes.field}
+        >
+          <MenuItem value={"DMY"}>dd/mm/yyyy (Day-Month-Year with leading zeros)</MenuItem>
+          <MenuItem value={"MDY"}>mm/dd/yyyy (Month-Day-Year with leading zeros)</MenuItem>
+        </Select>
+        <Box>
+          <Typography display="inline" sx={{ color: 'red', fontSize: 11 }}>Warning: </Typography>
+          <Typography display="inline" sx={{ color: '#666666', fontSize: 11 }}>selecting a false date format of the conversation will lead to incorrect results</Typography>
+        </Box>
+      </FormControl>
       <Box {...getRootProps({ style })}>
         <input {...getInputProps()} />
         {file ? (

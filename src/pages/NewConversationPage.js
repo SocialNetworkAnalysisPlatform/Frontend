@@ -318,7 +318,7 @@ const NewConversationPage = (props) => {
     } 
 
     const checkInputFormat = () => {
-     return uploadedConversation?.fileDateFormat == "DMY" ? "dd/MM/yyyy" : "MM/dd/yyyy"
+     return uploadedConversation?.conversationFile.fileDateFormat == "DMY" ? "dd/MM/yyyy" : "MM/dd/yyyy"
     }
 
     return (

@@ -38,7 +38,7 @@ const AppRouter = (props) => {
           <ProtectedRoute exact path='/projects/:id/new-conversation' component={NewConversationPage} />
           <ProtectedRoute exact path='/new-project' component={NewProjectPage} />
           <ProtectedRoute exact path='/project-settings' component={ProjectSettingsPage} />
-          <ProtectedRoute exact path='/compare' component={ComparePage} />
+          <ProtectedRoute exact path='/projects/:id/compare' component={ComparePage} />
           <ProtectedRoute exact path='/test' component={TestPage} />
           <ProtectedRoute
             exact

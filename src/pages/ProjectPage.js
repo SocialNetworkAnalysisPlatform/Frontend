@@ -408,7 +408,7 @@ const ProjectPage = (props) => {
         </CSVLink>
         <Button disabled={disabledCompare} startIcon={<CompareArrowsIcon />} variant="contained"
           sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, textTransform: "none" }}
-          component={Link} to={{ pathname: `/compare`, state: { compareList: selectedConversations } }} >
+          component={Link} to={{ pathname: `/projects/${project?.id}/compare`, state: { compareList: selectedConversations, project: project } }} >
           Compare
         </Button>
       </Stack>

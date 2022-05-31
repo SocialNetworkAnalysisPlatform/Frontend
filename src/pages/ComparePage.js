@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { makeStyles } from '@mui/styles';
 import { v4 as uuidv4 } from "uuid";
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Button from "@mui/material/Button";
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
@@ -14,6 +14,8 @@ import VisGraph from '../components/VisGraph'
 import Fab from '@mui/material/Fab';
 import TableViewIcon from '@mui/icons-material/TableView';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import LabelIcon from '@mui/icons-material/Label';
+import LabelOffIcon from '@mui/icons-material/LabelOff';
 import CompareTable from '../components/CompareTable';
 
 const useStyles = makeStyles({
@@ -37,6 +39,7 @@ const ComparePage = (props) => {
   const [networksData, setNetworksData] = useState([]);
   const [graphs, setGraphs] = useState([]);
   const [currMode, setCurrMode] = useState('');
+  const [hideLabels, setHideLabels] = useState(false);
 
   useEffect(() => {
     const compareList = props.location?.state.compareList;
@@ -50,6 +53,7 @@ const ComparePage = (props) => {
   
 
   const graphBuilder = (currNetwork, mode, path=null, hideLabels=null) => {
+    console.log("hideLabels", hideLabels)
     let newGraph =  { id: uuidv4(), networkId: currNetwork.id, title: currNetwork.title, nodes: [], edges: [...currNetwork.edges]};
     // Reset edges color
     for (let j = 0; j < (newGraph.edges).length; j++) {   
@@ -157,7 +161,7 @@ const ComparePage = (props) => {
     e.preventDefault()
     if(networksData) {
         networksData.forEach( (item, index) => {
-          graphBuilder(item, "init")
+          graphBuilder(item, "init", hideLabels)
         });
         setSelectedMeasure(); 
         setSelectedGlobal();
@@ -174,21 +178,26 @@ const ComparePage = (props) => {
 
   useEffect(() => {
     networksData.forEach( (item, index) => {
-      graphBuilder(item, selectedGlobal)
+      graphBuilder(item, currMode, null, hideLabels)
     });
+}, [hideLabels]);
 
+  useEffect(() => {
+    networksData.forEach( (item, index) => {
+      graphBuilder(item, selectedGlobal, null, hideLabels)
+    });
   }, [selectedGlobal]);
 
   useEffect(() => {
     networksData.forEach( (item, index) => {
-      graphBuilder(item, selectedLocal)
+      graphBuilder(item, selectedLocal, null, hideLabels)
     });
 
   }, [selectedLocal]);
 
   useEffect(() => {
     networksData.forEach( (item, index) => {
-      graphBuilder(item, selectedIndividual)
+      graphBuilder(item, selectedIndividual, null, hideLabels)
     });
 
   }, [selectedIndividual]);
@@ -197,66 +206,77 @@ const ComparePage = (props) => {
 
   const eachNetwork = (item, index) => {
     return  (
-              <Box key={item.id} index={index} sx={{  display: 'flex',flexDirection: 'column', width: '35vw',  height: '50vh', backgroundColor: '#f5f5f5', border: '1px #dddddd solid'}} >
-                <Typography sx={{ position: 'absolute', zIndex: 1, marginLeft: 1 }}>{ item.title }</Typography>
-                <VisGraph graph={item}></VisGraph>
-              </Box>
+      <Box key={item.id} index={index} sx={{  display: 'flex',flexDirection: 'column', width: '35vw',  height: '50vh', backgroundColor: '#f5f5f5', border: '1px #dddddd solid'}} >
+        <Typography sx={{ position: 'absolute', zIndex: 1, marginLeft: 1 }}>{ item.title }</Typography>
+        <VisGraph graph={item}></VisGraph>
+      </Box>
     )
   };
 
   return (
-          <Layout>
-            <Box>
-              <Stack direction={"column"} gap={1} sx={{ position: 'fixed', right: 20, zIndex: 1}}>
-              <Fab onClick={()=> setOpenTable(true)} size='medium' color="primary" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }  }}>
-                <TableViewIcon />
-              </Fab>
-              <Fab onClick={handleResetGraph} size='medium' color="primary" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }  }}>
-                <RestartAltIcon />
-              </Fab>
-              </Stack>
-              <Stack gap={1} sx={{ height: 130}}>
-                <Box sx={{ mt: 2}} >
-                  <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
-                    <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="individual measures">Individual Measures</ToggleButton>
-                    <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="local measures">Local Measures</ToggleButton>
-                    <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="global measures">Global Measures</ToggleButton>
-                  </ToggleButtonGroup>
-                </Box>
+    <Layout>
+      <Box>
+        <Typography display="inline" component={Link} to={`/projects/${props.location?.state.project.id}`}
+          sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1", textDecoration: 'none', "&:hover": { textDecoration: "underline" } }}>
+          {props.location?.state.project.name}
+        </Typography>
+        <Typography display="inline" sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1", pr: 1, pl: 1 }}>/</Typography>
+        <Typography display="inline" sx={{ fontSize: 24, fontWeight: 500, color: "#6366f1" }}>Compare Conversations</Typography>
+        <Stack direction={"column"} gap={1.5} sx={{ position: 'fixed', right: 20, zIndex: 1}}>
+          <Fab onClick={()=> setOpenTable(true)} size='medium' color="primary" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }  }}>
+            <TableViewIcon />
+          </Fab>
+          <Fab onClick={()=> setHideLabels(!hideLabels)} size='medium' color="primary" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }  }}>
+            {
+              hideLabels ? <LabelOffIcon/> : <LabelIcon/>
+            }
+          </Fab>
+          <Fab onClick={handleResetGraph} size='medium' color="primary" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }  }}>
+            <RestartAltIcon />
+          </Fab>
+        </Stack>
+        <Stack gap={1} sx={{ height: 130}}>
+          <Box sx={{ mt: 2}} >
+            <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
+              <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="individual measures">Individual Measures</ToggleButton>
+              <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="local measures">Local Measures</ToggleButton>
+              <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="global measures">Global Measures</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
 
-                  { selectedMeasure === "individual measures" &&
-                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedIndividual} exclusive onChange={(e, value) => setSelectedIndividual(value)} >
-                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="degree_centrality">Degree Centrality</ToggleButton>
-                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="closeness_centrality">Closeness Centrality</ToggleButton>
-                        <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="betweenness_centrality">Betweenness Centrality</ToggleButton>
-                    </ToggleButtonGroup>
-                  }
+            { selectedMeasure === "individual measures" &&
+              <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedIndividual} exclusive onChange={(e, value) => setSelectedIndividual(value)} >
+                  <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="degree_centrality">Degree Centrality</ToggleButton>
+                  <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="closeness_centrality">Closeness Centrality</ToggleButton>
+                  <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="betweenness_centrality">Betweenness Centrality</ToggleButton>
+              </ToggleButtonGroup>
+            }
 
-                  { selectedMeasure === "local measures" &&
-                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                      <Tooltip title="Finds communities in a graph using the Girvan–Newman method." arrow>
-                          <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="community_detection">Community Detection</ToggleButton>
-                      </Tooltip>
-                    </ToggleButtonGroup>
-                  }  
+            { selectedMeasure === "local measures" &&
+              <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
+                <Tooltip title="Finds communities in a graph using the Girvan–Newman method." arrow>
+                    <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="community_detection">Community Detection</ToggleButton>
+                </Tooltip>
+              </ToggleButtonGroup>
+            }  
 
-                  { selectedMeasure === "global measures" &&
-                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
-                      <ToggleButton  className={classes.toggleBtn} value="center">
-                        <Tooltip title="The center is the set of nodes with eccentricity equal to radius." arrow>
-                            <Typography variant={"body2"}>Center</Typography>
-                        </Tooltip>
-                      </ToggleButton>
-                    </ToggleButtonGroup>
-                  }
-              </Stack>
-            </Box>
-            
-            <Box sx={{  display: 'flex', flexDirection: 'row',  flexWrap: 'wrap', mt: 4, }}>
-                  { graphs && graphs.map(eachNetwork) }
-            </Box>
-            { openTable && <CompareTable compareList={props.location?.state.compareList}/>}
-        </Layout>
+            { selectedMeasure === "global measures" &&
+              <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
+                <ToggleButton  className={classes.toggleBtn} value="center">
+                  <Tooltip title="The center is the set of nodes with eccentricity equal to radius." arrow>
+                      <Typography variant={"body2"}>Center</Typography>
+                  </Tooltip>
+                </ToggleButton>
+              </ToggleButtonGroup>
+            }
+        </Stack>
+      </Box>
+      
+      <Box sx={{  display: 'flex', flexDirection: 'row',  flexWrap: 'wrap', mt: 4, }}>
+            { graphs && graphs.map(eachNetwork) }
+      </Box>
+      { openTable && <CompareTable compareList={props.location?.state.compareList}/>}
+    </Layout>
   )
 }
 export default ComparePage;

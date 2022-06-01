@@ -377,9 +377,7 @@ const ProjectNetwork = (props) => {
 
                                 { selectedMeasure === "local measures" &&
                                     <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                                        <Tooltip title="Finds communities in a graph using the Girvan–Newman method." arrow>
                                         <ToggleButton className={classes.toggleBtn} value="community_detection"><Typography variant={"body2"}>Community Detection</Typography></ToggleButton>
-                                        </Tooltip>
                                     </ToggleButtonGroup>
                                 }
 

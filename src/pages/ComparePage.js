@@ -254,9 +254,7 @@ const ComparePage = (props) => {
 
             { selectedMeasure === "local measures" &&
               <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                <Tooltip title="Finds communities in a graph using the Girvan–Newman method." arrow>
-                    <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="community_detection">Community Detection</ToggleButton>
-                </Tooltip>
+                  <ToggleButton className={classes.toggleBtn} sx={{ textTransform: 'none' }} value="community_detection">Community Detection</ToggleButton>
               </ToggleButtonGroup>
             }  
 

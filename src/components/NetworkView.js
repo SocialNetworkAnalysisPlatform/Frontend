@@ -330,7 +330,7 @@ const ProjectNetwork = (props) => {
             <Draggable nodeRef={nodeRef} bounds="parent">
                 <Box ref={nodeRef} sx={{ align: 'right', width: 320, backgroundColor: 'white', p: 1, position: 'absolute', zIndex: 1, right: 0}}> 
                     <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                        <Typography sx={{ color: '#6366f1' }}>SNAP Analysis</Typography>
+                        <Typography sx={{ color: '#6366f1' }}>SNAP Analyzer</Typography>
                         <IconButton onClick={() => setExpanded(!expanded)}>
                             { expanded ? <CloseFullscreenIcon/> : <OpenInFullIcon/> }
                         </IconButton>

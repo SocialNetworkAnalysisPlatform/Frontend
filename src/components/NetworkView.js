@@ -329,7 +329,7 @@ const ProjectNetwork = (props) => {
                     <ClipLoader color={'#6366F1'} loading={loading} size={100} />
                 </Box>
                 :
-                <Box>
+                <>
                     <Stack direction={'column'} gap={1} position={'absolute'} zIndex={1} > 
                         <IconButton onClick={zoomIn} color="default" size="large" sx={{ backgroundColor: 'white', color: '#6366f1'}}>
                             <AddIcon/>
@@ -452,7 +452,7 @@ const ProjectNetwork = (props) => {
                             </Collapse>
                         </Box>
                     </Draggable>
-                </Box>
+                </>
             }
             <Box sx={{ width: '100%', height: '90vh'}}>
               { graph && <Graph key={graph.id} style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }

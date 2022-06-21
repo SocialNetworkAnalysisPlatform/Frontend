@@ -282,7 +282,7 @@ const ProjectNetwork = (props) => {
     }
 
     const zoomIn = () => {
-        const zoomInScale = network.getScale() + 0.5
+        const zoomInScale = network.getScale() + 0.1
         network.moveTo({
             scale: zoomInScale,
             offset: {x: 0, y: 0},
@@ -291,7 +291,7 @@ const ProjectNetwork = (props) => {
     }
 
     const zoomOut = () => {
-        const zoomInScale = network.getScale() - 0.5
+        const zoomInScale = network.getScale() - 0.1
         if(zoomInScale > 0) {
             network.moveTo({
                 scale: zoomInScale,

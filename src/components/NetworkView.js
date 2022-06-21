@@ -26,6 +26,7 @@ import Grid from '@mui/material/Grid';
 import Slider from '@mui/material/Slider';
 import Input from '@mui/material/Input';
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
+import ClipLoader from "react-spinners/ClipLoader";
 
 const useStyles = makeStyles({
     toggleBtn: {
@@ -53,6 +54,7 @@ const useStyles = makeStyles({
 
 const ProjectNetwork = (props) => {
     const classes = useStyles();
+    const [loading, setLoading] = useState(true);
     const [expanded, setExpanded] = useState(false);
     const [hideLabels, setHideLabels] = useState(false);
 
@@ -224,8 +226,11 @@ const ProjectNetwork = (props) => {
     };
 
     const events = {
-        select: function(event) {
+        select: (event) => {
         var { nodes, edges } = event;
+        },
+        afterDrawing: (event) => {
+            setLoading(false)
         },
     };
 
@@ -318,131 +323,139 @@ const ProjectNetwork = (props) => {
   
     return (
         <Box sx={{position: 'relative'}}>
-            <Stack direction={'column'} gap={1} position={'absolute'} zIndex={1} > 
-                <IconButton onClick={zoomIn} color="default" size="large" sx={{ backgroundColor: 'white', color: '#6366f1'}}>
-                    <AddIcon/>
-                </IconButton>
-                <IconButton onClick={zoomOut} color="default" size="large" sx={{ backgroundColor: 'white', color: '#6366f1'}}>
-                    <RemoveIcon/>
-                </IconButton>
-            </Stack>
-            
-            <Draggable nodeRef={nodeRef} bounds="parent">
-                <Box ref={nodeRef} sx={{ align: 'right', width: 320, backgroundColor: 'white', p: 1, position: 'absolute', zIndex: 1, right: 0}}> 
-                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                        <Typography sx={{ color: '#6366f1' }}>SNAP Analyzer</Typography>
-                        <IconButton onClick={() => setExpanded(!expanded)}>
-                            { expanded ? <CloseFullscreenIcon/> : <OpenInFullIcon/> }
+            {
+                loading ? 
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 15}}>
+                    <ClipLoader color={'#6366F1'} loading={loading} size={100} />
+                </Box>
+                :
+                <Box>
+                    <Stack direction={'column'} gap={1} position={'absolute'} zIndex={1} > 
+                        <IconButton onClick={zoomIn} color="default" size="large" sx={{ backgroundColor: 'white', color: '#6366f1'}}>
+                            <AddIcon/>
+                        </IconButton>
+                        <IconButton onClick={zoomOut} color="default" size="large" sx={{ backgroundColor: 'white', color: '#6366f1'}}>
+                            <RemoveIcon/>
                         </IconButton>
                     </Stack>
                     
-                    <Collapse in={expanded} timeout="auto" unmountOnExit>
-                        <Stack direction={'column'} gap={2.5} mt={2}>
-                            <Stack direction={'row'} justifyContent={'space-between'}>
-                                <FormControlLabel sx={{ color: '#0000008A'}}
-                                    label="Hide labels"
-                                    control={<Checkbox color='default' sx={{ color: '#6366f1' }} checked={hideLabels} onChange={() => setHideLabels(event.target.checked)} />}
-                                />
-                                <IconButton onClick={handleResetGraph} title="Reset graph" sx={{ mr: 1, backgroundColor: "#6366f1", color: 'white', borderRadius: 1, height: 30, width: 30,  "&:hover": { backgroundColor: "#4e50c6" }}}><RestartAltIcon/></IconButton>
+                    <Draggable nodeRef={nodeRef} bounds="parent">
+                        <Box ref={nodeRef} sx={{ align: 'right', width: 320, backgroundColor: 'white', p: 1, position: 'absolute', zIndex: 1, right: 0}}> 
+                            <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+                                <Typography sx={{ color: '#6366f1' }}>SNAP Analyzer</Typography>
+                                <IconButton onClick={() => setExpanded(!expanded)}>
+                                    { expanded ? <CloseFullscreenIcon/> : <OpenInFullIcon/> }
+                                </IconButton>
                             </Stack>
                             
-                            <Box>
-                                <ToggleButtonGroup sx={{ mb: 1, height: 50 }} color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
-                                    <ToggleButton className={classes.toggleBtn} value="individual measures"><Typography variant={"body2"}>Individual Measures</Typography></ToggleButton>
-                                    <ToggleButton className={classes.toggleBtn} value="local measures"><Typography variant={"body2"}>Local Measures</Typography></ToggleButton>
-                                    <ToggleButton className={classes.toggleBtn} value="global measures"><Typography variant={"body2"}>Global Measures</Typography></ToggleButton>
-                                </ToggleButtonGroup>
-
-                                { selectedMeasure === "individual measures" &&
-                                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedIndividual} exclusive onChange={(e, value) => setSelectedIndividual(value)} >
-                                        <ToggleButton className={classes.toggleBtn} value="degree_centrality">
-                                            <Tooltip title="The degree centrality for a node is the fraction of nodes it is connected to." arrow>
-                                                <Typography variant={"body2"}>Degree Centrality</Typography>
-                                            </Tooltip>
-                                        </ToggleButton>
-
-                                        <ToggleButton className={classes.toggleBtn} value="closeness_centrality">
-                                            <Tooltip title="Closeness centrality of a node is the reciprocal of the average shortest path distance to him over all n-1 reachable nodes." arrow>
-                                                <Typography variant={"body2"}>Closeness Centrality</Typography>
-                                            </Tooltip>
-                                        </ToggleButton>
-
-                                        <ToggleButton className={classes.toggleBtn} value="betweenness_centrality">
-                                            <Tooltip title="Betweenness centrality of a node is the sum of the fraction of all-pairs shortest paths that pass through him." arrow>
-                                                <Typography variant={"body2"}>Betweenness Centrality</Typography>
-                                            </Tooltip>
-                                        </ToggleButton>
-                                    </ToggleButtonGroup>
-                                }
-
-                                { selectedMeasure === "local measures" &&
-                                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
-                                        <ToggleButton className={classes.toggleBtn} value="community_detection"><Typography variant={"body2"}>Community Detection</Typography></ToggleButton>
-                                    </ToggleButtonGroup>
-                                }
-
-                                { selectedMeasure === "global measures" &&
-                                    <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
-                                    
-                                        <ToggleButton className={classes.toggleBtn} value="shortest path">
-                                            <Tooltip title="Compute shortest paths in the graph." arrow>
-                                                <Typography variant={"body2"}>Shortest Path</Typography>
-                                            </Tooltip>
-                                        </ToggleButton>
-
-                                        <ToggleButton  className={classes.toggleBtn} value="center">
-                                            <Tooltip title="The center is the set of nodes with eccentricity equal to radius." arrow>
-                                                <Typography variant={"body2"}>Center</Typography>
-                                            </Tooltip>
-                                        </ToggleButton>
-                                    </ToggleButtonGroup>
-                                }
-                                { selectedMeasure === "global measures" && selectedGlobal === "shortest path" &&
-                                    <Stack direction={'column'} spacing={2} sx={{ mt: 2 }}>
-                                        <Autocomplete disablePortal options={networkData.nodes} onChange={(event, value) => setSourceNode(value)} 
-                                        renderInput={(params) => <TextField {...params} className={classes.autoComplete} size="small" variant="outlined" label='Source node' /> }
+                            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                                <Stack direction={'column'} gap={2.5} mt={2}>
+                                    <Stack direction={'row'} justifyContent={'space-between'}>
+                                        <FormControlLabel sx={{ color: '#0000008A'}}
+                                            label="Hide labels"
+                                            control={<Checkbox color='default' sx={{ color: '#6366f1' }} checked={hideLabels} onChange={() => setHideLabels(event.target.checked)} />}
                                         />
-                                        <Autocomplete disablePortal options={networkData.nodes} onChange={(event, value) => setTargetNode(value)} 
-                                        renderInput={(params) => <TextField {...params} className={classes.autoComplete} size="small" variant="outlined" label='Target node'/>}
-                                        />
-                                        <Button onClick={searchShortestPath} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Search </Button>
+                                        <IconButton onClick={handleResetGraph} title="Reset graph" sx={{ mr: 1, backgroundColor: "#6366f1", color: 'white', borderRadius: 1, height: 30, width: 30,  "&:hover": { backgroundColor: "#4e50c6" }}}><RestartAltIcon/></IconButton>
                                     </Stack>
-                                }
-                            </Box>
-                            <Box>
-                                <Stack direction={"row"} spacing={1.3} justifyContent={"flex-start"}>
-                                    <MessageOutlinedIcon sx={{ color: '#6366f1', fontSize: 21 }} />
-                                    <Typography id="input-slider" sx={{color: '#0000008A', fontSize: 15}}>
-                                        Minimum Messages per Member
-                                    </Typography>
-                                    <Input className={classes.sliderInput} sx={{fontSize: 15}}
-                                        value={sliderValue}
-                                        size="small"
-                                        onChange={(event) => setSliderValue(event.target.value === '' ? '' : Number(event.target.value))}
-                                        onBlur={handleBlur}
-                                        inputProps={{
-                                        step: 1,
-                                        min: 0,
-                                        max: maxEdges,
-                                        type: 'number',
-                                        'aria-labelledby': 'input-slider',
-                                        }}
-                                    />
-                                </Stack>
-                                <Slider sx={{ color: '#6366f1' }} onMouseDown={(e) => e.stopPropagation() }
-                                    value={typeof sliderValue === 'number' ? sliderValue : 0}
-                                    onChange={(event, newValue) => setSliderValue(newValue)}
-                                    min={0} max={maxEdges}
-                                    aria-labelledby="input-slider"
-                                />
-                            </Box>
-                        </Stack>
-                    </Collapse>
-                </Box>
-            </Draggable>
+                                    
+                                    <Box>
+                                        <ToggleButtonGroup sx={{ mb: 1, height: 50 }} color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
+                                            <ToggleButton className={classes.toggleBtn} value="individual measures"><Typography variant={"body2"}>Individual Measures</Typography></ToggleButton>
+                                            <ToggleButton className={classes.toggleBtn} value="local measures"><Typography variant={"body2"}>Local Measures</Typography></ToggleButton>
+                                            <ToggleButton className={classes.toggleBtn} value="global measures"><Typography variant={"body2"}>Global Measures</Typography></ToggleButton>
+                                        </ToggleButtonGroup>
 
+                                        { selectedMeasure === "individual measures" &&
+                                            <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedIndividual} exclusive onChange={(e, value) => setSelectedIndividual(value)} >
+                                                <ToggleButton className={classes.toggleBtn} value="degree_centrality">
+                                                    <Tooltip title="The degree centrality for a node is the fraction of nodes it is connected to." arrow>
+                                                        <Typography variant={"body2"}>Degree Centrality</Typography>
+                                                    </Tooltip>
+                                                </ToggleButton>
+
+                                                <ToggleButton className={classes.toggleBtn} value="closeness_centrality">
+                                                    <Tooltip title="Closeness centrality of a node is the reciprocal of the average shortest path distance to him over all n-1 reachable nodes." arrow>
+                                                        <Typography variant={"body2"}>Closeness Centrality</Typography>
+                                                    </Tooltip>
+                                                </ToggleButton>
+
+                                                <ToggleButton className={classes.toggleBtn} value="betweenness_centrality">
+                                                    <Tooltip title="Betweenness centrality of a node is the sum of the fraction of all-pairs shortest paths that pass through him." arrow>
+                                                        <Typography variant={"body2"}>Betweenness Centrality</Typography>
+                                                    </Tooltip>
+                                                </ToggleButton>
+                                            </ToggleButtonGroup>
+                                        }
+
+                                        { selectedMeasure === "local measures" &&
+                                            <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedLocal} exclusive onChange={(e, value) => setSelectedLocal(value)} >
+                                                <ToggleButton className={classes.toggleBtn} value="community_detection"><Typography variant={"body2"}>Community Detection</Typography></ToggleButton>
+                                            </ToggleButtonGroup>
+                                        }
+
+                                        { selectedMeasure === "global measures" &&
+                                            <ToggleButtonGroup sx={{ height: 50 }} color="primary" value={selectedGlobal} exclusive onChange={(e, value) => setSelectedGlobal(value)} >
+                                            
+                                                <ToggleButton className={classes.toggleBtn} value="shortest path">
+                                                    <Tooltip title="Compute shortest paths in the graph." arrow>
+                                                        <Typography variant={"body2"}>Shortest Path</Typography>
+                                                    </Tooltip>
+                                                </ToggleButton>
+
+                                                <ToggleButton  className={classes.toggleBtn} value="center">
+                                                    <Tooltip title="The center is the set of nodes with eccentricity equal to radius." arrow>
+                                                        <Typography variant={"body2"}>Center</Typography>
+                                                    </Tooltip>
+                                                </ToggleButton>
+                                            </ToggleButtonGroup>
+                                        }
+                                        { selectedMeasure === "global measures" && selectedGlobal === "shortest path" &&
+                                            <Stack direction={'column'} spacing={2} sx={{ mt: 2 }}>
+                                                <Autocomplete disablePortal options={networkData.nodes} onChange={(event, value) => setSourceNode(value)} 
+                                                renderInput={(params) => <TextField {...params} className={classes.autoComplete} size="small" variant="outlined" label='Source node' /> }
+                                                />
+                                                <Autocomplete disablePortal options={networkData.nodes} onChange={(event, value) => setTargetNode(value)} 
+                                                renderInput={(params) => <TextField {...params} className={classes.autoComplete} size="small" variant="outlined" label='Target node'/>}
+                                                />
+                                                <Button onClick={searchShortestPath} variant="contained" sx={{ backgroundColor: "#6366f1", "&:hover": { backgroundColor: "#4e50c6" }, height: 32, width: 80, textTransform: "none",}} > Search </Button>
+                                            </Stack>
+                                        }
+                                    </Box>
+                                    <Box>
+                                        <Stack direction={"row"} spacing={1.3} justifyContent={"flex-start"}>
+                                            <MessageOutlinedIcon sx={{ color: '#6366f1', fontSize: 21 }} />
+                                            <Typography id="input-slider" sx={{color: '#0000008A', fontSize: 15}}>
+                                                Minimum Messages per Member
+                                            </Typography>
+                                            <Input className={classes.sliderInput} sx={{fontSize: 15}}
+                                                value={sliderValue}
+                                                size="small"
+                                                onChange={(event) => setSliderValue(event.target.value === '' ? '' : Number(event.target.value))}
+                                                onBlur={handleBlur}
+                                                inputProps={{
+                                                step: 1,
+                                                min: 0,
+                                                max: maxEdges,
+                                                type: 'number',
+                                                'aria-labelledby': 'input-slider',
+                                                }}
+                                            />
+                                        </Stack>
+                                        <Slider sx={{ color: '#6366f1' }} onMouseDown={(e) => e.stopPropagation() }
+                                            value={typeof sliderValue === 'number' ? sliderValue : 0}
+                                            onChange={(event, newValue) => setSliderValue(newValue)}
+                                            min={0} max={maxEdges}
+                                            aria-labelledby="input-slider"
+                                        />
+                                    </Box>
+                                </Stack>
+                            </Collapse>
+                        </Box>
+                    </Draggable>
+                </Box>
+            }
             <Box sx={{ width: '100%', height: '90vh'}}>
-                { graph && <Graph key={graph.id} style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
+              { graph && <Graph key={graph.id} style={{width: '99%', height: '100%'}} graph={graph} options={options} events={events} getNetwork={network => { setNetwork(network); }}/> }
             </Box>
         </Box>
     )

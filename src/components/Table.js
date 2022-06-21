@@ -64,10 +64,7 @@ export const Table = (props) => {
 
     return (
       <Stack spacing={3}>
-        {
-          loading === false ?
-          <>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button variant="contained" startIcon={<DownloadIcon/>}
                 onClick={(e) => {
                   e.preventDefault();
@@ -77,6 +74,9 @@ export const Table = (props) => {
                     Download CSV
               </Button>
             </Box>
+        {
+          loading === false ?
+          <>
             <Box sx={{ maxHeight: '54vh', overflowY: 'auto' }}>
               <Spreadsheet data={csvData} />
             </Box>

@@ -172,7 +172,7 @@ const ProjectNetwork = (props) => {
             }
             case "community_detection": {
                 for (const node of currNetwork.nodes) {
-                    let graphNode = { id: node.label, group: node.group, label: hideLabels ? '' : node.label, shape: 'dot', value: 10} // default node
+                    let graphNode = { id: node.label, group: node.group, label: hideLabels ? '' : node.label, shape: 'dot', value: 10, cid: node.group} // default node
                     newGraph.nodes.push(graphNode);
                 }
                 setGraph(newGraph);
@@ -182,6 +182,9 @@ const ProjectNetwork = (props) => {
     }
     
     const options = {
+        groups: {
+           useDefaultGroups: true 
+        },
         layout: {
             randomSeed: 1,
             hierarchical: false,    
@@ -339,26 +342,26 @@ const ProjectNetwork = (props) => {
                         </IconButton>
                     </Stack>
                     
-                    <Draggable nodeRef={nodeRef} bounds="parent">
-                        <Box ref={nodeRef} sx={{ align: 'right', width: 320, backgroundColor: 'white', p: 1, position: 'absolute', zIndex: 1, right: 0}}> 
+                    <Draggable nodeRef={nodeRef} bounds="parent" cancel=".expandBtn, .hideLabels, .resetGraphBtn, .toggleMeasuresBtnsBox, .messagesCnt">
+                        <Box ref={nodeRef} sx={{ align: 'right', width: 320, backgroundColor: 'white', p: 1, position: 'absolute', zIndex: 1, right: 0}} > 
                             <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                                 <Typography sx={{ color: '#6366f1' }}>SNAP Analyzer</Typography>
-                                <IconButton onClick={() => setExpanded(!expanded)}>
+                                <IconButton onClick={() => setExpanded(!expanded)} className="expandBtn" >
                                     { expanded ? <CloseFullscreenIcon/> : <OpenInFullIcon/> }
                                 </IconButton>
                             </Stack>
                             
                             <Collapse in={expanded} timeout="auto" unmountOnExit>
-                                <Stack direction={'column'} gap={2.5} mt={2}>
+                                <Stack direction={'column'} gap={2.5} mt={2} >
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <FormControlLabel sx={{ color: '#0000008A'}}
                                             label="Hide labels"
-                                            control={<Checkbox color='default' sx={{ color: '#6366f1' }} checked={hideLabels} onChange={() => setHideLabels(event.target.checked)} />}
+                                            control={<Checkbox className="hideLabels" color='default' sx={{ color: '#6366f1' }} checked={hideLabels} onChange={() => setHideLabels(event.target.checked)} />}
                                         />
-                                        <IconButton onClick={handleResetGraph} title="Reset graph" sx={{ mr: 1, backgroundColor: "#6366f1", color: 'white', borderRadius: 1, height: 30, width: 30,  "&:hover": { backgroundColor: "#4e50c6" }}}><RestartAltIcon/></IconButton>
+                                        <IconButton className="resetGraphBtn" onClick={handleResetGraph} title="Reset graph" sx={{ mr: 1, backgroundColor: "#6366f1", color: 'white', borderRadius: 1, height: 30, width: 30,  "&:hover": { backgroundColor: "#4e50c6" }}}><RestartAltIcon/></IconButton>
                                     </Stack>
                                     
-                                    <Box>
+                                    <Box className="toggleMeasuresBtnsBox">
                                         <ToggleButtonGroup sx={{ mb: 1, height: 50 }} color="primary" value={selectedMeasure} exclusive onChange={(e, value) => setSelectedMeasure(value)} >
                                             <ToggleButton className={classes.toggleBtn} value="individual measures"><Typography variant={"body2"}>Individual Measures</Typography></ToggleButton>
                                             <ToggleButton className={classes.toggleBtn} value="local measures"><Typography variant={"body2"}>Local Measures</Typography></ToggleButton>
@@ -421,7 +424,7 @@ const ProjectNetwork = (props) => {
                                             </Stack>
                                         }
                                     </Box>
-                                    <Box>
+                                    <Box className="messagesCnt">
                                         <Stack direction={"row"} spacing={1.3} justifyContent={"flex-start"}>
                                             <MessageOutlinedIcon sx={{ color: '#6366f1', fontSize: 21 }} />
                                             <Typography id="input-slider" sx={{color: '#0000008A', fontSize: 15}}>
@@ -441,7 +444,7 @@ const ProjectNetwork = (props) => {
                                                 }}
                                             />
                                         </Stack>
-                                        <Slider sx={{ color: '#6366f1' }} onMouseDown={(e) => e.stopPropagation() }
+                                        <Slider sx={{ color: '#6366f1' }}
                                             value={typeof sliderValue === 'number' ? sliderValue : 0}
                                             onChange={(event, newValue) => setSliderValue(newValue)}
                                             min={0} max={maxEdges}

@@ -94,6 +94,9 @@ const ProjectPage = (props) => {
     { label: "Avg. Degree Centrality", key: "avgDegreeCentrality" },
     { label: "Avg. Closeness Centrality", key: "avgClosenessCentrality" },
     { label: "Avg. Betweenness Centrality", key: "avgBetweennessCentrality" },
+    { label: "Degree Graph Centralization", key: "degreeGraphCentralization" },
+    { label: "Closeness Graph Centralization", key: "closenessGraphCentralization" },
+    { label: "Betweenness Graph Centralization", key: "betweennessGraphCentralization" },
   ];
 
   const handleChangePage = (event, newPage) => {
@@ -355,7 +358,17 @@ const ProjectPage = (props) => {
     });
     let avg = sum / nodes.length;        
     return avg
-}
+  }
+
+  const calcGraphCentralization = (network, mode) => {
+    const nodes = network.nodes;
+    const nodesLength = network.nodes.length;
+    const maxCentrality = nodes.map(({ centrality }) => centrality[mode]).reduce((a, b) => Math.max(a, b))
+    const subtractMaxArr = nodes.map(({ centrality }) => maxCentrality - centrality[mode] );
+    const numerator = subtractMaxArr.map((value) => value).reduce((sum, i) => sum + i, 0)  
+    const denominator = (nodesLength - 1) * (nodesLength - 2)
+    return numerator / denominator
+  }
 
   const exportNetworksToCSV = () => {
     let networksData = [];
@@ -365,7 +378,9 @@ const ProjectPage = (props) => {
                 radius: network.globalMeasures.radius, density: network.globalMeasures.density, selfLoops: network.globalMeasures.numberOfSelfLoops,
                 avgClustering: network.localMeasures.average_clustering, transitivity: network.localMeasures.transitivity, 
                 reciprocity: network.localMeasures.reciprocity, avgDegreeCentrality: calcAvgCentrality(network, "degree"),
-                avgClosenessCentrality: calcAvgCentrality(network, "closeness"), avgBetweennessCentrality: calcAvgCentrality(network, "betweenness")
+                avgClosenessCentrality: calcAvgCentrality(network, "closeness"), avgBetweennessCentrality: calcAvgCentrality(network, "betweenness"),
+                degreeGraphCentralization: calcGraphCentralization(network, "degree"), closenessGraphCentralization: calcGraphCentralization(network, "closeness"),
+                betweennessGraphCentralization: calcGraphCentralization(network, "betweenness")
       };
       networksData.push(row)
     })
